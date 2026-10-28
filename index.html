@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E8471B"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><meta name="apple-mobile-web-app-capable" content="yes"></head><body>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E8471B"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><script>window.KK_FILES={"kk_mo_hinh_0.wasm": "phan_1/tts/kk_mo_hinh_0.wasm", "kk_mo_hinh_1.wasm": "phan_1/tts/kk_mo_hinh_1.wasm", "kk_mo_hinh_2.wasm": "phan_2/tts/kk_mo_hinh_2.wasm", "kk_mo_hinh_3.wasm": "phan_2/tts/kk_mo_hinh_3.wasm", "kk_mo_hinh_4.wasm": "phan_3/tts/kk_mo_hinh_4.wasm", "kk_mo_hinh_5.wasm": "phan_3/tts/kk_mo_hinh_5.wasm", "ort-wasm-simd-threaded.wasm": "phan_4/tts/ort-wasm-simd-threaded.wasm", "kk_am.json": "phan_4/tts/kk_am.json", "kk_giong.wasm": "phan_4/tts/kk_giong.wasm"}</script></head><body>
 <title>Xưởng video animation</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="fonts.css">
@@ -872,6 +872,8 @@ const KK = (() => {
   const FIX = { skin: "ʂkˈin", phri: "fɹˈi" };
   const LETTER = { a: "a", b: "bê", c: "xê", d: "đê", đ: "đê", e: "e", f: "ép", g: "giê", h: "hát", i: "i", j: "gi", k: "ca", l: "e lờ", m: "em mờ", n: "en nờ", o: "o", p: "pê", q: "quy", r: "e rờ", s: "ét", t: "tê", u: "u", v: "vê", w: "vê kép", x: "ích", y: "y", z: "dét" };
   let ort = null, session = null, styles = null, TAB = null, loading = null;
+  // chỗ để file giọng (trang trên GitHub để trong các thư mục phan_1..4/tts)
+  const F = n => (typeof window !== "undefined" && window.KK_FILES && window.KK_FILES[n]) || "tts/" + n;
 
   async function getFile(url, onBytes) {
     let cache = null;
@@ -897,10 +899,10 @@ const KK = (() => {
       const tick = n => { got += n; progress && progress(Math.min(1, got / TOTAL), "Đang tải giọng đọc mới (" + Math.round(got / 1e6) + "/" + Math.round(TOTAL / 1e6) + " MB, chỉ lần đầu)"); };
       const [ortMod, wasm, st, tab, ...parts] = await Promise.all([
         import(ORT_URL),
-        getFile("tts/ort-wasm-simd-threaded.wasm", tick),
-        getFile("tts/kk_giong.wasm", tick),
-        getFile("tts/kk_am.json", tick),
-        ...Array.from({ length: PARTS }, (_, k) => getFile("tts/kk_mo_hinh_" + k + ".wasm", tick)),
+        getFile(F("ort-wasm-simd-threaded.wasm"), tick),
+        getFile(F("kk_giong.wasm"), tick),
+        getFile(F("kk_am.json"), tick),
+        ...Array.from({ length: PARTS }, (_, k) => getFile(F("kk_mo_hinh_" + k + ".wasm"), tick)),
       ]);
       ort = ortMod.default && ortMod.default.InferenceSession ? ortMod.default : ortMod;
       if (!ort.env.wasm.wasmBinary) { ort.env.wasm.wasmBinary = wasm; ort.env.wasm.numThreads = 1; ort.env.wasm.proxy = false; }
