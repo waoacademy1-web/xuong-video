@@ -1,0 +1,17 @@
+{
+ "name": "Xưởng video animation",
+ "short_name": "Xưởng video",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#FFF8EC",
+ "theme_color": "#E8471B",
+ "icons": [
+  {
+   "src": "icon.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
