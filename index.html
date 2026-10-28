@@ -756,7 +756,7 @@ const TTS = (() => {
     facebook: "phây búc", tiktok: "tích tốc", zalo: "da lô", youtube: "diu túp", google: "gu gồ", email: "i meo",
     website: "oép sai", wifi: "oai phai", team: "tim", ceo: "xi i ô", kpi: "ca pê i", marketing: "ma két tinh",
     order: "o đơ", size: "sai", top: "tóp", hot: "hót", trend: "tren", healthy: "heo thi", omega: "ô mê ga",
-    vietwise: "việt quai", wise: "quai", file: "phai", drive: "đờ rai", content: "con ten", link: "linh", group: "gờ rúp", like: "lai", share: "se", post: "pốt", page: "pết", follow: "phô lô", inbox: "in bóc", fanpage: "phen pết", online: "on lai", hotline: "hót lai", heartline: "hát lai", keto: "kê tô", gym: "gim", yoga: "dô ga", menu: "mê nu", cafe: "ca phê", coffee: "cà phê",
+    vietwise: "việt quai", wise: "quai", boxing: "bóc xing", cardio: "ca đi ô", fitness: "phít nét", file: "phai", drive: "đờ rai", content: "con ten", link: "linh", group: "gờ rúp", like: "lai", share: "se", post: "pốt", page: "pết", follow: "phô lô", inbox: "in bóc", fanpage: "phen pết", online: "on lai", hotline: "hót lai", heartline: "hát lai", keto: "kê tô", gym: "gim", yoga: "dô ga", menu: "mê nu", cafe: "ca phê", coffee: "cà phê",
   };
   let LEX = { ...LEX_BASE }, lexVer = 0;
   // "ion = i on" mỗi dòng một từ
@@ -1017,10 +1017,10 @@ const Render = (() => {
       { bg: "#0E1633", ray: "#131D42", ink: "#FFFFFF", hl: "#FFC857", card: "#18244F", cardInk: "#FFFFFF", soft: "#24346B", hlOnCard: "#FFC857" },
       { bg: "#101A3B", ray: "#16224C", ink: "#FFFFFF", hl: "#5EA2FF", card: "#1A2858", cardInk: "#FFFFFF", soft: "#26386F", hlOnCard: "#5EA2FF" },
     ],
+    // kem sage: một bộ màu cố định cho mọi cảnh (Diễm muốn ổn định): nền kem, chữ xanh sage đậm, chữ nhấn hồng
     kem: [
-      { bg: "#F7EEE5", ray: "#F1E4D6", ink: "#3B3A2E", hl: "#6B8142", card: "#FFFFFF", cardInk: "#3B3A2E", soft: "#E9DCCB", hlOnCard: "#D67A84" },
-      { bg: "#F7EEE5", ray: "#EFE1D2", ink: "#3B3A2E", hl: "#D67A84", card: "#6B8142", cardInk: "#FFFFFF", soft: "#E3D3C0", hlOnCard: "#FFE9A8" },
-      { bg: "#EDE3D6", ray: "#E6D9C9", ink: "#3B3A2E", hl: "#8E7955", card: "#FFFFFF", cardInk: "#3B3A2E", soft: "#DCCDB9", hlOnCard: "#6B8142" },
+      { bg: "#FAF2E8", ray: "#F3E7D9", ink: "#4E5B48", hl: "#D45F78", card: "#FFFFFF", cardInk: "#4E5B48", soft: "#F7DCE1", hlOnCard: "#D45F78",
+        subNow: "#D45F78", subPast: "#4E5B48", subNext: "#8F9A87" },
     ],
   };
   const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -1158,7 +1158,7 @@ const Render = (() => {
     function productFor(st) { return PRODUCTS.length ? PRODUCTS[(st.k || 0) % PRODUCTS.length] : null; }
     function hero(name, x, y, s, p, t, st) {
       const im = productFor(st);
-      if (!im) { badge(name, x, y, s, p, t); return 0; }
+      if (!im) { badge(name, x, y, s, p, t); return y + s * .62; }   // đáy biểu tượng tròn: chữ cũng nằm dưới
       const ar = clamp(im.width / im.height, .75, 1.35), h = s * 1.3, w = h * ar;
       photo(im, x, y, w, h, t);
       return y + h / 2;                 // đáy ảnh sản phẩm: chữ phải nằm dưới đáy này
@@ -1262,7 +1262,7 @@ const Render = (() => {
     function sceneStatement(sc, p, st) {
       const t = st.t;
       const ix = P ? W / 2 : W * .2, iy = P ? H * .24 : H * .5;
-      const hb = hero(sc.icon, ix, iy, productFor(st) ? (P ? 300 : 380) * U : 300 * U, p, t, st);
+      const hb = hero(sc.icon, ix, iy, productFor(st) ? (P ? 300 : 380) * U : 250 * U, p, t, st);
       const cx = P ? W / 2 : W * .6, cy = P ? H * .52 : H * .5, mw = P ? CW : W * .62;
       if (P && hb) textBelow(sc.show, cx, hb + 60 * U, H * .8, mw, 122 * U, 6, p, st, {});
       else textBlock(sc.show, cx, cy, mw, (P ? 122 : 100) * U, P ? 6 : 4, p, st, {});
@@ -1455,7 +1455,7 @@ const Render = (() => {
       const pal = st.p;
       ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.25)"; ctx.shadowBlur = 14 * U; ctx.fillStyle = "rgba(255,255,255,0.96)"; rrect(x, y - h / 2, w, h, h / 2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.translate(x + sz * .8, y); ctx.scale(scale, scale); ctx.textBaseline = "middle"; let xx = 0;
-      grp.forEach((i, k) => { ctx.fillStyle = i === cur ? "#E8471B" : (i < cur ? "#1F2275" : "#5A5E8F"); ctx.font = fontOf(sz, i === cur ? 800 : 700); ctx.fillText(text[k], xx, 2 * U); xx += widths[k] + sp; });
+      grp.forEach((i, k) => { ctx.fillStyle = i === cur ? (pal.subNow || "#E8471B") : (i < cur ? (pal.subPast || "#1F2275") : (pal.subNext || "#5A5E8F")); ctx.font = fontOf(sz, i === cur ? 800 : 700); ctx.fillText(text[k], xx, 2 * U); xx += widths[k] + sp; });
       ctx.restore();
     }
 
