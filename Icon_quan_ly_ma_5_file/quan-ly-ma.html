@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tạo mã kích hoạt</title>
+<link rel="apple-touch-icon" href="icon-ma.png"><link rel="icon" href="icon-ma.png"><link rel="manifest" href="manifest-ma.json"><meta name="apple-mobile-web-app-title" content="Quản lý mã"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#E8471B">
+<style>
+:root{--bg:#FFF8EC;--panel:#FFFFFF;--ink:#1F2275;--muted:#6A6B8F;--line:#F0E2C8;--flame:#E8471B;--field:#FFFDF8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#12142E;--panel:#1B1E43;--ink:#F3F1FF;--muted:#A7A9D1;--line:#2C3066;--flame:#FF6A3D;--field:#151838;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12142E;--panel:#1B1E43;--ink:#F3F1FF;--muted:#A7A9D1;--line:#2C3066;--flame:#FF6A3D;--field:#151838;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Arial,sans-serif;padding:16px}
+[hidden]{display:none!important}
+main{max-width:480px;margin:0 auto 16px;background:var(--panel);border-radius:20px;padding:20px}
+h1{font-size:24px;margin:0 0 6px}h2{font-size:19px;margin:0 0 4px}p{line-height:1.5;color:var(--muted);margin:6px 0}
+label{display:block;font-weight:700;margin:14px 0 6px}
+input,select{width:100%;box-sizing:border-box;font-size:18px;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--field);color:inherit}
+input{text-transform:uppercase}
+button{font:inherit;font-weight:800;font-size:17px;border:0;border-radius:12px;padding:14px;background:var(--flame);color:#fff;width:100%;margin-top:16px;cursor:pointer}
+.ra{margin-top:16px;font-size:15px}.ra b{display:block;font-size:22px;letter-spacing:1px;color:var(--ink);margin:6px 0;word-break:break-all}
+.ra .lk{font-size:15px;letter-spacing:0}
+.chep{background:none;color:var(--flame);border:2px solid var(--flame);padding:8px;margin-top:6px}
+</style></head><body>
+<main>
+<h1>Tạo mã kích hoạt</h1>
+<p>Dành riêng cho Diễm.</p>
+</main>
+<main id="cong">
+<h2>Mật khẩu</h2>
+<p>Trang này chỉ dành cho Diễm.</p>
+<label for="mk">Mật khẩu</label>
+<input id="mk" type="password" autocomplete="current-password" style="text-transform:none">
+<button type="button" id="moKhoa">Mở</button>
+<p id="mkLoi" style="color:var(--flame);font-weight:700"></p>
+</main>
+<div id="noiDung" hidden>
+<main>
+<h2>1. Link dùng thử</h2>
+<p>Gửi link này cho khách. Bấm vào là dùng được ngay. Hết thời hạn (tính từ lúc Diễm bấm tạo) thì link không mở được nữa, khách xóa dữ liệu hay vào lại cũng vậy.</p>
+<label for="hanThu">Thời hạn dùng thử</label>
+<select id="hanThu"><option value="24" selected>24 giờ</option><option value="48">2 ngày</option><option value="72">3 ngày</option><option value="168">7 ngày</option></select>
+<button type="button" id="taoThu">Tạo link dùng thử</button>
+<div class="ra" id="raThu"></div>
+</main>
+<main>
+<h2>2. Mã kích hoạt cho khách mua</h2>
+<p>Khách gửi <b>mã máy</b> (hiện trên màn hình khóa, hoặc bấm "Nhập mã kích hoạt" dưới tiêu đề trang). Diễm dán vào đây, chọn thời hạn rồi gửi lại mã. Để trống mã máy thì ra mã chung, máy nào nhập cũng được (khách có thể chia cho người khác).</p>
+<label for="may">Mã máy của khách</label>
+<input id="may" placeholder="VD: 7K3M-9QXA" autocomplete="off" spellcheck="false">
+<label for="han">Thời hạn</label>
+<select id="han">
+  <option value="24">1 ngày</option><option value="168">7 ngày</option>
+  <option value="720" selected>1 tháng</option><option value="2160">3 tháng</option><option value="4320">6 tháng</option>
+  <option value="8760">1 năm</option><option value="forever">Vĩnh viễn</option>
+</select>
+<button type="button" id="tao">Tạo mã</button>
+<div class="ra" id="ra"></div>
+</main>
+</div>
+<script>window.LOCK_NO_AUTO = true;</script>
+<script>
+/* lock.js: trang chỉ dùng được khi có mã (ký HMAC, có giờ hết hạn ghi sẵn trong mã).
+   - Link dùng thử: ...?ma=MÃ (mã chung, hết hạn sau 24 giờ kể từ lúc Diễm tạo). Hết giờ thì link vô dụng, xóa dữ liệu trang cũng không dùng lại được.
+   - Mã kích hoạt theo máy: khách gửi mã máy, Diễm tạo mã có hạn (hoặc vĩnh viễn).
+   Khóa chạy trên máy người dùng nên chỉ chặn người dùng bình thường. */
+const LOCK = (() => {
+  const H0 = Date.UTC(2026, 0, 1), FOREVER = 0xFFFFFF;   // hạn = số giờ kể từ 1/1/2026
+  const CONTACT = "Diễm Nguyễn (Zalo 0938 333 310)";   // ghi trên màn hình khóa: liên hệ ai để nhận mã
+  const KEY = "95e3845e10c23e066e35309c7d91b45350666606fc5b8f03";
+  const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   // không có I L O U cho khỏi nhầm
+  const st = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+
+  const enc = bytes => { let bits = 0, v = 0, s = ""; for (const b of bytes) { v = (v << 8) | b; bits += 8; while (bits >= 5) { s += B32[(v >>> (bits - 5)) & 31]; bits -= 5; } } if (bits) s += B32[(v << (5 - bits)) & 31]; return s; };
+  const dec = s => { const out = []; let bits = 0, v = 0; for (const c of s) { const i = B32.indexOf(c); if (i < 0) return null; v = (v << 5) | i; bits += 5; if (bits >= 8) { out.push((v >>> (bits - 8)) & 255); bits -= 8; } } return out; };
+  const norm = s => (s || "").toUpperCase().replace(/[^0-9A-Z]/g, "").replace(/O/g, "0").replace(/[IL]/g, "1");
+  const group = s => s.match(/.{1,4}/g).join("-");
+
+  async function tag(device, hour) {
+    const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+    return new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(norm(device) + ":h" + hour))).slice(0, 6);
+  }
+  // mã cho 1 máy (device rỗng = mã chung, máy nào nhập cũng được), dùng được tới giờ `hour` (FOREVER = vĩnh viễn)
+  async function makeCode(device, hour) { return group(enc([hour >> 16, (hour >> 8) & 255, hour & 255, ...(await tag(device, hour))])); }
+  // mã đúng -> giờ hết hạn (số), sai -> null
+  async function check(device, code) {
+    const b = dec(norm(code)); if (!b || b.length < 9) return null;
+    const hour = (b[0] << 16) | (b[1] << 8) | b[2];
+    for (const d of [device, ""]) { const t = await tag(d, hour); if (t.every((x, i) => x === b[3 + i])) return hour; }
+    return null;
+  }
+  const hourEnd = h => H0 + h * 3600e3;
+  const hourNow = () => Math.floor((Date.now() - H0) / 3600e3);
+  const untilText = h => h === FOREVER ? "vĩnh viễn" : new Date(hourEnd(h)).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "numeric", year: "numeric" });
+
+  function deviceId() {
+    let id = st.get("xv_may");
+    if (!id) { id = group(enc(crypto.getRandomValues(new Uint8Array(5)))); st.set("xv_may", id); }
+    return id;
+  }
+
+  // trạng thái: { ok, until (giờ hết hạn), left (ms) }
+  async function status() {
+    const now = Date.now(), dev = deviceId();
+    const seen = +st.get("xv_lan_cuoi") || 0;
+    const back = seen && now < seen - 3600e3;            // chỉnh lùi đồng hồ máy
+    if (!back) st.set("xv_lan_cuoi", String(Math.max(now, seen)));
+    // mã đi kèm link (?ma=...) hoặc mã đã nhập trước đó
+    const fromLink = new URLSearchParams(location.search).get("ma");
+    for (const code of [fromLink, st.get("xv_ma")]) {
+      if (!code) continue;
+      const h = await check(dev, code);
+      if (h == null) continue;
+      if (h === FOREVER || (now < hourEnd(h) && !back)) { st.set("xv_ma", norm(code)); return { ok: true, until: h, left: hourEnd(h) - now }; }
+    }
+    return { ok: false, expired: !!(fromLink || st.get("xv_ma")) };
+  }
+
+  // khoa = true: không đóng được (chưa có mã / hết hạn); false: tự mở ra để nhập mã khác
+  function overlay(dev, khoa, expired) {
+    const el = document.createElement("div");
+    el.id = "khoa";
+    el.innerHTML = `<div class="khoa-hop">
+      ${khoa ? "" : '<button type="button" id="khoaDong" aria-label="Đóng">✕</button>'}
+      <h2>${!khoa ? "Nhập mã kích hoạt" : expired ? "Hết thời gian dùng" : "Cần mã để dùng"}</h2>
+      <p>${khoa ? (expired ? "Mã hoặc link dùng thử của bạn đã hết hạn. " : "") + "Để dùng, gửi" : "Gửi"} <b>mã máy</b> dưới đây cho ${CONTACT} để nhận mã kích hoạt.</p>
+      <p class="khoa-may">Mã máy: <b id="khoaMay">${dev}</b> <button type="button" id="khoaCopy">Sao chép</button></p>
+      <p class="khoa-lh"><a href="https://zalo.me/0938333310" target="_blank" rel="noopener">Nhắn Zalo</a><a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></p>
+      <input id="khoaMa" placeholder="Nhập mã kích hoạt" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button type="button" id="khoaMo">Kích hoạt</button>
+      <p id="khoaLoi" class="khoa-loi"></p></div>`;
+    document.body.appendChild(el);
+    if (!khoa) el.querySelector("#khoaDong").onclick = () => el.remove();
+    el.querySelector("#khoaCopy").onclick = () => { try { navigator.clipboard.writeText(dev); el.querySelector("#khoaCopy").textContent = "Đã chép"; } catch (e) { } };
+    el.querySelector("#khoaMo").onclick = async () => {
+      const v = el.querySelector("#khoaMa").value, h = await check(dev, v), err = el.querySelector("#khoaLoi");
+      if (h == null) { err.textContent = "Mã kích hoạt không đúng. Kiểm tra lại từng chữ."; return; }
+      if (h !== FOREVER && Date.now() >= hourEnd(h)) { err.textContent = "Mã này đã hết hạn (" + untilText(h) + ")."; return; }
+      st.set("xv_ma", norm(v)); el.remove(); guard();
+    };
+  }
+  function banner(s) {
+    const b = document.getElementById("khoaBan") || document.createElement("p");
+    b.id = "khoaBan"; b.className = "khoa-ban";
+    if (s.until === FOREVER) { b.remove(); return; }
+    const hl = Math.max(1, Math.ceil(s.left / 3600e3));
+    b.innerHTML = "Dùng được đến " + untilText(s.until) + (hl <= 72 ? " (còn " + hl + " giờ)." : ".") +
+      ' <button type="button" class="khoa-link">Nhập mã kích hoạt</button>';
+    b.querySelector("button").onclick = () => document.getElementById("khoa") || overlay(deviceId(), false);
+    const h = document.querySelector("header"); (h || document.body).insertAdjacentElement(h ? "afterend" : "afterbegin", b);
+  }
+  async function guard() {
+    const s = await status();
+    if (s.ok) { banner(s); if (s.until !== FOREVER) setTimeout(guard, Math.min(s.left + 1000, 3600e3)); return; }
+    const b = document.getElementById("khoaBan"); if (b) b.remove();
+    document.getElementById("khoa") || overlay(deviceId(), true, s.expired);
+  }
+
+  const css = document.createElement("style");
+  css.textContent = `#khoa{position:fixed;inset:0;z-index:9999;background:rgba(18,20,46,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+  .khoa-hop{background:var(--panel,#fff);color:var(--ink,#1F2275);border-radius:20px;padding:22px;max-width:420px;width:100%;font-family:var(--body,sans-serif)}
+  .khoa-hop h2{margin:0 0 8px}.khoa-hop p{line-height:1.5}.khoa-may b{font-size:20px;letter-spacing:1px}
+  .khoa-hop input{width:100%;box-sizing:border-box;font-size:18px;padding:12px;border-radius:12px;border:2px solid var(--line,#ddd);background:var(--field,#fff);color:inherit;text-transform:uppercase;margin:8px 0}
+  .khoa-hop button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 14px;background:var(--flame,#E8471B);color:#fff;cursor:pointer}
+  #khoaCopy{padding:6px 10px;font-size:14px;margin-left:6px}#khoaMo{width:100%;padding:14px}
+  .khoa-lh{display:flex;gap:8px;flex-wrap:wrap}.khoa-lh a{flex:1;text-align:center;font-weight:800;text-decoration:none;padding:10px;border-radius:12px;border:2px solid var(--flame,#E8471B);color:var(--flame,#E8471B)}
+  .khoa-loi{color:var(--flame,#E8471B);font-weight:700;min-height:1.2em}
+  .khoa-ban{margin:8px 0 0;font-size:13px;color:var(--muted,#6A6B8F);text-align:center}
+  .khoa-link{font:inherit;font-weight:700;background:none;border:0;color:var(--flame,#E8471B);text-decoration:underline;cursor:pointer;padding:4px}
+  .khoa-hop{position:relative}#khoaDong{position:absolute;top:10px;right:10px;background:none;color:inherit;font-size:20px;padding:6px 10px}`;
+  document.head.appendChild(css);
+  if (typeof window !== "undefined" && !window.LOCK_NO_AUTO) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", guard) : guard());
+
+  return { makeCode, check, status, deviceId, untilText, hourNow, FOREVER, norm };
+})();
+
+</script>
+<script>
+const LINK = "https://waoacademy1-web.github.io/xuong-video/";
+// mật khẩu: so mã băm PBKDF2 (không ghi mật khẩu trong trang)
+const SALT = "e5feaf90e0e89ddb", HASH = "5b07cc28bfbab0e383b9d50bb43953ca1ddcfc7bc67705884133b26a39d54c57";
+async function hashPw(pw) {
+  const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+  const b = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: new TextEncoder().encode(SALT), iterations: 200000, hash: "SHA-256" }, k, 256);
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+const open_ = () => { document.getElementById("cong").hidden = true; document.getElementById("noiDung").hidden = false; };
+try { if (sessionStorage.getItem("xv_mk") === HASH) open_(); } catch (e) { }
+document.getElementById("moKhoa").onclick = async () => {
+  const h = await hashPw(document.getElementById("mk").value);
+  if (h !== HASH) { document.getElementById("mkLoi").textContent = "Sai mật khẩu."; return; }
+  try { sessionStorage.setItem("xv_mk", h); } catch (e) { }
+  open_();
+};
+document.getElementById("mk").addEventListener("keydown", e => { if (e.key === "Enter") document.getElementById("moKhoa").click(); });
+const copyBtn = (id, text) => { document.getElementById(id).onclick = () => { try { navigator.clipboard.writeText(text); document.getElementById(id).textContent = "Đã chép"; } catch (e) { } }; };
+document.getElementById("taoThu").onclick = async () => {
+  const h = LOCK.hourNow() + (+document.getElementById("hanThu").value);
+  const url = LINK + "?ma=" + LOCK.norm(await LOCK.makeCode("", h));
+  document.getElementById("raThu").innerHTML = `Link dùng thử, mở được đến ${LOCK.untilText(h)}:<b class="lk" id="link">${url}</b><button type="button" class="chep" id="chepThu">Sao chép link</button>`;
+  copyBtn("chepThu", url);
+};
+document.getElementById("tao").onclick = async () => {
+  const may = LOCK.norm(document.getElementById("may").value), ra = document.getElementById("ra"), v = document.getElementById("han").value;
+  if (may && may.length !== 8) { ra.innerHTML = "<p>Mã máy phải có 8 ký tự (dạng XXXX-XXXX). Kiểm tra lại, hoặc để trống để tạo mã chung.</p>"; return; }
+  const h = v === "forever" ? LOCK.FOREVER : LOCK.hourNow() + (+v);
+  const code = await LOCK.makeCode(may, h);
+  ra.innerHTML = `${may ? "Mã kích hoạt cho máy " + may.slice(0, 4) + "-" + may.slice(4) : "Mã chung (máy nào nhập cũng được)"}, dùng đến ${LOCK.untilText(h)}:<b id="ma">${code}</b><button type="button" class="chep" id="chep">Sao chép mã</button>`;
+  copyBtn("chep", code);
+};
+</script>
+</body></html>
