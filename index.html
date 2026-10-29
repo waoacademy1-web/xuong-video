@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#E8471B"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><meta name="apple-mobile-web-app-capable" content="yes"></head><body>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1F2275"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><script>window.KK_FILES={"kk_mo_hinh_0.wasm": "phan_1/tts/kk_mo_hinh_0.wasm", "kk_mo_hinh_1.wasm": "phan_1/tts/kk_mo_hinh_1.wasm", "kk_mo_hinh_2.wasm": "phan_2/tts/kk_mo_hinh_2.wasm", "kk_mo_hinh_3.wasm": "phan_2/tts/kk_mo_hinh_3.wasm", "kk_mo_hinh_4.wasm": "phan_3/tts/kk_mo_hinh_4.wasm", "kk_mo_hinh_5.wasm": "phan_3/tts/kk_mo_hinh_5.wasm", "ort-wasm-simd-threaded.wasm": "phan_4/tts/ort-wasm-simd-threaded.wasm", "kk_am.json": "phan_4/tts/kk_am.json", "kk_giong.wasm": "phan_4/tts/kk_giong.wasm"}</script></head><body>
 <title>Xưởng video</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="fonts.css">
@@ -105,7 +105,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.4</p></div>
+    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.5</p></div>
   </header>
 
   <div class="grid">
@@ -2505,7 +2505,11 @@ const LOCK = (() => {
     };
   }
   // ---------------------------------------------------------------- mua gói: MoMo, lời nhắn tự điền mã máy + gói
-  const PAY = { momo: "0938 333 310", name: "NGUYỄN NGỌC DIỄM", plans: [["1THANG", "1 tháng", 99000, "1T"], ["1NAM", "1 năm", 499000, "1N"], ["VINHVIEN", "Vĩnh viễn", 990000, "VV"]] };
+  const PAY = { momo: "0938 333 310", name: "NGUYỄN NGỌC DIỄM", plans: [["1THANG", "1 tháng", 99000, "1T", 129000], ["1NAM", "1 năm", 499000, "1N", 690000], ["VINHVIEN", "Vĩnh viễn", 990000, "VV", 1490000]] };
+  // giá ra mắt đến 23:59 ngày 30/11/2026 (giờ VN), sau đó tự lên giá sau ra mắt
+  const LAUNCH_END = Date.UTC(2026, 10, 30, 16, 59, 59), isLaunch = () => Date.now() <= LAUNCH_END;
+  const price = p => isLaunch() ? p[2] : p[4];
+  const planPrice = code => { const p = PAY.plans.find(x => x[0] === code || x[3] === code); return p ? price(p) : 0; };
   const vnd = n => n.toLocaleString("vi-VN") + "đ";
   // VietQR của ví MoMo (Diễm gửi): thêm số tiền (54) và lời nhắn (62/08) rồi tính lại mã kiểm CRC
   const QR_ACC = "0010A000000727013300069710250119PSP26302142000001010208QRIBFTTA", QR_REF = "0515MOMOW2W123605830622hmzpXQJ_XugcfvJpcmNlsg";
@@ -2539,8 +2543,8 @@ const LOCK = (() => {
     el.innerHTML = `<div class="mua-hop" role="dialog" aria-modal="true" aria-labelledby="muaTd">
       <button type="button" id="muaDong" aria-label="Đóng">${ic("x")}</button>
       <h2 id="muaTd">Mua Xưởng video</h2>
-      <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.</p>
-      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === 1 ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(p[2])}</span></label>`).join("")}</div>
+      <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.${isLaunch() ? " <b class=\"mua-ram\">Giá ra mắt đến hết 30/11</b>" : ""}</p>
+      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === 1 ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
       <label class="mua-zl" for="muaZalo"><span>Số Zalo của bạn <i>(để nhận mã, nên ghi)</i></span>
         <input id="muaZalo" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xx xxx xxx" maxlength="14"></label>
       <div class="mua-qr">
@@ -2569,10 +2573,10 @@ const LOCK = (() => {
     const upd = () => {
       const p = PAY.plans[+el.querySelector("input[name=muaGoi]:checked").value], zl = zalo();
       const nhan = "XV " + dev.replace("-", "") + " " + p[3] + (zl ? " " + zl : "");
-      el.querySelector("#muaTien").textContent = vnd(p[2]); el.querySelector("#chepTien").dataset.chep = String(p[2]);
+      el.querySelector("#muaTien").textContent = vnd(price(p)); el.querySelector("#chepTien").dataset.chep = String(price(p));
       el.querySelector("#muaNhan").textContent = nhan; el.querySelector("#chepNhan").dataset.chep = nhan;
       const box = el.querySelector("#muaQr"); box.textContent = "";
-      try { qr = qrCanvas(vietqr(p[2], nhan), 480); qr.setAttribute("role", "img"); qr.setAttribute("aria-label", "Mã QR chuyển " + vnd(p[2]) + " vào MoMo " + PAY.name); box.append(qr); el.dataset.goi = p[0]; } catch (e) { qr = null; box.textContent = "Không tạo được mã QR, chuyển tay theo thông tin bên dưới."; }
+      try { qr = qrCanvas(vietqr(price(p), nhan), 480); qr.setAttribute("role", "img"); qr.setAttribute("aria-label", "Mã QR chuyển " + vnd(price(p)) + " vào MoMo " + PAY.name); box.append(qr); el.dataset.goi = p[0]; } catch (e) { qr = null; box.textContent = "Không tạo được mã QR, chuyển tay theo thông tin bên dưới."; }
     };
     // số Zalo hợp lệ (10 số, bắt đầu bằng 0) mới ghi vào lời nhắn; nhớ trên máy cho lần sau
     const zIn = el.querySelector("#muaZalo"); zIn.value = st.get("xv_zalo") || "";
@@ -2636,7 +2640,7 @@ const LOCK = (() => {
   .mua-goi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .mua-goi label{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;border:1.5px solid #E6E1EF;border-radius:14px;padding:16px 4px 10px;cursor:pointer;text-align:center;background:#fff;transition:border-color .15s,box-shadow .15s}
   .mua-goi input{position:absolute;opacity:0;pointer-events:none}
-  .mua-goi b{font-size:14px;font-weight:700;color:#6A6B8F}.mua-goi span{font:800 17px var(--display,sans-serif);color:#1F2275}
+  .mua-goi b{font-size:14px;font-weight:700;color:#6A6B8F}.mua-goi s{font-size:12px;color:#8A8CB0}.mua-ram{display:inline-block;margin-top:4px;font-weight:700;color:#A50064}.mua-goi span{font:800 17px var(--display,sans-serif);color:#1F2275}
   .mua-goi em{position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;font:700 10.5px var(--body,sans-serif);font-style:normal;background:#1F2275;color:#fff;border-radius:99px;padding:2px 8px}
   .mua-goi label:has(input:checked){border-color:#A50064;box-shadow:0 0 0 3px rgba(165,0,100,.12);background:#FFF7FB}
   .mua-goi label:has(input:checked) b{color:#A50064}
@@ -2670,7 +2674,7 @@ const LOCK = (() => {
   document.head.appendChild(css);
   if (typeof window !== "undefined" && !window.LOCK_NO_AUTO) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", guard) : guard());
 
-  return { buy, TRIAL_DEV, makeCode, check, checkFull, status, deviceId, untilText, hourNow, FOREVER, norm, isTrial, trialLeft, trialCount, TRIAL_MAX };
+  return { buy, isLaunch, LAUNCH_END, planPrice, TRIAL_DEV, makeCode, check, checkFull, status, deviceId, untilText, hourNow, FOREVER, norm, isTrial, trialLeft, trialCount, TRIAL_MAX };
 })();
 
 </script>
@@ -2984,6 +2988,6 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
 <script>
 // tự lưu trang và giọng đọc vào máy để lần sau chạy không cần mạng
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});
-if (location.protocol === "file:") document.body.insertAdjacentHTML("afterbegin", '<p style="background:#E8471B;color:#fff;padding:12px;border-radius:12px;font-weight:700">Mở trang bằng file CHAY_XUONG_VIDEO.bat (bấm đúp), không mở trực tiếp file index.html.</p>');
+if (location.protocol === "file:") document.body.insertAdjacentHTML("afterbegin", '<p style="background:#A50064;color:#fff;padding:12px;border-radius:12px;font-weight:700">Mở trang bằng file CHAY_XUONG_VIDEO.bat (bấm đúp), không mở trực tiếp file index.html.</p>');
 </script>
 </body></html>

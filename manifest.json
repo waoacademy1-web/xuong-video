@@ -3,8 +3,8 @@
  "short_name": "Xưởng video",
  "scope": "./",
  "display": "standalone",
- "background_color": "#FFF8EC",
- "theme_color": "#E8471B",
+ "background_color": "#FBE3EF",
+ "theme_color": "#1F2275",
  "icons": [
   {
    "src": "icon.png",

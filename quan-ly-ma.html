@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tạo mã kích hoạt</title>
-<link rel="apple-touch-icon" href="icon-ma.png"><link rel="icon" href="icon-ma.png"><link rel="manifest" href="manifest-ma.json"><meta name="apple-mobile-web-app-title" content="Quản lý mã"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#E8471B">
+<link rel="apple-touch-icon" href="icon-ma.png"><link rel="icon" href="icon-ma.png"><link rel="manifest" href="manifest-ma.json"><meta name="apple-mobile-web-app-title" content="Quản lý mã"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1F2275">
 <style>
-:root{--bg:#FFF8EC;--panel:#FFFFFF;--ink:#1F2275;--muted:#6A6B8F;--line:#F0E2C8;--flame:#E8471B;--field:#FFFDF8}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#12142E;--panel:#1B1E43;--ink:#F3F1FF;--muted:#A7A9D1;--line:#2C3066;--flame:#FF6A3D;--field:#151838;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#12142E;--panel:#1B1E43;--ink:#F3F1FF;--muted:#A7A9D1;--line:#2C3066;--flame:#FF6A3D;--field:#151838;color-scheme:dark}
+:root{--bg:#FBE3EF;--panel:#FFFFFF;--ink:#1F2275;--muted:#5F6188;--line:#F1D2E2;--flame:#A50064;--field:#FFF7FB}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#14164A;--panel:#1C1F5C;--ink:#F6F2FA;--muted:#B4B6DA;--line:#30347A;--flame:#E0549F;--field:#181A52;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14164A;--panel:#1C1F5C;--ink:#F6F2FA;--muted:#B4B6DA;--line:#30347A;--flame:#E0549F;--field:#181A52;color-scheme:dark}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Arial,sans-serif;padding:16px}
 [hidden]{display:none!important}
 main{max-width:480px;margin:0 auto 16px;background:var(--panel);border-radius:20px;padding:20px}
@@ -55,6 +55,13 @@ button{font:inherit;font-weight:800;font-size:17px;border:0;border-radius:12px;p
 </select>
 <button type="button" id="tao">Tạo mã</button>
 <div class="ra" id="ra"></div>
+</main>
+<main>
+<h2>3. Thông báo khách trên landing</h2>
+<p>Có khách thật đăng ký dùng thử hoặc mua gói, bấm nút <b>Ghi lên landing</b> hiện ngay dưới link hoặc mã vừa tạo. Tạo để thử thì đừng bấm. Khoảng 1 tuần 1 lần, bấm <b>Tải file cho landing</b> rồi tải file <b>hoat-dong.json</b> lên thư mục <b>gioi-thieu</b> trên GitHub. Landing chỉ hiện khách trong 30 ngày gần nhất, không hiện tên hay số điện thoại.</p>
+<p id="hdDem" style="font-weight:700"></p>
+<button type="button" id="hdTai">Tải file cho landing</button>
+<button type="button" class="chep" id="hdXoa">Xóa lượt ghi gần nhất (nếu ghi nhầm)</button>
 </main>
 </div>
 <script>window.LOCK_NO_AUTO = true;</script>
@@ -154,7 +161,11 @@ const LOCK = (() => {
     };
   }
   // ---------------------------------------------------------------- mua gói: MoMo, lời nhắn tự điền mã máy + gói
-  const PAY = { momo: "0938 333 310", name: "NGUYỄN NGỌC DIỄM", plans: [["1THANG", "1 tháng", 99000, "1T"], ["1NAM", "1 năm", 499000, "1N"], ["VINHVIEN", "Vĩnh viễn", 990000, "VV"]] };
+  const PAY = { momo: "0938 333 310", name: "NGUYỄN NGỌC DIỄM", plans: [["1THANG", "1 tháng", 99000, "1T", 129000], ["1NAM", "1 năm", 499000, "1N", 690000], ["VINHVIEN", "Vĩnh viễn", 990000, "VV", 1490000]] };
+  // giá ra mắt đến 23:59 ngày 30/11/2026 (giờ VN), sau đó tự lên giá sau ra mắt
+  const LAUNCH_END = Date.UTC(2026, 10, 30, 16, 59, 59), isLaunch = () => Date.now() <= LAUNCH_END;
+  const price = p => isLaunch() ? p[2] : p[4];
+  const planPrice = code => { const p = PAY.plans.find(x => x[0] === code || x[3] === code); return p ? price(p) : 0; };
   const vnd = n => n.toLocaleString("vi-VN") + "đ";
   // VietQR của ví MoMo (Diễm gửi): thêm số tiền (54) và lời nhắn (62/08) rồi tính lại mã kiểm CRC
   const QR_ACC = "0010A000000727013300069710250119PSP26302142000001010208QRIBFTTA", QR_REF = "0515MOMOW2W123605830622hmzpXQJ_XugcfvJpcmNlsg";
@@ -188,8 +199,8 @@ const LOCK = (() => {
     el.innerHTML = `<div class="mua-hop" role="dialog" aria-modal="true" aria-labelledby="muaTd">
       <button type="button" id="muaDong" aria-label="Đóng">${ic("x")}</button>
       <h2 id="muaTd">Mua Xưởng video</h2>
-      <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.</p>
-      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === 1 ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(p[2])}</span></label>`).join("")}</div>
+      <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.${isLaunch() ? " <b class=\"mua-ram\">Giá ra mắt đến hết 30/11</b>" : ""}</p>
+      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === 1 ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
       <label class="mua-zl" for="muaZalo"><span>Số Zalo của bạn <i>(để nhận mã, nên ghi)</i></span>
         <input id="muaZalo" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xx xxx xxx" maxlength="14"></label>
       <div class="mua-qr">
@@ -218,10 +229,10 @@ const LOCK = (() => {
     const upd = () => {
       const p = PAY.plans[+el.querySelector("input[name=muaGoi]:checked").value], zl = zalo();
       const nhan = "XV " + dev.replace("-", "") + " " + p[3] + (zl ? " " + zl : "");
-      el.querySelector("#muaTien").textContent = vnd(p[2]); el.querySelector("#chepTien").dataset.chep = String(p[2]);
+      el.querySelector("#muaTien").textContent = vnd(price(p)); el.querySelector("#chepTien").dataset.chep = String(price(p));
       el.querySelector("#muaNhan").textContent = nhan; el.querySelector("#chepNhan").dataset.chep = nhan;
       const box = el.querySelector("#muaQr"); box.textContent = "";
-      try { qr = qrCanvas(vietqr(p[2], nhan), 480); qr.setAttribute("role", "img"); qr.setAttribute("aria-label", "Mã QR chuyển " + vnd(p[2]) + " vào MoMo " + PAY.name); box.append(qr); el.dataset.goi = p[0]; } catch (e) { qr = null; box.textContent = "Không tạo được mã QR, chuyển tay theo thông tin bên dưới."; }
+      try { qr = qrCanvas(vietqr(price(p), nhan), 480); qr.setAttribute("role", "img"); qr.setAttribute("aria-label", "Mã QR chuyển " + vnd(price(p)) + " vào MoMo " + PAY.name); box.append(qr); el.dataset.goi = p[0]; } catch (e) { qr = null; box.textContent = "Không tạo được mã QR, chuyển tay theo thông tin bên dưới."; }
     };
     // số Zalo hợp lệ (10 số, bắt đầu bằng 0) mới ghi vào lời nhắn; nhớ trên máy cho lần sau
     const zIn = el.querySelector("#muaZalo"); zIn.value = st.get("xv_zalo") || "";
@@ -285,7 +296,7 @@ const LOCK = (() => {
   .mua-goi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .mua-goi label{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;border:1.5px solid #E6E1EF;border-radius:14px;padding:16px 4px 10px;cursor:pointer;text-align:center;background:#fff;transition:border-color .15s,box-shadow .15s}
   .mua-goi input{position:absolute;opacity:0;pointer-events:none}
-  .mua-goi b{font-size:14px;font-weight:700;color:#6A6B8F}.mua-goi span{font:800 17px var(--display,sans-serif);color:#1F2275}
+  .mua-goi b{font-size:14px;font-weight:700;color:#6A6B8F}.mua-goi s{font-size:12px;color:#8A8CB0}.mua-ram{display:inline-block;margin-top:4px;font-weight:700;color:#A50064}.mua-goi span{font:800 17px var(--display,sans-serif);color:#1F2275}
   .mua-goi em{position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;font:700 10.5px var(--body,sans-serif);font-style:normal;background:#1F2275;color:#fff;border-radius:99px;padding:2px 8px}
   .mua-goi label:has(input:checked){border-color:#A50064;box-shadow:0 0 0 3px rgba(165,0,100,.12);background:#FFF7FB}
   .mua-goi label:has(input:checked) b{color:#A50064}
@@ -319,7 +330,7 @@ const LOCK = (() => {
   document.head.appendChild(css);
   if (typeof window !== "undefined" && !window.LOCK_NO_AUTO) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", guard) : guard());
 
-  return { buy, TRIAL_DEV, makeCode, check, checkFull, status, deviceId, untilText, hourNow, FOREVER, norm, isTrial, trialLeft, trialCount, TRIAL_MAX };
+  return { buy, isLaunch, LAUNCH_END, planPrice, TRIAL_DEV, makeCode, check, checkFull, status, deviceId, untilText, hourNow, FOREVER, norm, isTrial, trialLeft, trialCount, TRIAL_MAX };
 })();
 
 </script>
@@ -347,6 +358,7 @@ document.getElementById("taoThu").onclick = async () => {
   const url = LINK + "?ma=" + LOCK.norm(await LOCK.makeCode(LOCK.TRIAL_DEV, h));   // mã dùng thử: có chữ ở góc video, tối đa 10 video
   document.getElementById("raThu").innerHTML = `Link dùng thử, mở được đến ${LOCK.untilText(h)}:<b class="lk" id="link">${url}</b><button type="button" class="chep" id="chepThu">Sao chép link</button>`;
   copyBtn("chepThu", url);
+  hdNut(document.getElementById("raThu"), "THU");
 };
 // lời nhắn MoMo "XV <mã máy> <gói>" -> tự điền mã máy và thời hạn
 document.getElementById("loiNhan").addEventListener("input", e => {
@@ -356,7 +368,7 @@ document.getElementById("loiNhan").addEventListener("input", e => {
   const goi = ({ "1T": "1THANG", "1N": "1NAM", "VV": "VINHVIEN" })[m[3].toUpperCase()] || m[3].toUpperCase().replace(/\s/g, ""), han = { "1THANG": "720", "1NAM": "8760", "VINHVIEN": "forever" }[goi];
   document.getElementById("may").value = m[1].toUpperCase() + "-" + m[2].toUpperCase();
   document.getElementById("han").value = han;
-  kq.textContent = "Đã điền: máy " + m[1].toUpperCase() + "-" + m[2].toUpperCase() + ", gói " + ({ "1THANG": "1 tháng", "1NAM": "1 năm", "VINHVIEN": "vĩnh viễn" }[goi]) + ", phải nhận đủ " + ({ "1THANG": "99.000đ", "1NAM": "499.000đ", "VINHVIEN": "990.000đ" }[goi]) + ". Mở app MoMo, xem Lịch sử giao dịch thấy tiền đã vào đủ rồi mới bấm Tạo mã. Đừng tin ảnh chụp màn hình khách gửi, ảnh có thể bị làm giả.";
+  kq.textContent = "Đã điền: máy " + m[1].toUpperCase() + "-" + m[2].toUpperCase() + ", gói " + ({ "1THANG": "1 tháng", "1NAM": "1 năm", "VINHVIEN": "vĩnh viễn" }[goi]) + ", phải nhận đủ " + LOCK.planPrice(goi).toLocaleString("vi-VN") + "đ" + ". Mở app MoMo, xem Lịch sử giao dịch thấy tiền đã vào đủ rồi mới bấm Tạo mã. Đừng tin ảnh chụp màn hình khách gửi, ảnh có thể bị làm giả.";
   const zl = m[4] ? m[4].replace(/^\+?84/, "0") : "";
   if (zl) { const a = document.createElement("a"); a.href = "https://zalo.me/" + zl; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Zalo khách: " + zl + " (bấm để nhắn gửi mã)"; a.style.display = "block"; a.style.marginTop = "6px"; kq.append(a); }
 });
@@ -367,6 +379,30 @@ document.getElementById("tao").onclick = async () => {
   const code = await LOCK.makeCode(may, h);
   ra.innerHTML = `${may ? "Mã kích hoạt cho máy " + may.slice(0, 4) + "-" + may.slice(4) : "Mã chung (máy nào nhập cũng được)"}, dùng đến ${LOCK.untilText(h)}:<b id="ma">${code}</b><button type="button" class="chep" id="chep">Sao chép mã</button>`;
   copyBtn("chep", code);
+  const g = { "720": "1T", "8760": "1N", forever: "VV" }[v]; if (g) hdNut(ra, g);
 };
+
+// ghi lượt khách thật để landing hiện thông báo (chỉ loại gói và ngày, không tên, không số điện thoại)
+const HD = "xv_hd", HD_TEN = { THU: "dùng thử", "1T": "1 tháng", "1N": "1 năm", VV: "vĩnh viễn" };
+const hdDoc = () => { try { return JSON.parse(localStorage.getItem(HD) || "[]"); } catch (e) { return []; } };
+const hdLuu = a => { try { localStorage.setItem(HD, JSON.stringify(a)); } catch (e) { } hdDem(); };
+const ngayVN = () => new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10);
+const hdGan = () => { const tu = new Date(Date.now() + 7 * 3600e3 - 30 * 864e5).toISOString().slice(0, 10); return hdDoc().filter(x => x.ngay >= tu); };
+function hdDem() {
+  const a = hdGan(), dem = {}; a.forEach(x => dem[x.goi] = (dem[x.goi] || 0) + 1);
+  document.getElementById("hdDem").textContent = a.length ? "Đã ghi " + a.length + " khách trong 30 ngày: " + Object.keys(dem).map(k => dem[k] + (k === "THU" ? " dùng thử" : " gói " + HD_TEN[k])).join(", ") + "." : "Chưa ghi lượt khách nào trong 30 ngày.";
+}
+function hdNut(hop, goi) {
+  const b = document.createElement("button"); b.type = "button"; b.className = "chep"; b.textContent = "Ghi lên landing: 1 khách " + (goi === "THU" ? "đăng ký dùng thử" : "mua gói " + HD_TEN[goi]);
+  b.onclick = () => { const a = hdDoc(); a.push({ goi, ngay: ngayVN() }); hdLuu(a); b.textContent = "Đã ghi"; b.disabled = true; };
+  hop.append(b);
+}
+document.getElementById("hdTai").onclick = async () => {
+  const txt = JSON.stringify({ cap_nhat: ngayVN(), luot: hdGan() }, null, 1), f = new File([txt], "hoat-dong.json", { type: "application/json" });
+  if (navigator.canShare && navigator.canShare({ files: [f] }) && /iPhone|iPad|Android/i.test(navigator.userAgent)) { try { await navigator.share({ files: [f] }); return; } catch (e) { } }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = "hoat-dong.json"; document.body.append(a); a.click(); a.remove();
+};
+document.getElementById("hdXoa").onclick = () => { const a = hdDoc(); if (!a.length) return; a.pop(); hdLuu(a); };
+hdDem();
 </script>
 </body></html>
