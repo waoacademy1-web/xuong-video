@@ -82,6 +82,7 @@ input:focus{outline:none;border-color:var(--berry)}
     <div class="card rut" id="rut"></div>
     <h2>Link giới thiệu của bạn</h2>
     <div class="link"><code id="link"></code><button class="btn line" id="chep" type="button" style="padding:8px 14px">Sao chép</button></div>
+    <button class="btn" id="share" type="button" style="width:100%;margin-top:10px">Chia sẻ link giới thiệu</button>
     <h2>Khách bạn giới thiệu</h2>
     <div class="list" id="don"></div>
     <p class="note">Tên và số điện thoại khách được che bớt để bảo vệ thông tin cá nhân. Hoa hồng tính khi khách đã chuyển tiền.</p>
@@ -111,6 +112,8 @@ function ve(r, sdt) {
   $('sDk').textContent = r.dk; $('sTra').textContent = r.tra; $('sHh').textContent = vnd(r.hoahong); $('sCon').textContent = vnd(r.conlai);
   const link = new URL('./?ref=' + r.ma, location.href).href; $('link').textContent = link;
   $('chep').onclick = async () => { try { await navigator.clipboard.writeText(link); $('chep').textContent = 'Đã chép'; } catch (e) { } };
+  const txt = 'Mình đang dùng Xưởng video: dán bài viết là ra video có giọng đọc AI tiếng Việt. Dùng thử miễn phí 24 giờ tại đây:';
+  $('share').onclick = async () => { if (navigator.share) { try { await navigator.share({ title: 'Xưởng video', text: txt, url: link }); return; } catch (e) { if (e && e.name === 'AbortError') return; } } try { await navigator.clipboard.writeText(txt + ' ' + link); $('share').textContent = 'Đã chép link, dán vào Zalo, Facebook để gửi'; } catch (e) { } };
   // yêu cầu rút
   const rut = $('rut'), min = r.toithieu || 100000;
   if (r.yc) rut.innerHTML = '<p><b>Đã gửi yêu cầu nhận hoa hồng ngày ' + esc(r.yc) + '.</b></p><p class="muted" style="margin:0">Xưởng video chuyển trong 3 ngày làm việc và báo qua ' + (r.email ? 'email' : 'Zalo') + '.</p>';
