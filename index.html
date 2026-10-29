@@ -74,7 +74,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video animation</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.0</p></div>
+    <div><h1>Xưởng video animation</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.1</p></div>
   </header>
 
   <div class="grid">
@@ -97,7 +97,7 @@ details textarea{margin-top:6px}
       <div class="step" id="s2"><b>2</b>Chọn kiểu</div>
       <div class="seg">
         <div class="opt"><label for="fmt">Khung</label><select id="fmt"><option value="doc">Dọc 9:16 (TikTok, Reels)</option><option value="ngang">Ngang 16:9 (YouTube)</option></select></div>
-        <div class="opt"><label for="theme">Màu</label><select id="theme"><option value="rucro">Vàng cam tím</option><option value="toi">Xanh đêm</option><option value="kem">Kem sage</option></select></div>
+        <div class="opt"><label for="theme">Màu</label><select id="theme"><option value="rucro">Vàng cam tím</option><option value="toi">Xanh đêm</option><option value="kem">Kem sage</option><option value="banh">Tiệm bánh, cà phê</option><option value="lavender">Chữa lành</option><option value="hoctap">Giáo viên, học tập</option><option value="tuvan">Tư vấn, bảo hiểm, BĐS</option><option value="sale">Sale, affiliate</option><option value="canhan">Thương hiệu cá nhân</option><option value="lamdep">Làm đẹp, spa</option><option value="xanhla">Sức khỏe, xanh</option></select></div>
         <div class="opt"><label for="voice">Giọng đọc</label><select id="voice"><option value="kk_mai_loan" selected>Nữ, Mai Loan</option><option value="kk_storyvert">Nữ kể chuyện, Storyvert</option><option value="kk_my_yen">Nữ trầm ấm, Mỹ Yến</option><option value="kk_thuc_trinh">Nữ trẻ trung, Thục Trinh</option><option value="kk_duc_an">Nam, Đức An</option><option value="kk_tuan_ngoc">Nam trẻ trung, Tuấn Ngọc</option><option value="kk_thanh_dat">Nam trầm, Thành Đạt</option><option value="off">Không giọng</option></select></div>
         <div class="opt"><label for="style">Kiểu đọc</label><select id="style"><option value="mau" selected>Như mẫu (rõ, vui)</option><option value="nang_luong">Năng lượng</option><option value="chia_se">Chia sẻ</option><option value="tam_su">Tâm sự</option><option value="chua_lanh">Chữa lành</option></select></div>
         <div class="opt"><label for="speed">Tốc độ đọc</label><select id="speed"><option value="0.85">Rất chậm, bài dài (0.85x)</option><option value="1" selected>Chậm (1x)</option><option value="1.3">Vừa (1.3x)</option><option value="1.7">Nhanh (1.7x)</option></select></div>
@@ -232,7 +232,8 @@ const Engine = (() => {
     ["don hang|gio hang|mua sam|sieu thi|cua hang|shop|san pham|hang hoa", "bag"],
     ["tien|thu nhap|gia ca|chi phi|trieu dong|luong|kiem tien|doanh thu|loi nhuan|ban hang|tiet kiem|trieu|ty", "coin"],
     ["cua hang|cong tac vien|dai ly|chi nhanh|diem ban", "store"],
-    ["thoi gian|phut|tieng|ngay|tuoi|som|muon|lich", "clock"],
+    ["thoi gian|phut|tieng|gio dong ho|tuoi|som|muon|nhanh chong", "clock"],
+    ["moi ngay|hang ngay|ngay mai|hom nay|moi tuan|hang tuan|moi thang|lich|lich hen|lich hoc|ke hoach", "calendar"],
     ["tang|phat trien|ket qua|so lieu|thong ke|hieu qua|tang truong|thanh cong|chi so|con so", "chart"],
     ["hoc|kien thuc|cuon sach|doc sach|truong hoc|bai hoc|giao duc|day hoc|lop hoc", "book"],
     ["con|tre|phu huynh|gia dinh|me|bo me|cha|khach hang|khach|cong dong|doi nhom|ban be|nhan vien|sep|moi nguoi", "people"],
@@ -244,19 +245,45 @@ const Engine = (() => {
     ["bao ve|tin|uy tin|cam ket|dam bao|niem tin|tin tuong", "shield"],
     ["uu dai|mien phi|qua tang|mon qua|khuyen mai", "gift"],
     ["dien thoai|mang xa hoi|online|tiktok|facebook|video|cong nghe|may tinh|tri tue nhan tao", "phone"],
-    ["yeu|thuong|tam|tinh cam|trai tim|phung su|tu te|cong suc", "heart"],
+    ["yeu thuong|thuong yeu|tinh cam|trai tim|phung su|tu te|tam long|tan tam", "heart"],
     ["sai lam|loi|canh bao|nguy hiem|tranh|can than|chu y", "warn"],
     ["y tuong|tu duy|sang tao|nang luc|tri tue|thong minh|hieu|nghi|bi quyet|meo", "bulb"],
     ["xuat sac|gioi|tai nang|dinh cao|chat luong", "star"],
+    ["banh|banh ngot|banh kem|tiem banh|banh mi", "cake"],
+    ["ca phe|cafe|tra sua|do uong", "cup"],
+    ["chua lanh|thien|an yen|binh an", "lotus"],
+    ["giam gia|voucher|ma giam gia|flash sale", "tag"],
+    ["gio hang|chot don|dat hang", "cart"],
+    ["livestream|podcast", "mic"],
+    ["hop dong|ho so|giay to|thu tuc", "doc"],
+    ["trai cay|rau cu|dinh duong", "apple"],
+    ["duong da|cham soc da|serum|kem duong", "drop"],
   ];
-  function pickIcon(text) {
+  // từ khóa riêng từng bộ màu (nhóm khách): được ưu tiên trước bảng chung
+  const THEME_WORDS = {
+    banh: [["banh|banh ngot|banh kem|tiem banh|lo nuong|nuong banh|socola", "cake"], ["ca phe|cafe|tra|tra sua|do uong|thuc uong", "cup"], ["qua tang|mon qua|tang kem|sinh nhat|dip le", "gift"], ["khach|khach hang|moi nguoi|gia dinh|ban be", "people"], ["ngon|thom|dac biet|chat luong", "star"]],
+    lavender: [["chua lanh|thien|binh an|an yen|tinh lang|buong bo|tha long|nhe nhang|hit tho", "lotus"], ["ngu|giac ngu|dem|mat ngu|nghi ngoi", "moon"], ["sang|binh minh|anh sang|hy vong|ngay moi|nang", "sun"], ["nang do|om|vo ve|an ui|ben canh|dong hanh|lang nghe", "hands"], ["yeu thuong|trai tim|cam xuc|tam hon", "heart"], ["tu nhien|cay xanh|la cay", "leaf"]],
+    hoctap: [["viet|bai tap|ghi chep|luyen|luyen tap|lam bai", "pencil"], ["tot nghiep|ky thi|di thi|thi cu|dai hoc|bang cap|hoc sinh|sinh vien|hoc vien", "cap"], ["lich|lich hoc|thoi khoa bieu|moi ngay|hang ngay|moi tuan|ke hoach", "calendar"], ["hoc|sach|kien thuc|bai hoc|tu vung", "book"], ["y tuong|meo|bi quyet|hieu|tu duy", "bulb"], ["hoan thanh|lam duoc|thanh thao", "check"]],
+    tuvan: [["chia khoa|bi mat|giai phap|mo khoa|loi giai", "key"], ["hop dong|ho so|giay to|thu tuc|phap ly|tai lieu|bao hiem|chinh sach", "doc"], ["bao ve|an toan|rui ro|uy tin|cam ket|dam bao", "shield"], ["nha|can ho|bat dong san|nha dat|nha o", "home"], ["dau tu|lai suat|tang truong|loi nhuan|so lieu", "chart"], ["tien|chi phi|gia|tai chinh|tiet kiem", "coin"]],
+    sale: [["giam gia|sale|gia re|gia goc|gia soc|ma giam|voucher|deal", "tag"], ["phan tram", "percent"], ["gio hang|mua|dat hang|chot don|don|don hang", "cart"], ["hot|ban chay|chay hang|hot trend|cuc hot", "fire"], ["qua tang|tang kem|mien phi|freeship", "gift"], ["link|duong link|affiliate|tiep thi lien ket|gan link", "link"]],
+    canhan: [["video|kenh|youtube|tiktok|reels|xem", "play"], ["noi chuyen|giong noi|podcast|livestream|ke chuyen", "mic"], ["quay|chup anh|hinh anh|buc anh|ong kinh", "camera"], ["thuong hieu|lan toa|thong diep|quang ba|truyen thong", "megaphone"], ["khan gia|nguoi xem|cong dong|follower|nguoi theo doi", "people"], ["bat dau|phat trien|buc pha|tang toc", "rocket"]],
+    lamdep: [["hoa|xinh|dep|nu tinh|duyen", "flower"], ["lan da|lam da|lam dep da|duong am|serum|cap am|duong da|kem duong|mat na", "drop"], ["rang ro|toa sang|lap lanh|sang min", "spark"], ["yeu ban than|tu tin|yeu thuong|tron ven", "heart"], ["thien nhien|tu nhien|thao moc|organic", "leaf"], ["qua tang|uu dai|tang kem", "gift"]],
+    xanhla: [["la cay|cay xanh|song xanh|tu nhien|thuan chay|organic|rau", "leaf"], ["trai cay|rau cu|dinh duong|an uong|eat clean|tao|thuc pham", "apple"], ["nuoc|uong nuoc|du nuoc", "drop"], ["nang|vitamin|buoi sang|nang luong", "sun"], ["mien dich|bao ve|phong benh|an toan", "shield"], ["suc khoe|khoe|tim mach|yeu thuong", "heart"]],
+  };
+  function pickIcon(text, theme, kind) {
+    if (kind === "question") return "question";
+    if (kind === "quote") return "quote";
     const f = " " + fold(plain(text)).replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ") + " ";
-    let best = null, pos = 1e9;
-    for (const [pat, name] of ICON_WORDS) for (const w of pat.split("|")) {
-      const k = f.indexOf(" " + w + " ");
-      if (k >= 0 && k < pos) { best = name; pos = k; }
-    }
-    return best || "spark";
+    if (/ (cam on|tri an|biet on) /.test(f) || kind === "cta") return "heart";   // lời cảm ơn, kêu gọi: trái tim
+    const find = list => {
+      let best = null, pos = 1e9;
+      for (const [pat, name] of list) for (const w of pat.split("|")) {
+        const k = f.indexOf(" " + w + " ");
+        if (k >= 0 && k < pos) { best = name; pos = k; }
+      }
+      return best;
+    };
+    return (THEME_WORDS[theme] && find(THEME_WORDS[theme])) || find(ICON_WORDS) || (kind === "list" ? "check" : "spark");
   }
 
   const CTA = /\b(follow|theo doi|luu lai|luu video|chia se|binh luan|comment|dang ky|inbox|nhan tin|tha tim|like|bam|ghe|lien he|dat hang|mua ngay|xem them|hotline|heartline|goi ngay)\b/;
@@ -365,9 +392,8 @@ const Engine = (() => {
         const h = plain(sc.text || "").replace(/:$/, "");
         sc.say = [...(h ? [h] : []), ...sc.items.map(x => plain(x).replace(/\.$/, ""))].join(". ") + ".";
       } else sc.say = plain(sc.text).replace(/[“”]/g, "");
-      sc.icon = pickIcon(sc.text + " " + (sc.items || []).join(" "));
-      if (sc.kind === "question") sc.icon = "question";
-      if (sc.kind === "quote") sc.icon = "quote";
+      sc.iconSrc = sc.text + " " + (sc.items || []).join(" ");
+      sc.icon = pickIcon(sc.iconSrc, "", sc.kind);
     });
     return out;
   }
@@ -606,6 +632,15 @@ const Engine = (() => {
   }
 
   // số liệu chính của cảnh (cảnh số liệu): giá trị + đơn vị
+  // đơn vị sau con số -> hình lặp lại; không rõ đơn vị thì chấm tròn
+  const UNIT_ICONS = [
+    [/ (chiec banh|cai banh|banh|hop banh|o banh) /, "cake"], [/ (ly|coc|tach) /, "cup"],
+    [/ (khach|khach hang|nguoi|hoc vien|hoc sinh|ban|thanh vien|follow|follower|nguoi theo doi|me|gia dinh) /, "people"],
+    [/ (ngay|tuan|thang|nam|buoi) /, "calendar"], [/ (gio|phut|giay) /, "clock"],
+    [/ (don|don hang|san pham|mon|mon hang|goi|hop|lo) /, "bag"], [/ (video|clip|tap) /, "play"],
+    [/ (bai|bai viet|bai hoc|cuon|trang) /, "book"], [/ (sao) /, "star"], [/ (cay|la) /, "leaf"],
+    [/ (bong hoa|hoa) /, "flower"], [/ (chai|lo|tuyp) /, "drop"], [/ (cuoc goi|tin nhan|binh luan) /, "chat"],
+  ];
   function mainStat(sc) {
     const src = (sc.show || []).map(t => t.w).join(" ") + " | " + (sc.say || "");
     const re = /(\d{1,3}(?:\.\d{3})+|\d+)(?:,(\d+))?\s*(%|phần trăm)?/g; let m, best = null;
@@ -618,6 +653,8 @@ const Engine = (() => {
     if (!best) return null;
     const after = src.slice(best.idx + best.raw.length).trim().split(/\s+/).slice(0, 3).join(" ").toLowerCase();
     best.money = /^(triệu|tỷ|tỉ|nghìn|ngàn|đồng|k\b|usd|vnđ|vnd)/.test(after) || /doanh thu|tiền|lợi nhuận|thu nhập/.test(src.toLowerCase());
+    const u = " " + fold(after).replace(/[^a-z0-9 ]/g, " ") + " ";
+    for (const [re, ic] of UNIT_ICONS) if (re.test(u)) { best.unitIcon = ic; break; }
     return best;
   }
 
@@ -1023,7 +1060,41 @@ const Render = (() => {
       { bg: "#FAF2E8", ray: "#F3E7D9", ink: "#4E5B48", hl: "#D45F78", card: "#FFFFFF", cardInk: "#4E5B48", soft: "#F7DCE1", hlOnCard: "#D45F78",
         subNow: "#D45F78", subPast: "#4E5B48", subNext: "#8F9A87" },
     ],
+    // 8 bộ màu theo nhóm khách (Diễm chốt 29/10), phối theo bánh xe màu
+    banh: [
+      { bg: "#F6EEE2", ray: "#EADCC6", ink: "#46302A", hl: "#B8562A", card: "#FFFFFF", cardInk: "#46302A", soft: "#EBDDC8", hlOnCard: "#B8562A", subNow: "#B8562A", subPast: "#46302A", subNext: "#9B8576" },
+      { bg: "#E7CFA9", ray: "#E0C49A", ink: "#46302A", hl: "#9C4521", card: "#FFFAF2", cardInk: "#46302A", soft: "#DDBF92", hlOnCard: "#B8562A" },
+    ],
+    lavender: [
+      { bg: "#ECE9F2", ray: "#E2DEEB", ink: "#3B3552", hl: "#9A6A16", card: "#FFFFFF", cardInk: "#3B3552", soft: "#E0DBEA", hlOnCard: "#9A6A16", subNow: "#9A6A16", subPast: "#3B3552", subNext: "#8E88A3" },
+      { bg: "#6E6596", ray: "#756C9C", ink: "#FFFFFF", hl: "#FFE08A", card: "#FFFFFF", cardInk: "#3B3552", soft: "#7B73A2", hlOnCard: "#9A6A16" },
+    ],
+    hoctap: [
+      { bg: "#F1F5FA", ray: "#DFE7F2", ink: "#1C2F52", hl: "#B86E00", card: "#FFFFFF", cardInk: "#1C2F52", soft: "#DCE5F2", hlOnCard: "#B86E00", subNow: "#B86E00", subPast: "#1C2F52", subNext: "#7D8DAA" },
+      { bg: "#2F5A9E", ray: "#3562A8", ink: "#FFFFFF", hl: "#FFC94D", card: "#FFFFFF", cardInk: "#1C2F52", soft: "#406BAE", hlOnCard: "#B86E00" },
+    ],
+    tuvan: [
+      { bg: "#15293F", ray: "#1A3049", ink: "#FFFFFF", hl: "#D6B36A", card: "#F4EFE5", cardInk: "#15293F", soft: "#223A55", hlOnCard: "#9A7631" },
+      { bg: "#F1ECE2", ray: "#E7E0D2", ink: "#15293F", hl: "#9A7631", card: "#15293F", cardInk: "#FFFFFF", soft: "#E5DCCB", hlOnCard: "#D6B36A", subNow: "#9A7631", subPast: "#15293F", subNext: "#8890A0" },
+    ],
+    sale: [
+      { bg: "#DE4A2C", ray: "#E45838", ink: "#FFFFFF", hl: "#FFE2A0", card: "#FFFFFF", cardInk: "#A3301A", soft: "#E8694C", hlOnCard: "#DE4A2C" },
+      { bg: "#FFF2E2", ray: "#FBE6CF", ink: "#2E1C17", hl: "#D23B1E", card: "#DE4A2C", cardInk: "#FFFFFF", soft: "#F8DEC4", hlOnCard: "#FFE2A0", subNow: "#D23B1E", subPast: "#2E1C17", subNext: "#9A857D" },
+    ],
+    canhan: [
+      { bg: "#151515", ray: "#202020", ink: "#F4F1EA", hl: "#FF6F59", card: "#F4F1EA", cardInk: "#151515", soft: "#2A2A2A", hlOnCard: "#E5533D", subNow: "#E5533D", subPast: "#151515", subNext: "#8A8780" },
+    ],
+    lamdep: [
+      { bg: "#F4ECE8", ray: "#ECE0DA", ink: "#4B3530", hl: "#9E4F3E", card: "#FFFFFF", cardInk: "#4B3530", soft: "#EAD9D1", hlOnCard: "#9E4F3E", subNow: "#9E4F3E", subPast: "#4B3530", subNext: "#A08F89" },
+      { bg: "#9A6B5E", ray: "#A07366", ink: "#FFFFFF", hl: "#FFF1DA", card: "#FFFFFF", cardInk: "#4B3530", soft: "#A67A6E", hlOnCard: "#9E4F3E" },
+    ],
+    xanhla: [
+      { bg: "#EDF3EA", ray: "#DDE8D8", ink: "#1F3A2A", hl: "#B85E1C", card: "#FFFFFF", cardInk: "#1F3A2A", soft: "#DAE7D4", hlOnCard: "#B85E1C", subNow: "#B85E1C", subPast: "#1F3A2A", subNext: "#7F9585" },
+      { bg: "#4E7A5A", ray: "#558262", ink: "#FFFFFF", hl: "#FFD08A", card: "#FFFFFF", cardInk: "#1F3A2A", soft: "#5C8868", hlOnCard: "#B85E1C" },
+    ],
   };
+  // kiểu nền từng bộ màu: rays (tia xoay), dots (chấm), plain (trơn), grid (ô vở), lines (sọc chéo), grain (hạt); bub:false = không bong bóng
+  const STY = { rucro: { pat: "rays" }, toi: { pat: "rays" }, kem: { pat: "dots" }, banh: { pat: "dots", bub: false }, lavender: { pat: "plain", bub: false }, hoctap: { pat: "grid", bub: false }, tuvan: { pat: "lines", bub: false }, sale: { pat: "rays" }, canhan: { pat: "grain", bub: false }, lamdep: { pat: "plain", bub: false }, xanhla: { pat: "dots", bub: false } };
   const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
   const easeOut = x => 1 - Math.pow(1 - clamp(x), 3);
   const easeInOut = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
@@ -1035,6 +1106,9 @@ const Render = (() => {
     const ctx = canvas.getContext("2d");
     const W = canvas.width, H = canvas.height, P = H > W, U = Math.min(W, H) / 1080;
     const pal = PAL[opt.theme] || PAL.rucro;
+    const sty = STY[opt.theme] || STY.rucro;
+    const SUBP = pal.find(x => x.subNow);   // màu phụ đề chung của bộ màu (cảnh nào thiếu thì lấy theo đây)
+    const light = c => { const n = parseInt(c.slice(1, 7), 16); return (.299 * (n >> 16) + .587 * (n >> 8 & 255) + .114 * (n & 255)) > 170; };
     const r = rng(7);
     const bubbles = Array.from({ length: 22 }, () => ({ x: r(), y: r(), s: 0.4 + r() * 1.2, v: 0.015 + r() * 0.03, ph: r() * 6 }));
     const stars = Array.from({ length: 7 }, () => ({ x: r(), y: r(), ph: r() * 6, s: 0.6 + r() * 0.8 }));
@@ -1062,7 +1136,19 @@ const Render = (() => {
         ctx.save(); ctx.globalAlpha = .6; ctx.fillStyle = p.bg; ctx.fillRect(0, 0, W, H); ctx.restore();
         const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(0,0,0,0.12)"); g.addColorStop(.5, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,0.18)");
         ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-      } else if (opt.theme !== "kem") {
+      } else if (sty.pat === "plain") {
+      } else if (sty.pat === "grid") {
+        ctx.strokeStyle = p.ray; ctx.lineWidth = 2 * U; const g = 64 * U, off = (T * 6 * U) % g;
+        ctx.beginPath(); for (let x = -g + off; x < W + g; x += g) { ctx.moveTo(x, 0); ctx.lineTo(x, H); } for (let y = -g + off; y < H + g; y += g) { ctx.moveTo(0, y); ctx.lineTo(W, y); } ctx.stroke();
+        ctx.fillStyle = p.hl; ctx.globalAlpha = .35; ctx.fillRect(P ? 90 * U : 120 * U, 0, 4 * U, H); ctx.globalAlpha = 1;
+      } else if (sty.pat === "lines") {
+        ctx.strokeStyle = p.ray; ctx.lineWidth = 3 * U; const g = 48 * U, off = (T * 10 * U) % g;
+        ctx.beginPath(); for (let x = -H + off; x < W + H; x += g) { ctx.moveTo(x, 0); ctx.lineTo(x + H, H); } ctx.stroke();
+        const v = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.hypot(W, H) * .6); v.addColorStop(0, "rgba(0,0,0,0)"); v.addColorStop(1, "rgba(0,0,0,0.18)"); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+      } else if (sty.pat === "grain") {
+        const rg = rng(11); ctx.fillStyle = p.ray; for (let i = 0; i < 2600; i++) ctx.fillRect(rg() * W, rg() * H, 2 * U, 2 * U);
+        const v = ctx.createRadialGradient(W / 2, H * .45, 0, W / 2, H * .45, Math.hypot(W, H) * .55); v.addColorStop(0, "rgba(255,255,255,0.05)"); v.addColorStop(1, "rgba(0,0,0,0.35)"); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+      } else if (sty.pat === "rays") {
         const cx = W * (P ? .5 : (k % 2 ? .72 : .3)), cy = H * (P ? .42 : .5), R = Math.hypot(W, H);
         const n = 22, a0 = T * 0.06 * (k % 2 ? -1 : 1);
         ctx.fillStyle = p.ray; ctx.beginPath();
@@ -1074,6 +1160,10 @@ const Render = (() => {
       } else {
         ctx.fillStyle = p.ray;
         for (let i = 0; i < 9; i++) for (let j = 0; j < 16; j++) { ctx.beginPath(); ctx.arc((i + .5) * W / 9, (j + .5) * H / 16, 3 * U, 0, 7); ctx.fill(); }
+      }
+      if (sty.bub === false) {   // nền dịu: chỉ vài ánh lấp lánh màu nhấn, nền trơn thì không gì cả
+        if (sty.pat !== "plain") for (const st of stars) { const a2 = .5 + .5 * Math.sin(T * 1.4 + st.ph); if (a2 > .3) sparkle(st.x * W, st.y * H, 12 * U * st.s * a2, p.hl + "88"); }
+        return;
       }
       // bong bóng bay lên
       ctx.save(); ctx.lineWidth = 3 * U;
@@ -1101,10 +1191,48 @@ const Render = (() => {
     }
 
     // ------------------------------------------------------------------ icon (vẽ tay bằng nét)
+    // bộ icon theo nhóm khách (bánh, chữa lành, học tập, tư vấn, sale, cá nhân, làm đẹp, sức khỏe)
+    const ICON2 = {
+      cake: [["f", "M-40 2h80v36h-80zM-32-18h64v16h-64zM-3-38h6v16h-6z"], ["hs", "M-40 18c10 8 20-8 27 0s20-8 27 0s20-8 26 0", 5]],
+      cup: [["f", "M-38-16h56v28a22 22 0 0 1-22 22h-12a22 22 0 0 1-22-22zM-44 38h68v6h-68z"], ["s", "M18-8h8a12 12 0 0 1 0 24h-8", 8], ["s", "M-26-26c-4-6 4-10 0-16M-6-26c-4-6 4-10 0-16", 5]],
+      lotus: [["f", "M0-38c13 15 13 42 0 58c-13-16-13-43 0-58zM-6 22c-22-4-36-20-40-40c20 2 34 16 40 40zM6 22c22-4 36-20 40-40c-20 2-34 16-40 40z"], ["s", "M-40 32h80", 6]],
+      moon: [["f", "M8-40a40 40 0 1 0 34 56a32 32 0 1 1-34-56z"]],
+      sun: [["c", 0, 0, 18], ["s", "M0-42v12M0 30v12M-42 0h12M30 0h12M-30-30l8 8M22 22l8 8M-30 30l8-8M22-22l8-8", 7]],
+      hands: [["f", "M0 6c-14-10-22-18-22-27c0-7 5-12 11-12c5 0 9 3 11 7c2-4 6-7 11-7c6 0 11 5 11 12c0 9-8 17-22 27z"], ["s", "M-42 6c4 22 22 34 42 34s38-12 42-34", 8]],
+      pencil: [["f", "M-34 34l8-24 40-40 16 16-40 40zM18-38l8-8a6 6 0 0 1 8 0l8 8a6 6 0 0 1 0 8l-8 8z"]],
+      cap: [["f", "M0-30l50 20-50 20-50-20zM-28 4v18c12 12 44 12 56 0v-18l-28 11z"], ["s", "M42-8v26", 5]],
+      key: [["co", -22, 0, 18], ["f", "M-6-5h48v10h-48zM26 5h8v14h-8zM36 5h6v10h-6z"]],
+      doc: [["f", "M-28-42h38l18 18v66h-56z"], ["h", "M-18-12h36v6h-36zM-18 4h36v6h-36zM-18 20h24v6h-24z"]],
+      calendar: [["f", "M-38-28h76v66h-76z"], ["h", "M-30-8h60v38h-60z"], ["f", "M-24-40h8v18h-8zM16-40h8v18h-8zM-22 0h12v10h-12zM-4 0h12v10h-12zM14 0h12v10h-12zM-22 16h12v10h-12z"]],
+      tag: [["f", "M-6-42h40a8 8 0 0 1 8 8v40l-44 44l-48-48z"], ["ch", 22, -22, 8]],
+      percent: [["c", -22, -22, 12], ["c", 22, 22, 12], ["s", "M28-30l-56 60", 10]],
+      cart: [["s", "M-46-34h14l12 44h46l10-30h-62", 8], ["c", -14, 30, 8], ["c", 22, 30, 8]],
+      fire: [["f", "M0-46c18 22 32 34 32 54a32 32 0 0 1-64 0c0-14 8-22 14-30c2 12 8 18 14 18c-6-16-4-28 4-42z"]],
+      play: [["c", 0, 0, 42], ["h", "M-12-20l32 20-32 20z"]],
+      mic: [["f", "M-14-42h28v42a14 14 0 0 1-28 0z"], ["s", "M-28-2a28 28 0 0 0 56 0M0 26v14M-14 42h28", 6]],
+      camera: [["f", "M-44-22h22l8-12h28l8 12h22v54h-88z"], ["ch", 0, 4, 18], ["c", 0, 4, 9]],
+      drop: [["f", "M0-44c18 24 30 40 30 56a30 30 0 0 1-60 0c0-16 12-32 30-56z"], ["hs", "M-14 14a14 14 0 0 0 10 14", 5]],
+      flower: [["c", 0, -24, 16], ["c", 22.8, -7.4, 16], ["c", 14.1, 19.4, 16], ["c", -14.1, 19.4, 16], ["c", -22.8, -7.4, 16], ["ch", 0, 0, 12]],
+      apple: [["f", "M0-20c-24-14-44 2-40 26c4 26 22 40 40 30c18 10 36-4 40-30c4-24-16-40-40-26zM2-24c0-12 8-20 20-22c0 12-8 20-20 22z"]],
+      link: [["rot", -0.785], ["s", "M-30-14h20a14 14 0 0 1 0 28h-20a14 14 0 0 1 0-28zM10-14h20a14 14 0 0 1 0 28h-20a14 14 0 0 1 0-28z", 9]],
+      megaphone: [["f", "M-40-12h18l42-24v72l-42-24h-18zM-30 12h14l6 26h-14z"], ["s", "M30-10c6 6 6 14 0 20", 6]],
+      dot: [["c", 0, 0, 30]]
+    };
+    function icon2(ops, col, bg) {
+      for (const [op, a, b, c] of ops) {
+        if (op === "rot") { ctx.rotate(a); continue; }
+        const hole = op === "h" || op === "hs" || op === "ch";
+        ctx.fillStyle = ctx.strokeStyle = hole ? (bg || "#fff") : col;
+        if (op === "f" || op === "h") ctx.fill(new Path2D(a));
+        else if (op === "s" || op === "hs") { ctx.lineWidth = b; ctx.stroke(new Path2D(a)); }
+        else { ctx.beginPath(); ctx.arc(a, b, c, 0, 7); if (op === "co") { ctx.lineWidth = 8; ctx.stroke(); } else ctx.fill(); }
+      }
+    }
     function icon(name, x, y, s, col, bg) {
       ctx.save(); ctx.translate(x, y); ctx.scale(s / 100, s / 100);
       ctx.lineWidth = 8; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = col; ctx.fillStyle = col;
       const P2 = d => new Path2D(d);
+      if (ICON2[name]) { icon2(ICON2[name], col, bg); ctx.restore(); return; }
       switch (name) {
         case "bag": ctx.fill(P2("M-32-18h64l6 58h-76z")); ctx.strokeStyle = bg || "#fff"; ctx.beginPath(); ctx.arc(0, -18, 16, Math.PI, 0); ctx.stroke(); ctx.strokeStyle = col; ctx.beginPath(); ctx.arc(0, -20, 18, Math.PI, 0); ctx.stroke(); break;
         case "coin": ctx.beginPath(); ctx.arc(0, 0, 40, 0, 7); ctx.fill(); ctx.fillStyle = bg || "#fff"; ctx.font = "900 50px " + FONT; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("đ", 0, 2); break;
@@ -1304,14 +1432,14 @@ const Render = (() => {
         } else fitNumber(txt, cx, ny, cw * .86, 230 * U, p.cardInk);
         const parts = statParts(sc.show, s);
         textBlock(parts.label, cx, cy + ch * .25, cw * .86, 66 * U, 2, p, st, { col: p.cardInk, hlCol: p.hlOnCard || p.hl, marker: false, upper: true });
-        if (parts.context) pill(parts.context, cx, cy + ch / 2 + 6 * U, 34 * U, p.hlOnCard || p.hl, "#FFFFFF", back((t - a - .6) / .4), cw * .9);
+        if (parts.context) pill(parts.context, cx, cy + ch / 2 + 6 * U, 34 * U, p.hlOnCard || p.hl, light(p.hlOnCard || p.hl) ? (light(p.ink) ? "#1E1E1E" : p.ink) : "#FFFFFF", back((t - a - .6) / .4), cw * .9);
       }
       // phần minh họa số: lưới icon / cột tiền
       const gx = P ? W / 2 : W * .74, gy = P ? H * .635 : H * .5, gw = P ? CW * .8 : W * .36, gh = P ? H * .2 : H * .5;
       const im = productFor(st);
       if (im) { const ar = clamp(im.width / im.height, .75, 1.35), h = Math.min(gh * 1.05, gw / ar); photo(im, gx, gy, h * ar, h, t - a); }
       else if (s.money) coins(gx, gy, gw, gh, p, t - a);
-      else if (!s.pct) iconGrid(sc.icon, s.value, gx, gy, gw, gh, p, t - a);
+      else if (!s.pct) iconGrid(s.unitIcon || "dot", s.value, gx, gy, gw, gh, p, t - a);
       else peopleBar(s.value, gx, gy, gw, gh, p, t - a);
     }
     // "Tháng 9 vừa qua có 240 đơn hàng" -> nhãn "ĐƠN HÀNG", ngữ cảnh "Tháng 9 vừa qua"
@@ -1338,7 +1466,7 @@ const Render = (() => {
       const n = Math.max(1, Math.min(60, Math.round(value / per)));
       const cols = Math.ceil(Math.sqrt(n * w / h)), rows = Math.ceil(n / cols), cell = Math.min(w / cols, h / (rows + .6), 105 * U);
       const x0 = cx - cols * cell / 2, y0 = cy - (rows * cell) / 2;
-      const nm = ["coin", "clock", "chart", "spark", "question", "quote"].includes(name) ? "bag" : name;
+      const nm = name;
       for (let i = 0; i < n; i++) {
         const k = back((t - i * Math.min(.05, 1.6 / n)) / .35); if (k <= 0) continue;
         const x = x0 + (i % cols + .5) * cell, y = y0 + (Math.floor(i / cols) + .5) * cell;
@@ -1453,7 +1581,7 @@ const Render = (() => {
       const widths = text.map(w => ctx.measureText(w).width); let tw = widths.reduce((a, b) => a + b + sp, -sp);
       const maxW = W - 2 * M; let scale = Math.min(1, maxW / tw);
       const h = sz * 1.9, w = tw * scale + sz * 1.6, x = W / 2 - w / 2, y = H - (P ? 230 : 120) * U;
-      const pal = st.p;
+      const pal = st.p.subNow || !SUBP ? st.p : SUBP;
       ctx.save(); ctx.shadowColor = "rgba(0,0,0,0.25)"; ctx.shadowBlur = 14 * U; ctx.fillStyle = "rgba(255,255,255,0.96)"; rrect(x, y - h / 2, w, h, h / 2); ctx.fill(); ctx.restore();
       ctx.save(); ctx.translate(x + sz * .8, y); ctx.scale(scale, scale); ctx.textBaseline = "middle"; let xx = 0;
       grp.forEach((i, k) => { ctx.fillStyle = i === cur ? (pal.subNow || "#E8471B") : (i < cur ? (pal.subPast || "#1F2275") : (pal.subNext || "#5A5E8F")); ctx.font = fontOf(sz, i === cur ? 800 : 700); ctx.fillText(text[k], xx, 2 * U); xx += widths[k] + sp; });
@@ -1469,6 +1597,7 @@ const Render = (() => {
         return (sc.words && sc.words[0] ? sc.words[0].start : .2) + (frac || 0);
       };
       const st = { t, p, wordT, k };
+      if (curTl !== tl && typeof Engine !== "undefined" && Engine.pickIcon) for (const x of tl) if (x.iconSrc != null) x.icon = Engine.pickIcon(x.iconSrc, opt.theme, x.kind);
       curTl = tl;
       background(p, T, k);
       // chuyển cảnh: vòng tròn màu mới loang ra trên nền cảnh trước
