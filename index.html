@@ -52,6 +52,11 @@ button:disabled{opacity:.5;cursor:default}
 #status{border-radius:16px;padding:14px;background:var(--panel);border:1px solid var(--line);display:grid;gap:8px}
 #status.err{border-color:var(--flame)}
 #status.err #statusText{color:var(--flame)}
+.quote{border-radius:16px;padding:18px 18px 16px;background:linear-gradient(160deg,#20246F,#171A55);color:#fff;display:grid;gap:8px;min-height:118px;align-content:start}
+.quote .qk{font:800 11.5px var(--display);letter-spacing:.12em;text-transform:uppercase;color:#F4AFD3}
+.quote p{margin:0;font:600 17px/1.5 var(--body);transition:opacity .45s}
+.quote p.out{opacity:0}
+.quote button{justify-self:start;background:#A50064;border-color:#A50064;color:#fff;padding:7px 16px;font-size:14px}
 .track{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
 #bar{height:100%;width:0;background:linear-gradient(90deg,var(--sun),var(--flame));transition:width .2s}
 #bar.indet{animation:pulse 1s ease-in-out infinite alternate}
@@ -98,6 +103,9 @@ pre.ex{white-space:pre-wrap;font:500 13px/1.5 ui-monospace,Menlo,Consolas,monosp
 .chip{font:800 12px var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--flame)}
 .muted{color:var(--muted);font-weight:500}
 details summary{cursor:pointer;font:700 13px var(--display);color:var(--muted)}
+details[open]>summary{color:var(--flame)}details[open]>summary::after{content:" (bấm để thu gọn)";font-weight:500;color:var(--muted)}
+details .thu{display:block;margin:10px auto 0;padding:7px 18px;font-size:13.5px}
+.scene textarea{resize:none;overflow:hidden}
 details textarea{margin-top:6px}
 .how{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14px;color:var(--muted)}
 </style>
@@ -105,7 +113,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.5</p></div>
+    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.6</p></div>
   </header>
 
   <div class="grid">
@@ -142,6 +150,7 @@ Chữ:
 - Hỏi câu mở
 - Kể chuyện mình trước</pre>
         <button id="btnScript" type="button">Dùng mẫu kịch bản này</button>
+        <button type="button" class="thu" onclick="const d=this.closest('details');d.open=false;d.scrollIntoView({block:'nearest'})">Thu gọn</button>
       </details>
     </section>
 
@@ -161,6 +170,7 @@ Chữ:
       <details id="lexBox"><summary>Từ điển cách đọc (tên sản phẩm, chữ nước ngoài)</summary>
         <textarea id="lex" rows="4" spellcheck="false" aria-label="Từ điển cách đọc" placeholder="Mỗi dòng 1 từ, ví dụ:&#10;umikai = u mi kai&#10;VietWise = việt quai"></textarea>
         <span class="note">Máy đã biết sẵn: 100g = một trăm gam, kg, ml, 50k, ion, collagen, vitamin, online, ship, voucher... Từ nào đọc sai thì thêm 1 dòng ở đây.</span>
+        <button type="button" class="thu" onclick="const d=this.closest('details');d.open=false;d.scrollIntoView({block:'nearest'})">Thu gọn</button>
       </details>
       <label class="switch"><input id="subs" type="checkbox" checked> Phụ đề lời đọc ở dưới</label>
     </section>
@@ -180,6 +190,7 @@ Chữ:
     <div class="row"><button id="btnPreview" type="button">Xem nhanh hình (không tiếng)</button></div>
     <p class="note">Lần đầu máy tải giọng đọc khoảng 100 MB (nên dùng Wi-Fi), các lần sau dùng lại. Bài dài thì chờ vài phút để giọng đọc xong. Chữ của bạn không gửi đi đâu, mọi thứ chạy ngay trên máy này.</p>
     <div id="status" hidden role="status"><span id="statusText"></span><div class="track"><div id="bar"></div></div></div>
+    <div id="quote" class="quote" hidden aria-live="polite"><span class="qk" id="quoteK"></span><p id="quoteT"></p><button type="button" id="quoteBuy" hidden>Xem các gói</button></div>
     <div id="stageWrap" class="media" hidden><canvas id="stage" width="1080" height="1920"></canvas></div>
   </section>
 
@@ -2536,7 +2547,8 @@ const LOCK = (() => {
     key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>'
   };
   const ic = n => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
-  function buy() {
+  function buy(sel) {
+    const pick = Number.isInteger(sel) ? sel : 1;   // gói chọn sẵn (landing truyền vào), mặc định 1 năm
     if (document.getElementById("mua")) return;
     const dev = deviceId(), el = document.createElement("div"); el.id = "mua";
     const tag = ["", "Tiết kiệm nhất", "Dùng mãi"];
@@ -2544,7 +2556,7 @@ const LOCK = (() => {
       <button type="button" id="muaDong" aria-label="Đóng">${ic("x")}</button>
       <h2 id="muaTd">Mua Xưởng video</h2>
       <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.${isLaunch() ? " <b class=\"mua-ram\">Giá ra mắt đến hết 30/11</b>" : ""}</p>
-      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === 1 ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
+      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === pick ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
       <label class="mua-zl" for="muaZalo"><span>Số Zalo của bạn <i>(để nhận mã, nên ghi)</i></span>
         <input id="muaZalo" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xx xxx xxx" maxlength="14"></label>
       <div class="mua-qr">
@@ -2595,7 +2607,7 @@ const LOCK = (() => {
         const u = URL.createObjectURL(f), a = document.createElement("a"); a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000);
       }, "image/png");
     };
-    el.querySelector("#muaNhap").onclick = () => { el.remove(); document.getElementById("khoa") || overlay(deviceId(), false); };
+    el.querySelector("#muaNhap").onclick = () => { el.remove(); if (window.LOCK_APP_URL) { location.href = window.LOCK_APP_URL; return; } document.getElementById("khoa") || overlay(deviceId(), false); };
     el.querySelector("#muaDong").onclick = () => el.remove();
     el.addEventListener("click", e => { if (e.target === el) el.remove(); });
   }
@@ -2834,6 +2846,9 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
       box.appendChild(d);
       const q = c => d.querySelector(c), s = q(".show"), y = q(".say"), kd = q(".kind");
       s.value = Engine.showText(sc); y.value = sc.say; kd.value = sc.kind;
+      // ô chữ tự cao theo nội dung, không phải kéo góc mở rộng
+      const fit = t => { t.style.height = "auto"; t.style.height = t.scrollHeight + 4 + "px"; };
+      for (const t of [s, y]) { t.addEventListener("input", () => fit(t)); requestAnimationFrame(() => fit(t)); }
       const changed = () => { state.tl = null; previewSoon(k); };
       // 2 ô ảnh của cảnh: trống = không có ảnh, cảnh hiện thẻ và hiệu ứng như thường
       const mnote = () => {
@@ -2913,11 +2928,48 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   const trial = () => typeof LOCK !== "undefined" && LOCK.isTrial && LOCK.isTrial();
   const opts = () => (syncMedia(), { trial: trial(), fmt: $("fmt").value, theme: $("theme").value, voice: $("voice").value, style: $("style").value, speed: +$("speed").value, music: $("music").value, subs: $("subs").checked, nhan: false, chu: $("chu").value, logo: state.logo, products: state.products, broll: state.broll, musicBuf: state.musicBuf });
 
+  // ---------------------------------------------------------------- câu đọc trong lúc chờ làm video
+  const QUOTES = [
+    ["kd", "Khách không mua sản phẩm tốt nhất. Khách mua thứ họ thấy rõ nhất. Đăng đều là cách để được thấy."],
+    ["kd", "Một video đăng hôm nay vẫn có thể bán hàng cho bạn vào tháng sau."],
+    ["kd", "Người đăng đều mỗi ngày thường đi xa hơn người đăng hay nhưng thất thường."],
+    ["kd", "Bạn không cần thật nhiều người xem. Bạn cần đúng người, xem nhiều lần."],
+    ["kd", "Mỗi video là một nhân viên bán hàng làm việc cả khi bạn ngủ."],
+    ["kd", "Đừng đợi hoàn hảo mới đăng. Video thứ 30 luôn đẹp hơn video đầu tiên."],
+    ["kd", "Khách tin người họ gặp thường xuyên. Hãy xuất hiện đều, dù chỉ bằng chữ và giọng đọc."],
+    ["kd", "Một bài viết hay mà chỉ đăng một lần thì phí. Biến nó thành video, cho nó sống thêm lần nữa."],
+    ["kd", "Thời gian tiết kiệm được hôm nay, hãy dành để trò chuyện với khách."],
+    ["cl", "Bạn đang làm tốt hơn bạn nghĩ. Cứ đi từng bước nhỏ."],
+    ["cl", "Không ai lớn lên trong một đêm. Kênh của bạn cũng vậy."],
+    ["cl", "Hôm nay ít đơn không có nghĩa là bạn đi sai đường."],
+    ["cl", "Nghỉ một chút cũng được, miễn là đừng bỏ cuộc."],
+    ["cl", "Nói điều mình hiểu, làm điều mình tin. Người hợp với bạn sẽ tự tìm đến."],
+    ["cl", "Mỗi video bạn làm là một lần bạn chọn tin vào chính mình."],
+    ["mo", "Câu đầu tiên quyết định khách có xem tiếp hay không. Viết ngắn, chạm đúng điều khách đang lo."],
+    ["mo", "Bọc **chữ** trong ô chữ hiện để tô màu từ khóa quan trọng."],
+    ["mo", "Một bài viết làm được cả bản dọc cho TikTok, Reels và bản ngang cho YouTube."],
+    ["mo", "Thêm ảnh sản phẩm vào đúng cảnh nói về nó, khách sẽ nhớ lâu hơn."],
+    ["mo", "Câu cuối nên mời khách làm một việc: nhắn tin, bình luận hoặc bấm theo dõi."],
+    ["mo", "Nội dung tâm sự hợp kiểu đọc Chữa lành, nội dung bán hàng hợp kiểu đọc Năng lượng."]];
+  const QK = { kd: "Cảm hứng kinh doanh", cl: "Một chút dịu dàng", mo: "Mẹo nhỏ", mua: "Bạn đang dùng thử" };
+  let qTimer = null;
+  function quotesOn() {
+    const list = QUOTES.slice().sort(() => Math.random() - .5);
+    if (trial()) for (let i = 2; i < list.length; i += 4) list.splice(i, 0, ["mua", "Mua gói để video không còn chữ dùng thử ở góc và làm không giới hạn, chỉ từ " + (LOCK.planPrice ? LOCK.planPrice("1T") / 1000 + "k" : "99k") + " mỗi tháng."]);
+    let i = 0; const box = $("quote"), t = $("quoteT");
+    const show = () => { const q = list[i++ % list.length]; t.classList.add("out");
+      setTimeout(() => { $("quoteK").textContent = QK[q[0]]; t.textContent = q[1]; $("quoteBuy").hidden = q[0] !== "mua"; t.classList.remove("out"); }, 450); };
+    box.hidden = false; show(); clearInterval(qTimer); qTimer = setInterval(show, 7000);
+  }
+  function quotesOff() { clearInterval(qTimer); qTimer = null; $("quote").hidden = true; }
+  $("quoteBuy").onclick = () => LOCK.buy();
+
   // ---------------------------------------------------------------- nút chính
   async function run(reuseScenes) {
     if (state.busy) return; state.busy = true; $("status").classList.remove("err");
     $("btnMake").disabled = true; $("btnSplit").disabled = true; $("btnPreview").disabled = true;
     let wake = null; try { wake = await navigator.wakeLock.request("screen"); } catch (e) { }
+    quotesOn();
     try {
       if (trial() && LOCK.trialLeft() <= 0) throw new Error("Bản dùng thử đã làm đủ " + LOCK.TRIAL_MAX + " video. Mua gói để làm tiếp không giới hạn, video không có chữ dùng thử.");
       if (!reuseScenes || !state.scenes) { state.scenes = newScenes(); renderEditor(); }
@@ -2943,7 +2995,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
     } catch (e) {
       console.error(e); fail("Chưa làm được video: " + (e && e.message ? e.message : e));
     } finally {
-      state.busy = false; $("btnMake").disabled = false; $("btnSplit").disabled = false; $("btnPreview").disabled = false;
+      quotesOff(); state.busy = false; $("btnMake").disabled = false; $("btnSplit").disabled = false; $("btnPreview").disabled = false;
       try { wake && wake.release(); } catch (e) { }
     }
   }

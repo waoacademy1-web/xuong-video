@@ -192,7 +192,8 @@ const LOCK = (() => {
     key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>'
   };
   const ic = n => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
-  function buy() {
+  function buy(sel) {
+    const pick = Number.isInteger(sel) ? sel : 1;   // gói chọn sẵn (landing truyền vào), mặc định 1 năm
     if (document.getElementById("mua")) return;
     const dev = deviceId(), el = document.createElement("div"); el.id = "mua";
     const tag = ["", "Tiết kiệm nhất", "Dùng mãi"];
@@ -200,7 +201,7 @@ const LOCK = (() => {
       <button type="button" id="muaDong" aria-label="Đóng">${ic("x")}</button>
       <h2 id="muaTd">Mua Xưởng video</h2>
       <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.${isLaunch() ? " <b class=\"mua-ram\">Giá ra mắt đến hết 30/11</b>" : ""}</p>
-      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === 1 ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
+      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === pick ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
       <label class="mua-zl" for="muaZalo"><span>Số Zalo của bạn <i>(để nhận mã, nên ghi)</i></span>
         <input id="muaZalo" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xx xxx xxx" maxlength="14"></label>
       <div class="mua-qr">
@@ -251,7 +252,7 @@ const LOCK = (() => {
         const u = URL.createObjectURL(f), a = document.createElement("a"); a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000);
       }, "image/png");
     };
-    el.querySelector("#muaNhap").onclick = () => { el.remove(); document.getElementById("khoa") || overlay(deviceId(), false); };
+    el.querySelector("#muaNhap").onclick = () => { el.remove(); if (window.LOCK_APP_URL) { location.href = window.LOCK_APP_URL; return; } document.getElementById("khoa") || overlay(deviceId(), false); };
     el.querySelector("#muaDong").onclick = () => el.remove();
     el.addEventListener("click", e => { if (e.target === el) el.remove(); });
   }
