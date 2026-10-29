@@ -74,7 +74,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video animation</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 28/10 · màu kem sage mới</p></div>
+    <div><h1>Xưởng video animation</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 29/10 · link dùng thử có hạn</p></div>
   </header>
 
   <div class="grid">
@@ -85,6 +85,7 @@ details textarea{margin-top:6px}
       <div class="row"><button id="btnClear" type="button">Xóa để dán bài mới</button><button id="btnSample" type="button">Dùng bài mẫu</button></div>
       <div class="row"><button id="btnOcr" type="button">📷 Chụp văn bản thành chữ</button><input id="ocrFile" type="file" accept="image/*" multiple hidden aria-label="Ảnh chụp văn bản"></div>
       <span id="ocrNote" class="note">Chụp thẳng, đủ sáng, rõ chữ. Nhiều trang thì chọn nhiều ảnh theo thứ tự. Máy đọc xong, chữ hiện ở ô trên, sửa chỗ sai rồi làm video.</span>
+      <span class="note" style="display:block;margin-top:6px">Mẹo: ảnh chụp màn hình bài đăng, chữ trang trí trên nền màu thì máy dễ đọc sai. Trên iPhone, mở ảnh trong app Ảnh, nhấn giữ lên chữ, chọn "Chọn tất cả" rồi "Sao chép", sau đó dán vào ô trên: chữ chuẩn hơn nhiều.</span>
       <ul class="how">
         <li>Dòng trống = sang cảnh mới. Dòng đầu ngắn = tiêu đề.</li>
         <li>Có số (240 đơn, 80%, 208,7 triệu) thì máy làm cảnh số đếm.</li>
@@ -2003,6 +2004,42 @@ const OCR = (() => {
     return paras.join("\n\n").trim();
   }
 
+  // ảnh chụp màn hình bài đăng có cả biểu tượng, hình vẽ, chữ trang trí: bỏ dòng máy đọc không chắc hoặc toàn ký hiệu lạ,
+  // bỏ chữ lẻ máy không chắc mà lại lẫn ký hiệu; mỗi đoạn của ảnh thành một đoạn (dòng trống)
+  const JUNK = /[^\p{L}\p{N}\s.,!?:;%()'"“”‘’\-–+\/&@#]/gu, JUNK1 = new RegExp(JUNK.source, "u");
+  function goodLine(l) {
+    const t = l.text.trim(), n = t.replace(/\s/g, "").length;
+    if (!n || letters(t) < 2) return false;
+    const junk = (t.match(JUNK) || []).length;
+    const ws = l.words || [], weak = ws.filter(x => x.confidence < 50).length;
+    if (junk / n > .12) return false;                   // nhiều ký hiệu lạ: hình vẽ, biểu tượng
+    if (l.confidence < 50) return false;                // máy đoán mò
+    if (ws.length >= 3 && weak / ws.length > .5) return false;
+    if (ws.length && ws.filter(badWord).length / ws.length > .5) return false;
+    return true;
+  }
+  // có dáng một tiếng Việt không (bỏ dấu rồi xét phụ âm đầu + vần)
+  const syl = w => w.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[đĐ]/g, "d").toLowerCase().split(/[^a-z]+/).filter(Boolean)
+    .every(x => /^(ngh|ng|nh|ch|gh|gi|kh|ph|qu|th|tr|[bcdghklmnpqrstvx])?[aeiouy]{1,3}(ch|ng|nh|[cmnpt])?$/.test(x));
+  // chữ lẻ đáng bỏ: máy không chắc mà lại lẫn ký hiệu lạ, hoặc không ra tiếng Việt / chữ số
+  const badWord = x => (x.confidence < 45 && (JUNK1.test(x.text) || letters(x.text) < 2)) ||
+    (x.confidence < 75 && letters(x.text) >= 2 && !/\d/.test(x.text) && !syl(x.text)) ||
+    (x.confidence < 60 && letters(x.text) === 1 && !/\d/.test(x.text));
+  function cleanLine(l) {
+    const ws = l.words && l.words.length ? l.words : [{ text: l.text, confidence: 100 }];
+    return ws.filter(x => !badWord(x))
+      .map(x => x.text.replace(JUNK, "")).filter(Boolean).join(" ").replace(/\s{2,}/g, " ").trim();
+  }
+  function clean(data) {
+    if (!data.blocks || !data.blocks.length) return data.text;
+    const paras = [];
+    for (const b of data.blocks) for (const pa of b.paragraphs || []) {
+      const ls = (pa.lines || []).filter(goodLine).map(cleanLine).filter(t => letters(t) >= 2);
+      if (ls.length) paras.push(ls.join("\n"));
+    }
+    return paras.join("\n\n");
+  }
+
   // files: ảnh chụp (nhiều trang theo thứ tự chọn). progress(text, 0..1)
   async function read(files, progress) {
     const out = [];
@@ -2012,13 +2049,130 @@ const OCR = (() => {
       const c = await prep(w, files[i]);
       progress && progress(`Đang đọc chữ ảnh ${i + 1}/${files.length}...`, 0);
       const r = await w.recognize(c);
-      if (r.data.confidence < 55)   // máy không chắc: thà báo chụp lại còn hơn đưa chữ lộn xộn vào bài
+      const text = clean(r.data);
+      if (letters(text) < 15)   // máy không chắc: thà báo chụp lại còn hơn đưa chữ lộn xộn vào bài
         throw new Error(`Ảnh ${i + 1} khó đọc (máy chỉ chắc ${Math.round(r.data.confidence)}%). Chụp gần hơn cho chữ to rõ, thẳng trang giấy, đủ sáng, không bóng, rồi thử lại.`);
-      out.push(r.data.text);
+      out.push(text);
     }
     return tidy(out.join("\n\n"));
   }
-  return { read, tidy, letters };
+  return { read, tidy, letters, clean };
+})();
+
+</script>
+<script>
+/* lock.js: trang chỉ dùng được khi có mã (ký HMAC, có giờ hết hạn ghi sẵn trong mã).
+   - Link dùng thử: ...?ma=MÃ (mã chung, hết hạn sau 24 giờ kể từ lúc Diễm tạo). Hết giờ thì link vô dụng, xóa dữ liệu trang cũng không dùng lại được.
+   - Mã kích hoạt theo máy: khách gửi mã máy, Diễm tạo mã có hạn (hoặc vĩnh viễn).
+   Khóa chạy trên máy người dùng nên chỉ chặn người dùng bình thường. */
+const LOCK = (() => {
+  const H0 = Date.UTC(2026, 0, 1), FOREVER = 0xFFFFFF;   // hạn = số giờ kể từ 1/1/2026
+  const CONTACT = "Diễm Nguyễn (Zalo 0938 333 310)";   // ghi trên màn hình khóa: liên hệ ai để nhận mã
+  const KEY = "95e3845e10c23e066e35309c7d91b45350666606fc5b8f03";
+  const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   // không có I L O U cho khỏi nhầm
+  const st = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+
+  const enc = bytes => { let bits = 0, v = 0, s = ""; for (const b of bytes) { v = (v << 8) | b; bits += 8; while (bits >= 5) { s += B32[(v >>> (bits - 5)) & 31]; bits -= 5; } } if (bits) s += B32[(v << (5 - bits)) & 31]; return s; };
+  const dec = s => { const out = []; let bits = 0, v = 0; for (const c of s) { const i = B32.indexOf(c); if (i < 0) return null; v = (v << 5) | i; bits += 5; if (bits >= 8) { out.push((v >>> (bits - 8)) & 255); bits -= 8; } } return out; };
+  const norm = s => (s || "").toUpperCase().replace(/[^0-9A-Z]/g, "").replace(/O/g, "0").replace(/[IL]/g, "1");
+  const group = s => s.match(/.{1,4}/g).join("-");
+
+  async function tag(device, hour) {
+    const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+    return new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(norm(device) + ":h" + hour))).slice(0, 6);
+  }
+  // mã cho 1 máy (device rỗng = mã chung, máy nào nhập cũng được), dùng được tới giờ `hour` (FOREVER = vĩnh viễn)
+  async function makeCode(device, hour) { return group(enc([hour >> 16, (hour >> 8) & 255, hour & 255, ...(await tag(device, hour))])); }
+  // mã đúng -> giờ hết hạn (số), sai -> null
+  async function check(device, code) {
+    const b = dec(norm(code)); if (!b || b.length < 9) return null;
+    const hour = (b[0] << 16) | (b[1] << 8) | b[2];
+    for (const d of [device, ""]) { const t = await tag(d, hour); if (t.every((x, i) => x === b[3 + i])) return hour; }
+    return null;
+  }
+  const hourEnd = h => H0 + h * 3600e3;
+  const hourNow = () => Math.floor((Date.now() - H0) / 3600e3);
+  const untilText = h => h === FOREVER ? "vĩnh viễn" : new Date(hourEnd(h)).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "numeric", year: "numeric" });
+
+  function deviceId() {
+    let id = st.get("xv_may");
+    if (!id) { id = group(enc(crypto.getRandomValues(new Uint8Array(5)))); st.set("xv_may", id); }
+    return id;
+  }
+
+  // trạng thái: { ok, until (giờ hết hạn), left (ms) }
+  async function status() {
+    const now = Date.now(), dev = deviceId();
+    const seen = +st.get("xv_lan_cuoi") || 0;
+    const back = seen && now < seen - 3600e3;            // chỉnh lùi đồng hồ máy
+    if (!back) st.set("xv_lan_cuoi", String(Math.max(now, seen)));
+    // mã đi kèm link (?ma=...) hoặc mã đã nhập trước đó
+    const fromLink = new URLSearchParams(location.search).get("ma");
+    for (const code of [fromLink, st.get("xv_ma")]) {
+      if (!code) continue;
+      const h = await check(dev, code);
+      if (h == null) continue;
+      if (h === FOREVER || (now < hourEnd(h) && !back)) { st.set("xv_ma", norm(code)); return { ok: true, until: h, left: hourEnd(h) - now }; }
+    }
+    return { ok: false, expired: !!(fromLink || st.get("xv_ma")) };
+  }
+
+  // khoa = true: không đóng được (chưa có mã / hết hạn); false: tự mở ra để nhập mã khác
+  function overlay(dev, khoa, expired) {
+    const el = document.createElement("div");
+    el.id = "khoa";
+    el.innerHTML = `<div class="khoa-hop">
+      ${khoa ? "" : '<button type="button" id="khoaDong" aria-label="Đóng">✕</button>'}
+      <h2>${!khoa ? "Nhập mã kích hoạt" : expired ? "Hết thời gian dùng" : "Cần mã để dùng"}</h2>
+      <p>${khoa ? (expired ? "Mã hoặc link dùng thử của bạn đã hết hạn. " : "") + "Để dùng, gửi" : "Gửi"} <b>mã máy</b> dưới đây cho ${CONTACT} để nhận mã kích hoạt.</p>
+      <p class="khoa-may">Mã máy: <b id="khoaMay">${dev}</b> <button type="button" id="khoaCopy">Sao chép</button></p>
+      <p class="khoa-lh"><a href="https://zalo.me/0938333310" target="_blank" rel="noopener">Nhắn Zalo</a><a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></p>
+      <input id="khoaMa" placeholder="Nhập mã kích hoạt" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button type="button" id="khoaMo">Kích hoạt</button>
+      <p id="khoaLoi" class="khoa-loi"></p></div>`;
+    document.body.appendChild(el);
+    if (!khoa) el.querySelector("#khoaDong").onclick = () => el.remove();
+    el.querySelector("#khoaCopy").onclick = () => { try { navigator.clipboard.writeText(dev); el.querySelector("#khoaCopy").textContent = "Đã chép"; } catch (e) { } };
+    el.querySelector("#khoaMo").onclick = async () => {
+      const v = el.querySelector("#khoaMa").value, h = await check(dev, v), err = el.querySelector("#khoaLoi");
+      if (h == null) { err.textContent = "Mã kích hoạt không đúng. Kiểm tra lại từng chữ."; return; }
+      if (h !== FOREVER && Date.now() >= hourEnd(h)) { err.textContent = "Mã này đã hết hạn (" + untilText(h) + ")."; return; }
+      st.set("xv_ma", norm(v)); el.remove(); guard();
+    };
+  }
+  function banner(s) {
+    const b = document.getElementById("khoaBan") || document.createElement("p");
+    b.id = "khoaBan"; b.className = "khoa-ban";
+    if (s.until === FOREVER) { b.remove(); return; }
+    const hl = Math.max(1, Math.ceil(s.left / 3600e3));
+    b.innerHTML = "Dùng được đến " + untilText(s.until) + (hl <= 72 ? " (còn " + hl + " giờ)." : ".") +
+      ' <button type="button" class="khoa-link">Nhập mã kích hoạt</button>';
+    b.querySelector("button").onclick = () => document.getElementById("khoa") || overlay(deviceId(), false);
+    const h = document.querySelector("header"); (h || document.body).insertAdjacentElement(h ? "afterend" : "afterbegin", b);
+  }
+  async function guard() {
+    const s = await status();
+    if (s.ok) { banner(s); if (s.until !== FOREVER) setTimeout(guard, Math.min(s.left + 1000, 3600e3)); return; }
+    const b = document.getElementById("khoaBan"); if (b) b.remove();
+    document.getElementById("khoa") || overlay(deviceId(), true, s.expired);
+  }
+
+  const css = document.createElement("style");
+  css.textContent = `#khoa{position:fixed;inset:0;z-index:9999;background:rgba(18,20,46,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+  .khoa-hop{background:var(--panel,#fff);color:var(--ink,#1F2275);border-radius:20px;padding:22px;max-width:420px;width:100%;font-family:var(--body,sans-serif)}
+  .khoa-hop h2{margin:0 0 8px}.khoa-hop p{line-height:1.5}.khoa-may b{font-size:20px;letter-spacing:1px}
+  .khoa-hop input{width:100%;box-sizing:border-box;font-size:18px;padding:12px;border-radius:12px;border:2px solid var(--line,#ddd);background:var(--field,#fff);color:inherit;text-transform:uppercase;margin:8px 0}
+  .khoa-hop button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 14px;background:var(--flame,#E8471B);color:#fff;cursor:pointer}
+  #khoaCopy{padding:6px 10px;font-size:14px;margin-left:6px}#khoaMo{width:100%;padding:14px}
+  .khoa-lh{display:flex;gap:8px;flex-wrap:wrap}.khoa-lh a{flex:1;text-align:center;font-weight:800;text-decoration:none;padding:10px;border-radius:12px;border:2px solid var(--flame,#E8471B);color:var(--flame,#E8471B)}
+  .khoa-loi{color:var(--flame,#E8471B);font-weight:700;min-height:1.2em}
+  .khoa-ban{margin:8px 0 0;font-size:13px;color:var(--muted,#6A6B8F);text-align:center}
+  .khoa-link{font:inherit;font-weight:700;background:none;border:0;color:var(--flame,#E8471B);text-decoration:underline;cursor:pointer;padding:4px}
+  .khoa-hop{position:relative}#khoaDong{position:absolute;top:10px;right:10px;background:none;color:inherit;font-size:20px;padding:6px 10px}`;
+  document.head.appendChild(css);
+  if (typeof window !== "undefined" && !window.LOCK_NO_AUTO) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", guard) : guard());
+
+  return { makeCode, check, status, deviceId, untilText, hourNow, FOREVER, norm };
 })();
 
 </script>

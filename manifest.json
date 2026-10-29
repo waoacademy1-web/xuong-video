@@ -1,7 +1,6 @@
 {
  "name": "Xưởng video animation",
  "short_name": "Xưởng video",
- "start_url": "./index.html",
  "scope": "./",
  "display": "standalone",
  "background_color": "#FFF8EC",
