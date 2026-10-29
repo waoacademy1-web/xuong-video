@@ -236,6 +236,35 @@ input:focus,select:focus{outline:none;border-color:var(--text)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .err{color:var(--err);font-size:13.5px;margin:-16px 0 18px;display:none}
+.err.on{display:block}
+.ctvbar{position:fixed;top:84px;right:16px;z-index:29;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 14px;border-radius:999px;background:#fff;color:var(--text);box-shadow:0 10px 30px rgba(31,34,117,.2);font-size:13.5px}
+.ctvbar[hidden]{display:none}.ctvbar b{color:var(--sienna)}
+.ctvbar button{border:0;border-radius:999px;background:#A50064;color:#fff;font:600 13.5px var(--sans);padding:8px 14px;cursor:pointer}
+@media (max-width:760px){.ctvbar{top:auto;bottom:86px;right:14px}}
+.ctv{background:linear-gradient(180deg,#FFF6FA,#FCEAF4)}
+.ctv-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.earn{display:grid;gap:10px;padding:26px;border-radius:24px;background:linear-gradient(160deg,#20246F,#171A55);color:#fff}
+.earn div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.earn span{color:var(--on-dark-mute);font-size:15px}
+.earn b{font:700 26px var(--sans);color:#fff}.earn .hl b{color:#F4AFD3;font-size:32px}
+.earn p{margin:6px 0 0;font-size:13.5px;color:var(--on-dark-mute)}
+.steps3{list-style:none;counter-reset:s;padding:0;margin:26px 0 0;display:grid;gap:16px}
+.steps3 li{counter-increment:s;display:grid;grid-template-columns:40px 1fr;column-gap:14px}
+.steps3 li::before{content:counter(s);grid-row:span 2;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:#A50064;color:#fff;font:700 16px var(--sans)}
+.steps3 b{font-size:17px}.steps3 span{color:var(--muted);font-size:15px}
+.terms{margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+.terms summary{cursor:pointer;font-weight:600;color:var(--sienna)}
+.terms ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14.5px;display:grid;gap:6px}
+.ctv form.fcard{box-shadow:0 30px 70px -30px rgba(31,34,117,.35)}
+.reflink{display:flex;gap:8px;align-items:center}
+.reflink code,.reflink input{flex:1;min-width:0}
+.reflink code{display:block;padding:12px 14px;border-radius:12px;background:#F9DDEB;color:var(--text);font-size:14px;word-break:break-all}
+.lookup{margin-top:22px;padding:22px;border-radius:20px;background:#fff;border:1px solid var(--line)}
+.lookup input{margin:0}
+.tc-kq{margin-top:12px;font-size:14.5px;color:var(--muted)}
+.tc-kq div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
+.tc-kq b{color:var(--text)}.tc-kq .hl b{color:var(--sienna);font-size:18px}
+@media (max-width:900px){.ctv-grid{grid-template-columns:1fr}}
 .consent{font-size:13px;color:var(--muted);margin:14px 0 0;text-align:center}
 .fcard .btn{width:100%;margin-top:6px}
 .done{display:none;text-align:center;padding:20px 0}
@@ -327,7 +356,7 @@ footer a{color:var(--on-dark)}
 <header class="top" id="top">
   <div class="wrap">
     <a class="logo" href="#"><b></b><span>Xưởng video<small>by Wao Academy</small></span></a>
-    <nav class="nav" aria-label="Mục chính"><a href="#video-mau">Video mẫu</a><a href="#giau-mat">Kênh giấu mặt</a><a href="#bang-gia">Bảng giá</a><a href="#hoi-dap">Hỏi đáp</a></nav>
+    <nav class="nav" aria-label="Mục chính"><a href="#video-mau">Video mẫu</a><a href="#giau-mat">Kênh giấu mặt</a><a href="#bang-gia">Bảng giá</a><a href="#hoi-dap">Hỏi đáp</a><a href="#ctv">Cộng tác viên</a></nav>
     <a class="btn btn-gold btn-sm" href="#dang-ky">Dùng thử miễn phí</a>
   </div>
 </header>
@@ -586,6 +615,63 @@ footer a{color:var(--on-dark)}
     </form>
   </div>
 </section>
+<section class="ctv" id="ctv">
+  <div class="wrap">
+    <div class="head-row rv">
+      <div><p class="kicker">08 · Cộng tác viên</p><h2>Giới thiệu Xưởng video, <em>nhận 40%.</em></h2></div>
+      <p class="muted">Không cần đã mua hay đang dùng, bản dùng thử cũng được. Ai cũng đăng ký làm cộng tác viên được: nhận link riêng, chia sẻ, có khách mua là có tiền.</p>
+    </div>
+    <div class="ctv-grid">
+      <div class="rv">
+        <div class="earn" id="earn">
+          <div><span>Khách mua 1 tháng</span><b data-goi="1T">39.600đ</b></div>
+          <div class="hl"><span>Khách mua 1 năm</span><b data-goi="1N">199.600đ</b></div>
+          <div><span>Khách mua vĩnh viễn</span><b data-goi="VV">396.000đ</b></div>
+          <p>Bạn nhận 40% trên số tiền khách đã chuyển, mỗi khách mỗi lần mua.</p>
+        </div>
+        <ol class="steps3">
+          <li><b>Đăng ký làm CTV</b><span>Điền form bên cạnh, nhận ngay link giới thiệu của riêng bạn.</span></li>
+          <li><b>Chia sẻ link</b><span>Đăng lên Facebook, TikTok, Zalo, nhóm bán hàng. Gửi kèm video bạn làm bằng Xưởng video càng dễ thuyết phục.</span></li>
+          <li><b>Nhận hoa hồng</b><span>Khách vào từ link của bạn và mua gói, hoa hồng chuyển vào MoMo của bạn mỗi thứ 2.</span></li>
+        </ol>
+        <details class="terms"><summary>Điều khoản ngắn</summary>
+          <ul><li>Khách được tính cho bạn khi vào từ link của bạn và đăng ký trong 30 ngày.</li><li>Hoa hồng tính sau khi khách đã chuyển tiền, trả vào thứ 2 hằng tuần qua MoMo.</li><li>Không tự mua qua link của chính mình để nhận hoa hồng.</li><li>Không quảng cáo sai sự thật, không hứa hẹn thu nhập thay Xưởng video.</li><li>Cần hỏi thêm, nhắn Zalo 0938 333 310.</li></ul>
+        </details>
+      </div>
+      <div class="rv">
+        <form class="fcard" id="fc" novalidate>
+          <div id="fcFields">
+            <h3>Đăng ký làm CTV</h3>
+            <label for="cTen">Họ và tên <span class="req">*</span></label>
+            <input id="cTen" autocomplete="name" placeholder="Nguyễn Thị Lan">
+            <p class="err" id="ec-ten">Bạn nhập tên giúp mình nhé.</p>
+            <div class="row2">
+              <div><label for="cSdt">Số Zalo <span class="req">*</span></label><input id="cSdt" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx"><p class="err" id="ec-sdt">Số Zalo chưa đúng.</p></div>
+              <div><label for="cMomo">Số MoMo nhận tiền</label><input id="cMomo" type="tel" inputmode="tel" placeholder="Để trống nếu giống số Zalo"></div>
+            </div>
+            <label for="cKenh">Bạn sẽ chia sẻ ở đâu</label>
+            <select id="cKenh"><option>Facebook</option><option>TikTok</option><option>Zalo, nhóm chat</option><option>YouTube</option><option>Khác</option></select>
+            <div class="hp" aria-hidden="true"><label for="cWeb">Website</label><input id="cWeb" tabindex="-1" autocomplete="off"></div>
+            <button class="btn btn-gold" id="cGui" type="submit">Nhận link giới thiệu <span class="arr">→</span></button>
+            <p class="err" id="ec-gui" style="margin:14px 0 0;text-align:center">Gửi chưa được. Bạn thử lại, hoặc nhắn Zalo 0938 333 310 nhé.</p>
+          </div>
+          <div id="fcDone" hidden>
+            <h3>Link giới thiệu của bạn</h3>
+            <p class="muted" style="margin:0 0 10px">Mã CTV: <b id="cMa"></b>. Lưu lại mã này để tra cứu hoa hồng.</p>
+            <div class="reflink"><code id="cLink"></code><button type="button" class="btn btn-line btn-sm" id="cChep">Sao chép</button></div>
+            <p class="muted" style="margin:14px 0 0;font-size:14px">Chia sẻ link này kèm vài câu về Xưởng video. Khách bấm vào và đăng ký trong 30 ngày là được tính cho bạn.</p>
+          </div>
+        </form>
+        <div class="lookup">
+          <label for="tcMa">Tra cứu hoa hồng</label>
+          <div class="reflink"><input id="tcMa" placeholder="Nhập mã CTV, vd lan5678" autocomplete="off"><button type="button" class="btn btn-ink btn-sm" id="tcBtn">Xem</button></div>
+          <div class="tc-kq" id="tcKq" aria-live="polite"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="cskh" aria-labelledby="cskhT">
   <div class="wrap cskh-in rv">
     <div><p class="kicker">Luôn có người hỗ trợ</p><h2 id="cskhT">Heartline <em>chăm sóc khách hàng.</em></h2>
@@ -608,6 +694,7 @@ footer a{color:var(--on-dark)}
 </footer>
 
 <div class="mcta"><a class="btn btn-gold" href="#dang-ky"><span class="t">Dùng thử miễn phí<small id="mctaSub">24 giờ, không cần trả trước</small></span><span class="arr">→</span></a></div>
+<div class="ctvbar" id="ctvBar" hidden><span>CTV <b id="ctvBarMa"></b></span><button type="button" id="ctvShare">Chia sẻ link giới thiệu</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="tic" id="toastIc"></span><p id="toastTxt"></p><button type="button" id="toastX" aria-label="Tắt thông báo">×</button></div>
 <script>window.LOCK_NO_AUTO = true; window.LOCK_APP_URL = "../";</script>
 <script>/* qrcode-generator 1.4.4, Kazuhiko Arase, MIT license (vẽ mã QR chuyển tiền, chạy offline) */
@@ -965,6 +1052,53 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     document.querySelectorAll('.rv').forEach(el => io.observe(el));
   } else document.querySelectorAll('.rv').forEach(el => el.classList.add('in'));
 
+  // Cộng tác viên: nhớ mã giới thiệu từ link ?ref= trong 30 ngày
+  const REF_KEY = 'xv_ref';
+  { const r = (new URLSearchParams(location.search).get('ref') || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 20);
+    let toi = ''; try { toi = localStorage.getItem('xv_ctv') || ''; } catch (e) { }
+    if (r && r !== toi) try { localStorage.setItem(REF_KEY, JSON.stringify({ ma: r, t: Date.now() })); } catch (e) { }
+    // máy của CTV: thanh địa chỉ luôn mang link giới thiệu, sao chép hay chia sẻ trang lúc nào cũng được ghi nhận
+    if (toi && r !== toi) { const u = new URL(location.href); u.searchParams.set('ref', toi); history.replaceState(null, '', u); } }
+  const refNow = () => { try { const r = JSON.parse(localStorage.getItem(REF_KEY) || 'null'); return r && Date.now() - r.t < 30 * 864e5 ? r.ma : ''; } catch (e) { return ''; } };
+  // số tiền hoa hồng theo giá hiện tại (giá ra mắt hoặc giá gốc)
+  document.querySelectorAll('#earn b[data-goi]').forEach(b => { const v = Math.round(LOCK.planPrice(b.dataset.goi) * 0.4); b.textContent = v.toLocaleString('vi-VN') + 'đ'; });
+  const khongDau = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
+  $('fc').addEventListener('submit', async e => {
+    e.preventDefault();
+    const ten = $('cTen').value.trim(), sdt = $('cSdt').value.replace(/[^\d]/g, '').replace(/^84/, '0'), momo = $('cMomo').value.replace(/[^\d]/g, '').replace(/^84/, '0') || sdt;
+    const okT = ten.length >= 2, okS = /^0\d{9}$/.test(sdt);
+    $('ec-ten').classList.toggle('on', !okT); $('ec-sdt').classList.toggle('on', !okS); $('ec-gui').classList.remove('on');
+    if (!okT || !okS || $('cWeb').value) return;
+    const ma = (khongDau(ten).split(/\s+/).filter(Boolean).pop() || 'ctv').replace(/[^a-z0-9]/g, '').slice(0, 10) + sdt.slice(-4);
+    const btn = $('cGui'); btn.disabled = true; btn.textContent = 'Đang gửi...';
+    try {
+      if (SHEET_URL) await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ loai: 'ctv', ma, ten, sdt, momo, kenh: $('cKenh').value }) });
+      const link = location.href.split(/[?#]/)[0] + '?ref=' + ma;
+      $('cMa').textContent = ma; $('cLink').textContent = link; $('tcMa').value = ma;
+      $('cChep').onclick = () => { try { navigator.clipboard.writeText(link); $('cChep').textContent = 'Đã chép'; } catch (err) { } };
+      try { localStorage.setItem('xv_ctv', ma); } catch (err) { }
+      $('fcFields').hidden = true; $('fcDone').hidden = false; ctvBar();
+    } catch (err) { $('ec-gui').classList.add('on'); btn.disabled = false; btn.textContent = 'Nhận link giới thiệu'; }
+  });
+  // thanh nhỏ cho CTV: chia sẻ link giới thiệu bằng 1 chạm
+  function ctvBar() {
+    let ma = ''; try { ma = localStorage.getItem('xv_ctv') || ''; } catch (e) { } if (!ma) return;
+    const link = location.href.split(/[?#]/)[0] + '?ref=' + ma, bar = $('ctvBar'); bar.hidden = false; $('ctvBarMa').textContent = ma; $('tcMa').value = $('tcMa').value || ma;
+    const txt = 'Mình đang dùng Xưởng video: dán bài viết là ra video có giọng đọc AI tiếng Việt. Dùng thử miễn phí 24 giờ tại đây:';
+    $('ctvShare').onclick = async () => { if (navigator.share) { try { await navigator.share({ title: 'Xưởng video', text: txt, url: link }); return; } catch (e) { if (e && e.name === 'AbortError') return; } } try { await navigator.clipboard.writeText(txt + ' ' + link); $('ctvShare').textContent = 'Đã chép link'; } catch (e) { } };
+  }
+  ctvBar();
+  const vnd = n => (Number(n) || 0).toLocaleString('vi-VN') + 'đ';
+  $('tcBtn').addEventListener('click', async () => {
+    const ma = $('tcMa').value.toLowerCase().replace(/[^a-z0-9]/g, ''), kq = $('tcKq'); if (!ma) return;
+    kq.textContent = 'Đang tra cứu...';
+    try {
+      const r = await fetch(SHEET_URL + '?ctv=' + encodeURIComponent(ma), { cache: 'no-store' }).then(x => x.json());
+      if (!r.ok) { kq.textContent = 'Chưa thấy mã ' + ma + '. Mã mới đăng ký có thể mất vài phút mới tra được, hoặc nhắn Zalo 0938 333 310.'; return; }
+      kq.innerHTML = '<div><span>Khách đăng ký qua link</span><b>' + r.dk + '</b></div><div><span>Khách đã thanh toán</span><b>' + r.tra + '</b></div><div><span>Hoa hồng</span><b>' + vnd(r.hoahong) + '</b></div><div><span>Đã nhận</span><b>' + vnd(r.danhan) + '</b></div><div class="hl"><span>Còn chờ nhận</span><b>' + vnd(r.conlai) + '</b></div>';
+    } catch (err) { kq.textContent = 'Chưa tra cứu được. Bạn thử lại sau ít phút nhé.'; }
+  });
+
   // Ghi lại nguồn khách (vd ?nguon=tiktok hoặc utm_source=facebook)
   const q = new URLSearchParams(location.search);
   const nguon = q.get('nguon') || q.get('utm_source') || (document.referrer ? new URL(document.referrer).hostname : 'truc tiep');
@@ -983,7 +1117,7 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
 
     const btn = $('gui');
     btn.disabled = true; btn.textContent = 'Đang gửi...';
-    const data = new URLSearchParams({ ten, sdt, email, nghe: $('nghe').value, goi: $('goi').value, nguon, trang: location.href.split('?')[0] });
+    const data = new URLSearchParams({ ten, sdt, email, nghe: $('nghe').value, goi: $('goi').value, nguon, trang: location.href.split('?')[0], ref: refNow() });
     try {
       if (SHEET_URL) await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: data });
       else await new Promise(r => setTimeout(r, 600));

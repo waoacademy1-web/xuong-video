@@ -17,6 +17,7 @@ header{display:flex;gap:14px;align-items:center}
 .logo-mark{width:52px;height:52px;border-radius:50%;flex:none;background:#1F2275;display:grid;place-items:center;color:#fff;font:900 22px var(--display);box-shadow:inset 0 0 0 3px #A50064,inset 0 0 0 5px #fff}
 h1{font:900 clamp(24px,5vw,34px)/1.1 var(--display);margin:0;text-wrap:balance}
 header p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.kiem a{display:inline-block;margin-top:6px;font:700 13px var(--display);color:var(--flame);text-decoration:none;border-bottom:1.5px solid currentColor}
 .grid{display:grid;gap:20px;grid-template-columns:1fr}
 @media (min-width:880px){.grid{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;min-width:0}
@@ -113,7 +114,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.6</p></div>
+    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.7</p><p class="kiem"><a id="kiemLink" href="gioi-thieu/#ctv" target="_blank" rel="noopener">Kiếm tiền cùng Xưởng video: giới thiệu bạn bè, nhận 40%</a></p></div>
   </header>
 
   <div class="grid">
@@ -2963,6 +2964,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   }
   function quotesOff() { clearInterval(qTimer); qTimer = null; $("quote").hidden = true; }
   $("quoteBuy").onclick = () => LOCK.buy();
+  if (location.protocol !== "https:") $("kiemLink").href = "https" + "://waoacademy1-web.github.io/xuong-video/gioi-thieu/#ctv";
 
   // ---------------------------------------------------------------- nút chính
   async function run(reuseScenes) {
