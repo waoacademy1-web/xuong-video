@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang cộng tác viên · Xưởng video</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1A1D5E">
+<link rel="icon" href="../icon.png"><link rel="apple-touch-icon" href="../icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1A1D5E;--paper:#FFF6FA;--card:#fff;--pink:#F4AFD3;--berry:#A50064;--text:#1F2275;--muted:#5F6188;--line:#F1D2E2;--ok:#2F7D55;--sans:"Be Vietnam Pro",system-ui,sans-serif;--serif:"Playfair Display",Georgia,serif}
+*{box-sizing:border-box}
+html{background:#FCEAF4}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#FFF6FA,#FCEAF4);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.top{background:var(--ink);color:#F8F5FF;padding:14px 16px}
+.top .in{max-width:760px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:700}
+.brand img{width:30px;height:30px;border-radius:8px}
+.top button{background:none;border:1px solid #4A4EA0;color:#BDBFE8;border-radius:99px;padding:6px 14px;font:600 13px var(--sans);cursor:pointer}
+main{max-width:760px;margin:0 auto;padding:26px 16px 60px}
+h1{font-family:var(--serif);font-weight:600;font-size:30px;line-height:1.15;margin:0 0 6px}
+h2{font-size:17px;margin:30px 0 12px}
+.muted{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 20px 50px -30px rgba(31,34,117,.35)}
+label{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+input{width:100%;font:16px var(--sans);color:var(--text);padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#FFFBFD;margin:0 0 14px}
+input:focus{outline:none;border-color:var(--berry)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:99px;padding:13px 22px;font:700 15px var(--sans);cursor:pointer;background:var(--berry);color:#fff;text-decoration:none}
+.btn.ink{background:var(--ink)}.btn.line{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn:disabled{opacity:.6}
+.err{color:#B3261E;font-size:14px;min-height:1.2em;margin:8px 0 0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+.stat span{display:block;font-size:13px;color:var(--muted)}
+.stat b{display:block;font-size:22px;margin-top:2px}
+.stat.hl{background:var(--ink);color:#fff;border-color:var(--ink)}.stat.hl span{color:#BDBFE8}.stat.hl b{color:var(--pink)}
+.rut{margin-top:14px}
+.rut p{margin:0 0 10px}
+.row{display:flex;gap:8px}.row input{margin:0;flex:1;min-width:0}
+.link{display:flex;gap:8px;align-items:center;background:#FFFBFD;border:1.5px dashed var(--pink);border-radius:14px;padding:10px 12px}
+.link code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.item{display:flex;justify-content:space-between;gap:12px;padding:13px 16px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item .l b{display:block;font-size:15px}.item .l small{color:var(--muted);font-size:13px}
+.item .r{text-align:right;white-space:nowrap}.item .r b{display:block}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:#F3F3FB;color:var(--muted)}
+.tag.ok{background:#E6F3EC;color:var(--ok)}.tag.cho{background:#FCE4EF;color:var(--berry)}
+.empty{padding:18px 16px;color:var(--muted);font-size:14px}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.foot{margin-top:34px;font-size:14px;color:var(--muted);text-align:center}
+@media (min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="in"><a class="brand" href="./"><img src="../icon.png" alt="">Xưởng video</a><button id="out" hidden>Đăng xuất</button></div></header>
+<main>
+  <section id="login">
+    <h1>Trang cộng tác viên</h1>
+    <p class="muted">Xem khách bạn giới thiệu, hoa hồng đã kiếm và yêu cầu nhận tiền.</p>
+    <form class="card" id="f">
+      <label for="ma">Mã CTV</label><input id="ma" autocomplete="username" placeholder="vd lan5678">
+      <label for="sdt">Số Zalo đã đăng ký</label><input id="sdt" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx">
+      <button class="btn" id="vao" type="submit">Xem trang của tôi</button>
+      <p class="err" id="loi"></p>
+      <p class="note">Chưa là cộng tác viên? <a href="./#ctv">Đăng ký tại đây</a>.</p>
+    </form>
+  </section>
+  <section id="ds" hidden>
+    <h1 id="chao"></h1>
+    <p class="muted" id="nhan"></p>
+    <div class="stats">
+      <div class="stat"><span>Khách đăng ký</span><b id="sDk"></b></div>
+      <div class="stat"><span>Khách đã mua</span><b id="sTra"></b></div>
+      <div class="stat"><span>Đã kiếm được</span><b id="sHh"></b></div>
+      <div class="stat hl"><span>Còn chờ nhận</span><b id="sCon"></b></div>
+    </div>
+    <div class="card rut" id="rut"></div>
+    <h2>Link giới thiệu của bạn</h2>
+    <div class="link"><code id="link"></code><button class="btn line" id="chep" type="button" style="padding:8px 14px">Sao chép</button></div>
+    <h2>Khách bạn giới thiệu</h2>
+    <div class="list" id="don"></div>
+    <p class="note">Tên và số điện thoại khách được che bớt để bảo vệ thông tin cá nhân. Hoa hồng tính khi khách đã chuyển tiền.</p>
+    <h2>Lịch sử nhận tiền</h2>
+    <div class="list" id="lan"></div>
+  </section>
+  <p class="foot">Cần hỗ trợ, nhắn Zalo <a href="https://zalo.me/0938333310">0938 333 310</a></p>
+</main>
+<script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4SE16h_Zb0sfgKHSmHKJ3BJ6LtlSUDtT9BrNjjcigdMrrE9O/exec';
+const $ = id => document.getElementById(id), KEY = 'xv_ctv_dn';
+const vnd = n => (Number(n) || 0).toLocaleString('vi-VN') + 'đ';
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sdtSach = v => v.replace(/[^\d]/g, '').replace(/^84/, '0');
+let dn = null; try { dn = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { }
+if (!dn) { const q = new URLSearchParams(location.search).get('ma'); let m = ''; try { m = localStorage.getItem('xv_ctv') || ''; } catch (e) { } $('ma').value = q || m; }
+
+async function tai(ma, sdt) {
+  const r = await fetch(SHEET_URL + '?ds=' + encodeURIComponent(ma) + '&sdt=' + sdt, { cache: 'no-store' }).then(x => x.json());
+  if (!r.ok) throw new Error(r.loi || 'Mã CTV hoặc số Zalo chưa đúng.');
+  return r;
+}
+function ve(r, sdt) {
+  $('login').hidden = true; $('ds').hidden = false; $('out').hidden = false;
+  $('chao').textContent = 'Chào ' + (String(r.ten || '').trim().split(/\s+/).pop() || 'bạn');
+  $('nhan').textContent = 'Mã CTV: ' + r.ma + (r.nhan ? ' · Nhận tiền qua ' + r.nhan : '');
+  $('sDk').textContent = r.dk; $('sTra').textContent = r.tra; $('sHh').textContent = vnd(r.hoahong); $('sCon').textContent = vnd(r.conlai);
+  const link = new URL('./?ref=' + r.ma, location.href).href; $('link').textContent = link;
+  $('chep').onclick = async () => { try { await navigator.clipboard.writeText(link); $('chep').textContent = 'Đã chép'; } catch (e) { } };
+  // yêu cầu rút
+  const rut = $('rut'), min = r.toithieu || 100000;
+  if (r.yc) rut.innerHTML = '<p><b>Đã gửi yêu cầu nhận hoa hồng ngày ' + esc(r.yc) + '.</b></p><p class="muted" style="margin:0">Xưởng video chuyển trong 3 ngày làm việc và báo qua ' + (r.email ? 'email' : 'Zalo') + '.</p>';
+  else if (r.conlai >= min) {
+    rut.innerHTML = '<p>Bạn có thể nhận <b>' + vnd(r.conlai) + '</b>.' + (r.conlai >= 2000000 ? ' Số từ 2.000.000đ được khấu trừ 10% thuế thu nhập cá nhân theo quy định.' : '') + '</p><button class="btn" id="rutBtn" type="button">Yêu cầu nhận hoa hồng</button><p class="err" id="rutLoi"></p>';
+    $('rutBtn').onclick = async () => {
+      $('rutBtn').disabled = true; $('rutBtn').textContent = 'Đang gửi...';
+      try { const x = await fetch(SHEET_URL + '?rut=' + encodeURIComponent(r.ma) + '&sdt=' + sdt, { cache: 'no-store' }).then(y => y.json());
+        if (!x.ok) throw new Error(x.loi); r.yc = x.yc; ve(r, sdt);
+      } catch (e) { $('rutLoi').textContent = (e && e.message) || 'Chưa gửi được. Bạn thử lại sau ít phút nhé.'; $('rutBtn').disabled = false; $('rutBtn').textContent = 'Yêu cầu nhận hoa hồng'; }
+    };
+  } else rut.innerHTML = '<p style="margin:0">Còn chờ nhận từ <b>' + vnd(min) + '</b> là bấm yêu cầu nhận hoa hồng được. Chia sẻ link bên dưới để có thêm khách nhé.</p>';
+  // danh sách khách
+  $('don').innerHTML = (r.don || []).length ? r.don.map(d => '<div class="item"><div class="l"><b>' + esc(d.khach) + '</b><small>' + esc(d.ngay) + ' · ' + esc(d.goi || 'Đăng ký') + '</small></div><div class="r">' +
+    (d.tien > 0 ? '<b>+' + vnd(d.hoahong) + '</b><span class="tag ok">Đã mua</span>' : '<b class="muted">0đ</b><span class="tag">Chưa mua</span>') + '</div></div>').join('')
+    : '<div class="empty">Chưa có khách đăng ký qua link của bạn.</div>';
+  // lịch sử nhận tiền
+  $('lan').innerHTML = (r.lan || []).length ? r.lan.map(l => '<div class="item"><div class="l"><b>' + vnd(l.chuyen) + '</b><small>' + esc(l.ngay) + (l.thue ? ' · đã trừ thuế ' + vnd(l.thue) : '') + '</small></div><div class="r">' +
+    (l.xn ? '<span class="tag ok">Đã xác nhận</span>' : l.tk ? '<a class="btn" style="padding:8px 14px;font-size:13px" href="' + SHEET_URL + '?xn=' + encodeURIComponent(l.tk) + '" target="_blank" rel="noopener">Xác nhận đã nhận</a>' : '<span class="tag cho">Chờ xác nhận</span>') + '</div></div>').join('')
+    : '<div class="empty">Chưa có lần nhận tiền nào.</div>';
+}
+async function vao(ma, sdt, im) {
+  const b = $('vao'); b.disabled = true; b.textContent = 'Đang mở...'; $('loi').textContent = '';
+  try { const r = await tai(ma, sdt); try { localStorage.setItem(KEY, JSON.stringify({ ma, sdt })); localStorage.setItem('xv_ctv', ma); } catch (e) { } ve(r, sdt); }
+  catch (e) { if (!im) $('loi').textContent = (e && e.message) || 'Chưa mở được. Bạn thử lại sau ít phút nhé.'; else { $('ma').value = ma; } }
+  b.disabled = false; b.textContent = 'Xem trang của tôi';
+}
+$('f').addEventListener('submit', e => { e.preventDefault();
+  const ma = $('ma').value.toLowerCase().replace(/[^a-z0-9]/g, ''), sdt = sdtSach($('sdt').value);
+  if (!ma) { $('loi').textContent = 'Bạn nhập mã CTV nhé.'; return; } if (!/^0\d{9}$/.test(sdt)) { $('loi').textContent = 'Số Zalo chưa đúng.'; return; }
+  vao(ma, sdt); });
+$('out').onclick = () => { try { localStorage.removeItem(KEY); } catch (e) { } location.reload(); };
+if (dn && dn.ma && dn.sdt) vao(dn.ma, dn.sdt, true);
+</script>
+</body>
+</html>

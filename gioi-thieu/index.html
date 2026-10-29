@@ -259,6 +259,11 @@ input:focus,select:focus{outline:none;border-color:var(--text)}
 .reflink{display:flex;gap:8px;align-items:center}
 .reflink code,.reflink input{flex:1;min-width:0}
 .reflink code{display:block;padding:12px 14px;border-radius:12px;background:#F9DDEB;color:var(--text);font-size:14px;word-break:break-all}
+.hint{font-size:13px;color:var(--muted);margin:-8px 0 16px}
+.seg{display:flex;gap:10px;margin:0 0 16px}.seg label{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;margin:0;padding:12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font-weight:700;cursor:pointer}
+.seg label:has(input:checked){border-color:var(--navy,#1F2275);background:#F3F3FB}.seg input{margin:0;width:auto;accent-color:#A50064}
+.tc-kq .rut{display:block;border:0;padding:12px 0 0}.tc-kq .rut p{margin:0 0 10px;color:var(--text)}.tc-kq .rut .reflink{display:flex;gap:8px}.tc-kq .rut input{margin:0;flex:1;min-width:0}.tc-kq .rut-kq{color:#A50064;font-size:13.5px}
+.tc-kq .lan span{font-size:13px}.tc-kq .lan b{font-size:13px;color:var(--muted)}
 .lookup{margin-top:22px;padding:22px;border-radius:20px;background:#fff;border:1px solid var(--line)}
 .lookup input{margin:0}
 .tc-kq{margin-top:12px;font-size:14.5px;color:var(--muted)}
@@ -632,10 +637,10 @@ footer a{color:var(--on-dark)}
         <ol class="steps3">
           <li><b>Đăng ký làm CTV</b><span>Điền form bên cạnh, nhận ngay link giới thiệu của riêng bạn.</span></li>
           <li><b>Chia sẻ link</b><span>Đăng lên Facebook, TikTok, Zalo, nhóm bán hàng. Gửi kèm video bạn làm bằng Xưởng video càng dễ thuyết phục.</span></li>
-          <li><b>Nhận hoa hồng</b><span>Khách vào từ link của bạn và mua gói, hoa hồng chuyển vào MoMo của bạn mỗi thứ 2.</span></li>
+          <li><b>Nhận hoa hồng</b><span>Khách vào từ link của bạn và mua gói, số dư từ 100.000đ là bấm "Yêu cầu nhận hoa hồng" ở ô Tra cứu, tiền về MoMo hoặc ngân hàng trong 3 ngày làm việc. Có email báo, bạn bấm xác nhận khi nhận được.</span></li>
         </ol>
         <details class="terms"><summary>Điều khoản ngắn</summary>
-          <ul><li>Khách được tính cho bạn khi vào từ link của bạn và đăng ký trong 30 ngày.</li><li>Hoa hồng tính sau khi khách đã chuyển tiền, trả vào thứ 2 hằng tuần qua MoMo.</li><li>Không tự mua qua link của chính mình để nhận hoa hồng.</li><li>Không quảng cáo sai sự thật, không hứa hẹn thu nhập thay Xưởng video.</li><li>Cần hỏi thêm, nhắn Zalo 0938 333 310.</li></ul>
+          <ul><li>Khách được tính cho bạn khi vào từ link của bạn và đăng ký trong 30 ngày.</li><li>Hoa hồng tính sau khi khách đã chuyển tiền, số dư từ 100.000đ thì bạn bấm yêu cầu nhận ở ô Tra cứu, Xưởng video chuyển vào MoMo hoặc ngân hàng đã đăng ký trong 3 ngày làm việc.</li><li>Lần trả từ 2.000.000đ trở lên được khấu trừ 10% thuế thu nhập cá nhân theo quy định, Xưởng video nộp thay bạn.</li><li>Không tự mua qua link của chính mình để nhận hoa hồng.</li><li>Không quảng cáo sai sự thật, không hứa hẹn thu nhập thay Xưởng video.</li><li>Cần hỏi thêm, nhắn Zalo 0938 333 310.</li></ul>
         </details>
       </div>
       <div class="rv">
@@ -647,10 +652,20 @@ footer a{color:var(--on-dark)}
             <p class="err" id="ec-ten">Bạn nhập tên giúp mình nhé.</p>
             <div class="row2">
               <div><label for="cSdt">Số Zalo <span class="req">*</span></label><input id="cSdt" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx"><p class="err" id="ec-sdt">Số Zalo chưa đúng.</p></div>
-              <div><label for="cMomo">Số MoMo nhận tiền</label><input id="cMomo" type="tel" inputmode="tel" placeholder="Để trống nếu giống số Zalo"></div>
+              <div><label for="cEmail">Email</label><input id="cEmail" type="email" inputmode="email" autocomplete="email" placeholder="ban@gmail.com"><p class="err" id="ec-email">Email chưa đúng.</p></div>
             </div>
-            <label for="cKenh">Bạn sẽ chia sẻ ở đâu</label>
-            <select id="cKenh"><option>Facebook</option><option>TikTok</option><option>Zalo, nhóm chat</option><option>YouTube</option><option>Khác</option></select>
+            <p class="hint">Email để nhận báo mỗi lần Xưởng video chuyển hoa hồng.</p>
+            <label>Nhận hoa hồng qua <span class="req">*</span></label>
+            <div class="seg" role="radiogroup"><label><input type="radio" name="cNhan" value="momo" checked> MoMo</label><label><input type="radio" name="cNhan" value="bank"> Ngân hàng</label></div>
+            <div id="cMomoBox"><label for="cMomo">Số MoMo</label><input id="cMomo" type="tel" inputmode="tel" placeholder="Để trống nếu giống số Zalo"></div>
+            <div id="cBankBox" hidden>
+              <div class="row2">
+                <div><label for="cNh">Ngân hàng <span class="req">*</span></label><input id="cNh" placeholder="Vietcombank"></div>
+                <div><label for="cStk">Số tài khoản <span class="req">*</span></label><input id="cStk" inputmode="numeric" placeholder="0123456789"></div>
+              </div>
+              <label for="cChu">Tên chủ tài khoản <span class="req">*</span></label><input id="cChu" placeholder="NGUYEN THI LAN" style="text-transform:uppercase">
+              <p class="err" id="ec-bank">Bạn điền đủ ngân hàng, số tài khoản và tên chủ tài khoản nhé.</p>
+            </div>
             <div class="hp" aria-hidden="true"><label for="cWeb">Website</label><input id="cWeb" tabindex="-1" autocomplete="off"></div>
             <button class="btn btn-gold" id="cGui" type="submit">Nhận link giới thiệu <span class="arr">→</span></button>
             <p class="err" id="ec-gui" style="margin:14px 0 0;text-align:center">Gửi chưa được. Bạn thử lại, hoặc nhắn Zalo 0938 333 310 nhé.</p>
@@ -660,10 +675,13 @@ footer a{color:var(--on-dark)}
             <p class="muted" style="margin:0 0 10px">Mã CTV: <b id="cMa"></b>. Lưu lại mã này để tra cứu hoa hồng.</p>
             <div class="reflink"><code id="cLink"></code><button type="button" class="btn btn-line btn-sm" id="cChep">Sao chép</button></div>
             <p class="muted" style="margin:14px 0 0;font-size:14px">Chia sẻ link này kèm vài câu về Xưởng video. Khách bấm vào và đăng ký trong 30 ngày là được tính cho bạn.</p>
+            <a class="btn btn-ink" href="ctv.html" style="margin-top:16px;width:100%">Mở trang CTV của bạn</a>
+            <p class="muted" style="margin:8px 0 0;font-size:13px;text-align:center">Xem từng khách, hoa hồng và yêu cầu nhận tiền. Đăng nhập bằng mã CTV và số Zalo.</p>
           </div>
         </form>
         <div class="lookup">
           <label for="tcMa">Tra cứu hoa hồng</label>
+          <p class="muted" style="font-size:13.5px;margin:-2px 0 10px">Xem từng khách và lịch sử nhận tiền ở <a href="ctv.html" style="color:var(--sienna);font-weight:700">Trang CTV</a>.</p>
           <div class="reflink"><input id="tcMa" placeholder="Nhập mã CTV, vd lan5678" autocomplete="off"><button type="button" class="btn btn-ink btn-sm" id="tcBtn">Xem</button></div>
           <div class="tc-kq" id="tcKq" aria-live="polite"></div>
         </div>
@@ -694,7 +712,7 @@ footer a{color:var(--on-dark)}
 </footer>
 
 <div class="mcta"><a class="btn btn-gold" href="#dang-ky"><span class="t">Dùng thử miễn phí<small id="mctaSub">24 giờ, không cần trả trước</small></span><span class="arr">→</span></a></div>
-<div class="ctvbar" id="ctvBar" hidden><span>CTV <b id="ctvBarMa"></b></span><button type="button" id="ctvShare">Chia sẻ link giới thiệu</button></div>
+<div class="ctvbar" id="ctvBar" hidden><a href="ctv.html" style="color:inherit">CTV <b id="ctvBarMa"></b></a><button type="button" id="ctvShare">Chia sẻ link giới thiệu</button></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="tic" id="toastIc"></span><p id="toastTxt"></p><button type="button" id="toastX" aria-label="Tắt thông báo">×</button></div>
 <script>window.LOCK_NO_AUTO = true; window.LOCK_APP_URL = "../";</script>
 <script>/* qrcode-generator 1.4.4, Kazuhiko Arase, MIT license (vẽ mã QR chuyển tiền, chạy offline) */
@@ -1063,16 +1081,20 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
   // số tiền hoa hồng theo giá hiện tại (giá ra mắt hoặc giá gốc)
   document.querySelectorAll('#earn b[data-goi]').forEach(b => { const v = Math.round(LOCK.planPrice(b.dataset.goi) * 0.4); b.textContent = v.toLocaleString('vi-VN') + 'đ'; });
   const khongDau = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
+  document.querySelectorAll('[name=cNhan]').forEach(r => r.addEventListener('change', () => { const b = r.value === 'bank' && r.checked; if (r.checked) { $('cBankBox').hidden = !b; $('cMomoBox').hidden = b; } }));
   $('fc').addEventListener('submit', async e => {
     e.preventDefault();
     const ten = $('cTen').value.trim(), sdt = $('cSdt').value.replace(/[^\d]/g, '').replace(/^84/, '0'), momo = $('cMomo').value.replace(/[^\d]/g, '').replace(/^84/, '0') || sdt;
-    const okT = ten.length >= 2, okS = /^0\d{9}$/.test(sdt);
-    $('ec-ten').classList.toggle('on', !okT); $('ec-sdt').classList.toggle('on', !okS); $('ec-gui').classList.remove('on');
-    if (!okT || !okS || $('cWeb').value) return;
+    const email = $('cEmail').value.trim(), bank = document.querySelector('[name=cNhan]:checked').value === 'bank';
+    const nh = $('cNh').value.trim(), stk = $('cStk').value.replace(/[^\d]/g, ''), chu = $('cChu').value.trim().toUpperCase();
+    const okT = ten.length >= 2, okS = /^0\d{9}$/.test(sdt), okE = !email || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email), okB = !bank || (nh && stk.length >= 6 && chu.length >= 2);
+    $('ec-ten').classList.toggle('on', !okT); $('ec-sdt').classList.toggle('on', !okS); $('ec-email').classList.toggle('on', !okE); $('ec-bank').classList.toggle('on', !okB); $('ec-gui').classList.remove('on');
+    if (!okT || !okS || !okE || !okB || $('cWeb').value) return;
+    const nhan = bank ? 'Ngân hàng ' + nh + ' ' + stk + ' - ' + chu : 'MoMo ' + momo;
     const ma = (khongDau(ten).split(/\s+/).filter(Boolean).pop() || 'ctv').replace(/[^a-z0-9]/g, '').slice(0, 10) + sdt.slice(-4);
     const btn = $('cGui'); btn.disabled = true; btn.textContent = 'Đang gửi...';
     try {
-      if (SHEET_URL) await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ loai: 'ctv', ma, ten, sdt, momo, kenh: $('cKenh').value }) });
+      if (SHEET_URL) await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ loai: 'ctv', ma, ten, sdt, momo, nhan, email }) });
       const link = location.href.split(/[?#]/)[0] + '?ref=' + ma;
       $('cMa').textContent = ma; $('cLink').textContent = link; $('tcMa').value = ma;
       $('cChep').onclick = () => { try { navigator.clipboard.writeText(link); $('cChep').textContent = 'Đã chép'; } catch (err) { } };
@@ -1095,7 +1117,21 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     try {
       const r = await fetch(SHEET_URL + '?ctv=' + encodeURIComponent(ma), { cache: 'no-store' }).then(x => x.json());
       if (!r.ok) { kq.textContent = 'Chưa thấy mã ' + ma + '. Mã mới đăng ký có thể mất vài phút mới tra được, hoặc nhắn Zalo 0938 333 310.'; return; }
-      kq.innerHTML = '<div><span>Khách đăng ký qua link</span><b>' + r.dk + '</b></div><div><span>Khách đã thanh toán</span><b>' + r.tra + '</b></div><div><span>Hoa hồng</span><b>' + vnd(r.hoahong) + '</b></div><div><span>Đã nhận</span><b>' + vnd(r.danhan) + '</b></div><div class="hl"><span>Còn chờ nhận</span><b>' + vnd(r.conlai) + '</b></div>';
+      kq.innerHTML = '<div><span>Khách đăng ký qua link</span><b>' + r.dk + '</b></div><div><span>Khách đã thanh toán</span><b>' + r.tra + '</b></div><div><span>Hoa hồng</span><b>' + vnd(r.hoahong) + '</b></div><div><span>Đã nhận</span><b>' + vnd(r.danhan) + '</b></div><div class="hl"><span>Còn chờ nhận</span><b>' + vnd(r.conlai) + '</b></div>' + (r.lan || []).slice().reverse().map(l => '<div class="lan"><span>' + l.ngay + ': đã chuyển ' + vnd(l.chuyen) + (l.thue ? ' (đã trừ thuế ' + vnd(l.thue) + ')' : '') + '</span><b>' + (l.xn ? 'Đã xác nhận' : 'Chờ bạn xác nhận') + '</b></div>').join('');
+      const rut = document.createElement('div'); rut.className = 'rut'; kq.appendChild(rut);
+      if (r.yc) rut.innerHTML = '<p>Bạn đã gửi yêu cầu nhận hoa hồng ngày ' + r.yc + '. Xưởng video chuyển trong 3 ngày làm việc và báo qua email.</p>';
+      else if (r.conlai >= (r.toithieu || 100000)) {
+        rut.innerHTML = '<p>Bạn có thể nhận ' + vnd(r.conlai) + '. Nhập số Zalo đã đăng ký để gửi yêu cầu.</p><div class="reflink"><input id="rutSdt" type="tel" inputmode="tel" placeholder="Số Zalo đã đăng ký"><button type="button" class="btn btn-gold btn-sm" id="rutBtn">Yêu cầu nhận hoa hồng</button></div><p class="rut-kq" id="rutKq"></p>';
+        $('rutBtn').onclick = async () => {
+          const sdt = $('rutSdt').value.replace(/[^\d]/g, '').replace(/^84/, '0'), o = $('rutKq'); if (!/^0\d{9}$/.test(sdt)) { o.textContent = 'Số Zalo chưa đúng.'; return; }
+          $('rutBtn').disabled = true; o.textContent = 'Đang gửi...';
+          try {
+            const x = await fetch(SHEET_URL + '?rut=' + encodeURIComponent(ma) + '&sdt=' + sdt, { cache: 'no-store' }).then(y => y.json());
+            if (x.ok) rut.innerHTML = '<p>Đã gửi yêu cầu nhận ' + vnd(r.conlai) + '. Xưởng video chuyển vào tài khoản bạn đã đăng ký trong 3 ngày làm việc và báo qua email.' + (r.conlai >= 2000000 ? ' Số từ 2.000.000đ được khấu trừ 10% thuế thu nhập cá nhân theo quy định.' : '') + '</p>';
+            else { o.textContent = x.loi || 'Chưa gửi được.'; $('rutBtn').disabled = false; }
+          } catch (err) { o.textContent = 'Chưa gửi được. Bạn thử lại sau ít phút nhé.'; $('rutBtn').disabled = false; }
+        };
+      } else rut.innerHTML = '<p>Số dư từ ' + vnd(r.toithieu || 100000) + ' là bấm yêu cầu nhận hoa hồng được.</p>';
     } catch (err) { kq.textContent = 'Chưa tra cứu được. Bạn thử lại sau ít phút nhé.'; }
   });
 
