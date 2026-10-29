@@ -475,7 +475,7 @@ footer a{color:var(--on-dark)}
         <div class="amt" data-sau="129k">99k<small>/ tháng</small></div>
         <div class="old">129k</div><div class="save">Tiết kiệm 30k</div>
         <ul><li>Đủ tính năng</li><li>Video không giới hạn, không chữ góc</li><li>Hỗ trợ qua Zalo</li></ul>
-        <button type="button" class="btn btn-line" data-mua="0">Mua gói này</button>
+        <a class="btn btn-line" href="#dang-ky" data-goi="1 tháng">Đăng ký gói này</a>
       </div>
       <div class="price best">
         <span class="tag">Tiết kiệm nhất</span>
@@ -483,19 +483,19 @@ footer a{color:var(--on-dark)}
         <div class="amt" data-sau="690k">499k<small>/ năm</small></div>
         <div class="old">690k</div><div class="save">Tiết kiệm 191k</div>
         <ul><li>Đủ tính năng</li><li>Chưa bằng nửa giá trả từng tháng</li><li>Cập nhật giọng và mẫu mới</li><li>Hỗ trợ qua Zalo</li></ul>
-        <button type="button" class="btn btn-gold" data-mua="1">Mua gói này</button>
+        <a class="btn btn-gold" href="#dang-ky" data-goi="1 năm">Đăng ký gói này</a>
       </div>
       <div class="price">
         <h3>Vĩnh viễn</h3>
         <div class="amt" data-sau="1.490k">990k<small>trọn đời</small></div>
         <div class="old">1.490k</div><div class="save">Tiết kiệm 500k</div>
         <ul><li>Trả một lần, dùng mãi</li><li>Cập nhật miễn phí</li><li>Kèm bản chạy trên máy tính</li><li>Hỗ trợ ưu tiên qua Zalo</li></ul>
-        <button type="button" class="btn btn-line" data-mua="2">Mua gói này</button>
+        <a class="btn btn-line" href="#dang-ky" data-goi="Vĩnh viễn">Đăng ký gói này</a>
       </div>
     </div>
     <div class="pay rv" id="thanh-toan">
       <div class="shield"><svg class="i" aria-hidden="true"><use href="#i-shield"/></svg></div>
-      <div><h3>Thanh toán an toàn qua MoMo</h3><p>Bấm <b>Mua gói này</b> ở bảng giá (hoặc <b>Mua gói</b> trong app): quét mã QR có sẵn số tiền và lời nhắn, hoặc chuyển tay vào MoMo <b>0938 333 310</b>, tên <b>NGUYỄN NGỌC DIỄM</b>. Chỉ nhận đúng tài khoản này, không ai thu hộ. Chuyển xong, mình đối soát theo lời nhắn và gửi mã qua Zalo. Còn phân vân thì gọi Heartline 0938 333 310 trước khi chuyển.</p></div>
+      <div><h3>Thanh toán an toàn qua MoMo</h3><p>Bấm <b>Đăng ký gói này</b>, điền thông tin, bấm Gửi là hiện mã QR (hoặc bấm <b>Mua gói</b> trong app): quét mã QR có sẵn số tiền và lời nhắn, hoặc chuyển tay vào MoMo <b>0938 333 310</b>, tên <b>NGUYỄN NGỌC DIỄM</b>. Chỉ nhận đúng tài khoản này, không ai thu hộ. Chuyển xong, mình đối soát theo lời nhắn và gửi mã qua Zalo. Còn phân vân thì gọi Heartline 0938 333 310 trước khi chuyển.</p></div>
       <div class="acts"><a class="btn btn-line btn-sm" href="https://zalo.me/0938333310" target="_blank" rel="noopener">Hỏi qua Zalo</a><a class="btn btn-line btn-sm" href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></div>
     </div>
     <p class="trial-bar">Chưa chắc? <a href="#dang-ky">Dùng thử miễn phí 24 giờ</a>, không cần trả trước.</p>
@@ -578,9 +578,10 @@ footer a{color:var(--on-dark)}
       </div>
       <div class="done" id="done">
         <div class="big"><svg class="i" aria-hidden="true"><use href="#i-check"/></svg></div>
-        <h3>Đã nhận đăng ký của bạn</h3>
-        <p>Mình sẽ gửi link dùng thử qua email và Zalo trong ngày. Nhớ xem cả hộp thư Quảng cáo, Spam. Muốn nhận ngay, bấm nút dưới đây.</p>
+        <h3 id="doneT">Đã nhận đăng ký của bạn</h3>
+        <p id="doneP">Mình sẽ gửi link dùng thử qua email và Zalo trong ngày. Nhớ xem cả hộp thư Quảng cáo, Spam. Muốn nhận ngay, bấm nút dưới đây.</p>
         <a class="btn btn-ink" href="https://zalo.me/0938333310" target="_blank" rel="noopener">Nhắn Zalo nhận link ngay</a>
+        <button type="button" class="btn btn-gold" id="donePay" hidden>Mở mã QR chuyển khoản</button>
       </div>
     </form>
   </div>
@@ -940,9 +941,15 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     const show = () => { if (off) return; const it = q[i++ % q.length]; ic.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-' + it[0] + '"/></svg>'; tx.textContent = it[1]; t.hidden = false; requestAnimationFrame(() => t.classList.add('on')); clearTimeout(hideT); hideT = setTimeout(() => { t.classList.remove('on'); setTimeout(() => t.hidden = true, 400); }, 7000); };
     $('toastX').onclick = () => { off = true; t.classList.remove('on'); t.hidden = true; };
     const start = khach => { const tp = tips(); q = []; khach.forEach((k, j) => { q.push(k); if (tp.length) q.push(tp[j % tp.length]); }); tp.slice(khach.length).forEach(x => q.push(x)); setTimeout(() => { show(); setInterval(show, 30000); }, 8000); };
-    fetch('hoat-dong.json', { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null).then(d => {
+    // 2 nguồn khách thật: hoat-dong.json (khách mua Diễm ghi ở trang tạo mã) + lượt đăng ký form trong Google Sheet
+    const lay = u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
+    const DK = { THU: 'đăng ký dùng thử', '1T': 'đăng ký gói 1 tháng', '1N': 'đăng ký gói 1 năm', VV: 'đăng ký gói vĩnh viễn' };
+    Promise.all([lay('hoat-dong.json'), typeof SHEET_URL === 'string' && SHEET_URL ? lay(SHEET_URL + '?hd=1') : null]).then(([d, s]) => {
       const tu = new Date(Date.now() + 7 * 3600e3 - 30 * 864e5).toISOString().slice(0, 10);
-      const k = (d && Array.isArray(d.luot) ? d.luot : []).filter(x => x && TEN[x.goi] && String(x.ngay) >= tu).reverse().map(x => ['users', 'Một khách đã ' + TEN[x.goi]]);
+      const ok = x => x && TEN[x.goi] && String(x.ngay) >= tu;
+      const a = (d && Array.isArray(d.luot) ? d.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: 'Một khách đã ' + TEN[x.goi] }));
+      const b = (s && Array.isArray(s.luot) ? s.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: 'Một khách đã ' + DK[x.goi] }));
+      const k = a.concat(b).sort((x, y) => y.ngay.localeCompare(x.ngay)).slice(0, 30).map(x => ['users', x.t]);
       start(k);
     });
   }
@@ -987,7 +994,13 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     }
   });
 
-  function finish(){ show('fields', false); show('done', true); $('dang-ky').scrollIntoView({behavior:'smooth'}); }
+  function finish(){ show('fields', false); show('done', true); $('dang-ky').scrollIntoView({behavior:'smooth'});
+    // chọn gói trả phí: hiện luôn khung chuyển khoản MoMo đúng gói, điền sẵn số Zalo vừa nhập
+    const g = ['1 tháng', '1 năm', 'Vĩnh viễn'].indexOf($('goi').value); if (g < 0) return;
+    try { localStorage.setItem('xv_zalo', $('sdt').value); } catch (e) { }
+    $('doneT').textContent = 'Đã nhận đăng ký gói ' + $('goi').value;
+    $('doneP').textContent = 'Chuyển khoản MoMo theo mã QR để nhận mã kích hoạt qua Zalo trong ngày. Lỡ đóng khung chuyển khoản thì bấm nút dưới đây để mở lại.';
+    $('donePay').hidden = false; $('donePay').onclick = () => LOCK.buy(g); LOCK.buy(g); }
 })();
 </script>
 </body>
