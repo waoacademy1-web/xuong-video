@@ -180,7 +180,7 @@ section{padding:110px 0;position:relative}
 .toast .tic{width:36px;height:36px;border-radius:50%;flex:none;display:grid;place-items:center;background:#F9DDEB;color:#A50064}.toast .tic .i{width:18px;height:18px}
 .toast p{margin:0;font-size:14px;font-weight:600;line-height:1.4}
 .toast button{flex:none;width:28px;height:28px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:18px;cursor:pointer}
-@media (max-width:760px){.toast{left:14px;right:14px;max-width:none;bottom:90px}.launch .cd b{font-size:20px}}
+@media (max-width:760px){.toast{left:50%;right:auto;top:74px;bottom:auto;width:calc(100% - 28px);max-width:420px;transform:translate(-50%,-16px)}.toast.on{transform:translate(-50%,0)}.launch .cd b{font-size:20px}}
 .prices{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:60px;align-items:stretch}
 .price{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:34px 30px}
 .price h3{font-size:15px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--muted)}
@@ -240,7 +240,7 @@ input:focus,select:focus{outline:none;border-color:var(--text)}
 .ctvbar{position:fixed;top:84px;right:16px;z-index:29;display:flex;align-items:center;gap:10px;padding:6px 6px 6px 14px;border-radius:999px;background:#fff;color:var(--text);box-shadow:0 10px 30px rgba(31,34,117,.2);font-size:13.5px}
 .ctvbar[hidden]{display:none}.ctvbar b{color:var(--sienna)}
 .ctvbar button{border:0;border-radius:999px;background:#A50064;color:#fff;font:600 13.5px var(--sans);padding:8px 14px;cursor:pointer}
-@media (max-width:760px){.ctvbar{top:auto;bottom:86px;right:14px}}
+
 .ctv{background:linear-gradient(180deg,#FFF6FA,#FCEAF4)}
 .ctv-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
 .earn{display:grid;gap:10px;padding:26px;border-radius:24px;background:linear-gradient(160deg,#20246F,#171A55);color:#fff}
@@ -302,11 +302,23 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-bet
 footer .logo{color:var(--on-dark);font-size:19px}
 footer a{color:var(--on-dark)}
 
-.mcta{position:fixed;right:24px;bottom:24px;z-index:30;transition:opacity .3s,transform .3s;opacity:0;transform:translateY(20px);pointer-events:none}
-.mcta.on{opacity:1;transform:none;pointer-events:auto}
-.mcta .btn{box-shadow:0 16px 40px rgba(165,0,100,.35);padding:15px 24px}
-.mcta .btn small{display:block;font-size:11.5px;font-weight:500;opacity:.85}
-.mcta .btn span.t{display:flex;flex-direction:column;align-items:flex-start;line-height:1.25}
+.fab{position:fixed;right:24px;bottom:24px;z-index:30;display:flex;flex-direction:column;align-items:stretch;gap:10px;width:250px}
+.fab-earn,.fab-try{display:flex;align-items:center;gap:10px;border-radius:999px;text-decoration:none;font:700 15px var(--sans);line-height:1.2;cursor:pointer}
+.fab-earn{border:1.5px solid #F4AFD3;background:#fff;color:var(--ink);padding:10px 18px 10px 12px;box-shadow:0 14px 34px rgba(31,34,117,.22);text-align:left}
+.fab-earn .i{width:34px;height:34px;padding:7px;border-radius:50%;background:#FCE4EF;color:#A50064;flex:none}
+.fab-try{justify-content:center;background:#A50064;color:#fff;padding:12px 20px;box-shadow:0 16px 40px rgba(165,0,100,.35);text-align:center}
+.fab-try small{display:block;font-size:11.5px;font-weight:500;opacity:.88}.fab-try .t{display:flex;flex-direction:column;align-items:center}
+.sheet{position:fixed;inset:0;z-index:60}.sheet[hidden]{display:none}
+.sheet-bg{position:absolute;inset:0;background:rgba(20,22,74,.45);opacity:0;transition:opacity .3s}
+.sheet-card{position:absolute;right:24px;bottom:24px;width:min(420px,calc(100% - 28px));max-height:calc(100% - 40px);overflow:auto;background:#fff;border-radius:24px;padding:26px 22px 22px;box-shadow:0 30px 80px rgba(20,22,74,.35);transform:translateY(30px);opacity:0;transition:transform .3s,opacity .3s}
+.sheet.on .sheet-bg{opacity:1}.sheet.on .sheet-card{transform:none;opacity:1}
+.sheet-card h3{font-family:var(--serif);font-size:26px;line-height:1.15;margin:4px 0 10px}.sheet-card h3 em{font-style:normal;color:#A50064}
+.sheet-card .kicker{margin:0}.sheet-card .muted{font-size:15px}
+.sheet-x{position:absolute;top:12px;right:12px;width:34px;height:34px;border:0;border-radius:50%;background:#F6EEF3;color:var(--muted);font-size:20px;cursor:pointer}
+.earn-sm{margin:14px 0}
+.sheet-acts{display:flex;flex-direction:column;gap:10px}.sheet-acts .btn{width:100%}
+.sheet .ctvbar{position:static;box-shadow:none;border:1px solid var(--line);justify-content:space-between;margin-top:6px}
+.toast.tien{cursor:pointer}.toast.tien .tic{background:#E6F3EC;color:#2F7D55}
 
 /* hiện dần khi cuộn tới */
 .rv{opacity:0;transform:translateY(26px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
@@ -350,13 +362,17 @@ footer a{color:var(--on-dark)}
   .pay .acts .btn{flex:1}
   .top .btn-sm{padding:8px 14px;font-size:13.5px}
   .logo{font-size:19px}.logo small{font-size:9.5px}
-  .mcta{left:14px;right:14px;bottom:14px}
-  .mcta .btn{width:100%;justify-content:center}
+  .fab{left:10px;right:10px;bottom:10px;width:auto;flex-direction:row;gap:8px}
+  .fab-earn,.fab-try{flex:1;min-height:58px;font-size:14px}
+  .fab-earn{padding:8px 10px 8px 8px;gap:8px}.fab-earn .i{width:32px;height:32px;padding:6px}
+  .fab-try{padding:8px 10px}
+  .sheet-card{left:0;right:0;bottom:0;width:auto;border-radius:24px 24px 0 0;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+  footer{padding-bottom:90px}
 }
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></symbol><symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></symbol><symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol><symbol id="i-wifioff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/></symbol><symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol><symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol><symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></symbol><symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></symbol><symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol><symbol id="i-brief" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol><symbol id="i-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></symbol><symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol><symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></symbol><symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol><symbol id="i-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol><symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol><symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol><symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol><symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol><symbol id="i-volx" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></symbol><symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z"/></symbol><symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></symbol><symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9"/><path d="m12.4 3.4 3.1 4"/><path d="M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol><symbol id="i-wifioff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/></symbol><symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol><symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol><symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="10" r="3"/><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/></symbol><symbol id="i-sprout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/></symbol><symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></symbol><symbol id="i-brief" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></symbol><symbol id="i-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></symbol><symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></symbol><symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol><symbol id="i-building" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></symbol><symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol><symbol id="i-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol><symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol><symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol><symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></symbol><symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol><symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></symbol><symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/></symbol><symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol><symbol id="i-volx" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></symbol><symbol id="i-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" fill="currentColor"/></symbol><symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></symbol><symbol id="i-coins" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></symbol></svg>
 
 <header class="top" id="top">
   <div class="wrap">
@@ -418,7 +434,7 @@ footer a{color:var(--on-dark)}
     </div>
     <div class="feat rv">
       <div><span class="n">i.</span><div><h3>Chỉ cần chữ</h3><p>Dán bài viết, hoặc thêm ảnh có chữ, máy tự đọc ra nội dung.</p></div></div>
-      <div><span class="n">ii.</span><div><h3>Giọng đọc AI tự nhiên</h3><p>7 giọng nam, nữ tiếng Việt, đọc đúng số và đơn vị, nhấn nhá từ khóa.</p></div></div>
+      <div><span class="n">ii.</span><div><h3>Giọng đọc AI tự nhiên</h3><p>7 giọng nam, nữ tiếng Việt, đọc đúng số và đơn vị, ngắt nghỉ đúng nhịp theo dấu câu.</p></div></div>
       <div><span class="n">iii.</span><div><h3>Tự dựng từng cảnh</h3><p>Chia cảnh theo ý, chữ bay, số liệu động, ảnh và B-roll đúng chỗ bạn chọn.</p></div></div>
       <div><span class="n">iv.</span><div><h3>Riêng tư, không cần mạng</h3><p>Mọi thứ chạy ngay trên máy bạn. Mở một lần là dùng được cả khi mất mạng.</p></div></div>
     </div>
@@ -711,8 +727,26 @@ footer a{color:var(--on-dark)}
   </div>
 </footer>
 
-<div class="mcta"><a class="btn btn-gold" href="#dang-ky"><span class="t">Dùng thử miễn phí<small id="mctaSub">24 giờ, không cần trả trước</small></span><span class="arr">→</span></a></div>
-<div class="ctvbar" id="ctvBar" hidden><a href="ctv.html" style="color:inherit">CTV <b id="ctvBarMa"></b></a><button type="button" id="ctvShare">Chia sẻ link giới thiệu</button></div>
+<div class="fab">
+  <button type="button" class="fab-earn" id="earnBtn" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="#i-coins"/></svg><span>Kiếm tiền cùng<br>Xưởng video</span></button>
+  <a class="fab-try" href="#dang-ky"><span class="t">Dùng thử miễn phí<small id="mctaSub">24 giờ, không cần trả trước</small></span></a>
+</div>
+<div class="sheet" id="earnSheet" hidden role="dialog" aria-modal="true" aria-labelledby="earnT">
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-card">
+    <button type="button" class="sheet-x" data-close aria-label="Đóng">×</button>
+    <p class="kicker">Cộng tác viên</p>
+    <h3 id="earnT">Giới thiệu bạn bè, nhận <em>40%</em> mỗi đơn</h3>
+    <p class="muted">Không cần đã mua, đang dùng thử cũng đăng ký được. Bạn nhận link riêng, ai mua qua link của bạn là bạn có hoa hồng.</p>
+    <div class="earn earn-sm">
+      <div><span>Khách mua 1 tháng</span><b data-goi="1T"></b></div>
+      <div class="hl"><span>Khách mua 1 năm</span><b data-goi="1N"></b></div>
+      <div><span>Khách mua vĩnh viễn</span><b data-goi="VV"></b></div>
+    </div>
+    <div class="ctvbar" id="ctvBar" hidden><a href="ctv.html">CTV <b id="ctvBarMa"></b> · Trang CTV</a><button type="button" id="ctvShare">Chia sẻ link giới thiệu</button></div>
+    <div class="sheet-acts" id="earnActs"><a class="btn btn-gold" href="#ctv" data-close>Đăng ký làm CTV</a><a class="btn btn-line" href="ctv.html">Đã là CTV? Mở trang CTV</a></div>
+  </div>
+</div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden><span class="tic" id="toastIc"></span><p id="toastTxt"></p><button type="button" id="toastX" aria-label="Tắt thông báo">×</button></div>
 <script>window.LOCK_NO_AUTO = true; window.LOCK_APP_URL = "../";</script>
 <script>/* qrcode-generator 1.4.4, Kazuhiko Arase, MIT license (vẽ mã QR chuyển tiền, chạy offline) */
@@ -1020,14 +1054,7 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
   // nút dùng thử chọn "Dùng thử trước", nút gói nào chọn đúng gói đó
   document.querySelectorAll('a[href="#dang-ky"]').forEach(a => a.addEventListener('click', () => { $('goi').value = a.dataset.goi || 'Dùng thử trước'; }));
 
-  // Ẩn nút dính dưới màn hình khi đang ở form
-  // nút dính dưới màn hình: chỉ hiện khi đã cuộn qua phần đầu và chưa tới form
-  const mcta = document.querySelector('.mcta'); let atForm = false;
-  const showM = () => mcta.classList.toggle('on', scrollY > innerHeight * .5 && !atForm); addEventListener('scroll', showM, {passive:true});
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver(es => es.forEach(e => { atForm = e.isIntersecting; showM(); }), {threshold: .15})
-      .observe($('dang-ky'));
-  }
+
 
   // Giá ra mắt: đếm ngược tới 23:59 ngày 30/11/2026 giờ VN, hết hạn thì tự về giá gốc
   const END = Date.UTC(2026, 10, 30, 16, 59, 59), launch = () => Date.now() <= END;
@@ -1043,8 +1070,9 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     const tips = () => (launch() ? [['clock', 'Giá ra mắt còn ' + left()[0] + ' ngày ' + left()[1] + ' giờ, sau đó về giá gốc']] : []).concat([
       ['cal', 'Gói 1 năm chưa bằng nửa giá trả từng tháng'], ['check', 'Dùng thử miễn phí 24 giờ, không cần trả trước'],
       ['shield', 'Vĩnh viễn ' + (launch() ? '990k' : '1.490k') + ': trả một lần, dùng mãi'], ['msg', 'Cần hỏi? Nhắn Zalo 0938 333 310, trả lời trong ngày']]);
-    const show = () => { if (off) return; const it = q[i++ % q.length]; ic.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-' + it[0] + '"/></svg>'; tx.textContent = it[1]; t.hidden = false; requestAnimationFrame(() => t.classList.add('on')); clearTimeout(hideT); hideT = setTimeout(() => { t.classList.remove('on'); setTimeout(() => t.hidden = true, 400); }, 7000); };
-    $('toastX').onclick = () => { off = true; t.classList.remove('on'); t.hidden = true; };
+    const show = () => { if (off) return; const it = q[i++ % q.length]; ic.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-' + it[0] + '"/></svg>'; tx.textContent = it[1]; t.classList.toggle('tien', !!it[2]); t.hidden = false; requestAnimationFrame(() => t.classList.add('on')); clearTimeout(hideT); hideT = setTimeout(() => { t.classList.remove('on'); setTimeout(() => t.hidden = true, 400); }, 7000); };
+    $('toastX').onclick = e => { e.stopPropagation(); off = true; t.classList.remove('on'); t.hidden = true; };
+    t.addEventListener('click', () => { if (t.classList.contains('tien') && window.moKiemTien) window.moKiemTien(); });
     const start = khach => { const tp = tips(); q = []; khach.forEach((k, j) => { q.push(k); if (tp.length) q.push(tp[j % tp.length]); }); tp.slice(khach.length).forEach(x => q.push(x)); setTimeout(() => { show(); setInterval(show, 30000); }, 8000); };
     // 2 nguồn khách thật: hoat-dong.json (khách mua Diễm ghi ở trang tạo mã) + lượt đăng ký form trong Google Sheet
     const lay = u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
@@ -1055,7 +1083,12 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
       const a = (d && Array.isArray(d.luot) ? d.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: 'Một khách đã ' + TEN[x.goi] }));
       const b = (s && Array.isArray(s.luot) ? s.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: 'Một khách đã ' + DK[x.goi] }));
       const k = a.concat(b).sort((x, y) => y.ngay.localeCompare(x.ngay)).slice(0, 30).map(x => ['users', x.t]);
-      start(k);
+      // CTV đã nhận hoa hồng thật (trang "Đã trả CTV"), tên chỉ còn chữ cái đầu
+      const h = (s && Array.isArray(s.hh) ? s.hh : []).filter(x => x && String(x.ngay) >= tu && Number(x.tien) > 0 && /^[A-ZÀ-Ỹ][*]{3}$/.test(String(x.ten)))
+        .slice(0, 20).map(x => ['coins', x.ten + ' đã nhận ' + Number(x.tien).toLocaleString('vi-VN') + 'đ hoa hồng từ Xưởng video', 1]);
+      const m = []; for (let j = 0; j < Math.max(k.length, h.length); j++) { if (k[j]) m.push(k[j]); if (h[j]) m.push(h[j]); }
+      // chỉ hiện người thật (đăng ký, nhận hoa hồng), không xen câu giới thiệu; chưa có ai thì không hiện
+      if (m.length) { q = m; setTimeout(() => { show(); setInterval(show, 30000); }, 8000); }
     });
   }
 
@@ -1079,7 +1112,7 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     if (toi && r !== toi) { const u = new URL(location.href); u.searchParams.set('ref', toi); history.replaceState(null, '', u); } }
   const refNow = () => { try { const r = JSON.parse(localStorage.getItem(REF_KEY) || 'null'); return r && Date.now() - r.t < 30 * 864e5 ? r.ma : ''; } catch (e) { return ''; } };
   // số tiền hoa hồng theo giá hiện tại (giá ra mắt hoặc giá gốc)
-  document.querySelectorAll('#earn b[data-goi]').forEach(b => { const v = Math.round(LOCK.planPrice(b.dataset.goi) * 0.4); b.textContent = v.toLocaleString('vi-VN') + 'đ'; });
+  document.querySelectorAll('.earn b[data-goi]').forEach(b => { const v = Math.round(LOCK.planPrice(b.dataset.goi) * 0.4); b.textContent = v.toLocaleString('vi-VN') + 'đ'; });
   const khongDau = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase();
   document.querySelectorAll('[name=cNhan]').forEach(r => r.addEventListener('change', () => { const b = r.value === 'bank' && r.checked; if (r.checked) { $('cBankBox').hidden = !b; $('cMomoBox').hidden = b; } }));
   $('fc').addEventListener('submit', async e => {
@@ -1105,11 +1138,14 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
   // thanh nhỏ cho CTV: chia sẻ link giới thiệu bằng 1 chạm
   function ctvBar() {
     let ma = ''; try { ma = localStorage.getItem('xv_ctv') || ''; } catch (e) { } if (!ma) return;
-    const link = location.href.split(/[?#]/)[0] + '?ref=' + ma, bar = $('ctvBar'); bar.hidden = false; $('ctvBarMa').textContent = ma; $('tcMa').value = $('tcMa').value || ma;
+    const link = location.href.split(/[?#]/)[0] + '?ref=' + ma, bar = $('ctvBar'); bar.hidden = false; $('earnActs').hidden = true; $('ctvBarMa').textContent = ma; $('tcMa').value = $('tcMa').value || ma;
     const txt = 'Mình đang dùng Xưởng video: dán bài viết là ra video có giọng đọc AI tiếng Việt. Dùng thử miễn phí 24 giờ tại đây:';
     $('ctvShare').onclick = async () => { if (navigator.share) { try { await navigator.share({ title: 'Xưởng video', text: txt, url: link }); return; } catch (e) { if (e && e.name === 'AbortError') return; } } try { await navigator.clipboard.writeText(txt + ' ' + link); $('ctvShare').textContent = 'Đã chép link'; } catch (e) { } };
   }
   ctvBar();
+  { const sh = $('earnSheet'), open = () => { sh.hidden = false; requestAnimationFrame(() => sh.classList.add('on')); }, close = () => { sh.classList.remove('on'); setTimeout(() => sh.hidden = true, 300); };
+    $('earnBtn').onclick = open; window.moKiemTien = open;
+    sh.querySelectorAll('[data-close]').forEach(x => x.addEventListener('click', close)); addEventListener('keydown', e => { if (e.key === 'Escape' && !sh.hidden) close(); }); }
   const vnd = n => (Number(n) || 0).toLocaleString('vi-VN') + 'đ';
   $('tcBtn').addEventListener('click', async () => {
     const ma = $('tcMa').value.toLowerCase().replace(/[^a-z0-9]/g, ''), kq = $('tcKq'); if (!ma) return;

@@ -114,7 +114,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.7</p><p class="kiem"><a id="kiemLink" href="gioi-thieu/#ctv" target="_blank" rel="noopener">Kiếm tiền cùng Xưởng video: giới thiệu bạn bè, nhận 40%</a></p></div>
+    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.8</p><p class="kiem"><a id="kiemLink" href="gioi-thieu/#ctv" target="_blank" rel="noopener">Kiếm tiền cùng Xưởng video: giới thiệu bạn bè, nhận 40%</a></p></div>
   </header>
 
   <div class="grid">
@@ -125,6 +125,7 @@ details textarea{margin-top:6px}
       <div class="row"><button id="btnClear" type="button">Xóa để dán bài mới</button><button id="btnSample" type="button">Dùng bài mẫu</button></div>
       <div class="row"><button id="btnOcr" type="button">Thêm ảnh có chữ, máy đọc thành content</button><input id="ocrFile" type="file" accept="image/*" multiple hidden aria-label="Ảnh chụp văn bản"></div>
       <span id="ocrNote" class="note">Chụp thẳng, đủ sáng, rõ chữ. Nhiều trang thì chọn nhiều ảnh theo thứ tự. Máy đọc xong, chữ hiện ở ô trên, sửa chỗ sai rồi làm video.</span>
+      <details id="tips"><summary>Mẹo viết bài và chụp ảnh</summary>
       <span class="note" style="display:block;margin-top:6px">Mẹo: ảnh chụp màn hình bài đăng, chữ trang trí trên nền màu thì máy dễ đọc sai. Trên iPhone, mở ảnh trong app Ảnh, nhấn giữ lên chữ, chọn "Chọn tất cả" rồi "Sao chép", sau đó dán vào ô trên: chữ chuẩn hơn nhiều.</span>
       <ul class="how">
         <li>Dòng trống = sang cảnh mới. Dòng đầu ngắn = tiêu đề.</li>
@@ -132,6 +133,8 @@ details textarea{margin-top:6px}
         <li>Dòng bắt đầu bằng “-” thành danh sách. Câu cuối có “theo dõi”, số hotline thành cảnh kêu gọi.</li>
         <li>Tối đa 12 cảnh. Bài dài thì máy gộp các câu ngắn liền nhau, chỉ tách ở chỗ hết câu, hết ý.</li>
       </ul>
+        <button type="button" class="thu" onclick="const d=this.closest('details');d.open=false;d.scrollIntoView({block:'nearest'})">Thu gọn</button>
+      </details>
       <details id="scriptHelp"><summary>Muốn tự chỉ định từng cảnh? Viết kịch bản chi tiết</summary>
         <p class="note">Bắt đầu mỗi cảnh bằng dòng “Cảnh 1”, “Cảnh 2”... Mỗi cảnh ghi: <b>Lời đọc:</b> giọng AI đọc gì, <b>Chữ:</b> chữ hiện trên video (bọc **chữ** để tô màu, “vế 1 | vế 2” để so sánh, mỗi dòng “-” là 1 thẻ danh sách), <b>Kiểu:</b> tiêu đề, ý chính, số liệu, danh sách, so sánh, câu hỏi, trích dẫn, kêu gọi. Dòng nào bỏ trống thì máy tự chọn. Để trống lời đọc là bỏ cảnh đó. Ảnh sản phẩm và B-roll thêm ở bước 3, ngay trong từng cảnh.</p>
         <pre class="ex">Cảnh 1
@@ -2717,7 +2720,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   $("sampleNote").hidden = ta.value !== SAMPLE;
   // sửa bài thì phải chia cảnh lại: xóa bảng cảnh cũ
   // ảnh của từng cảnh được giữ theo vị trí cảnh, chia lại thì cảnh cùng số thứ tự vẫn có ảnh cũ
-  function clearScenes() { if (state.scenes) state.media = state.scenes.map(sc => ({ pImg: sc.pImg || null, bImg: sc.bImg || null })); state.scenes = null; $("scenes").innerHTML = ""; $("sceneNote").hidden = true; }
+  function clearScenes() { if (state.scenes) state.media = state.scenes.map(sc => ({ pImg: sc.pImg || null, bImg: sc.bImg || null })); state.scenes = null; $("scenes").innerHTML = ""; $("scenes").hidden = false; $("sceneNote").hidden = true; $("btnSplit").textContent = "Chia cảnh và xem trước"; }
   ta.addEventListener("input", () => { store.set("anim_content", ta.value); $("sampleNote").hidden = ta.value !== SAMPLE; clearScenes(); });
   $("btnSample").onclick = () => { ta.value = SAMPLE; ta.dispatchEvent(new Event("input")); };
   $("btnClear").onclick = () => { ta.value = ""; ta.dispatchEvent(new Event("input")); ta.focus(); };
@@ -2920,9 +2923,23 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   // đổi màu / khung: vẽ lại hình xem trước
   function refreshScenes() { if (state.scenes && !$("editor").hidden && $("scenes").children.length) renderEditor(); }
   for (const id of ["fmt", "theme", "subs"]) $(id).addEventListener("change", refreshScenes);
-  $("btnSplit").onclick = () => {
-    try { $("status").classList.remove("err"); if (state.scenes) clearScenes(); state.scenes = newScenes(); renderEditor(); $("scenes").scrollIntoView({ behavior: "smooth", block: "start" }); }
-    catch (e) { fail(e.message); }
+  // nút chia cảnh: bấm lần đầu (hoặc khi bài đã sửa) thì chia và bung ra; bấm lại thì thu gọn / mở lại, không mất chỗ đã chỉnh
+  let splitText = null;
+  const splitBtn = $("btnSplit");
+  function splitShow(on) {
+    $("scenes").hidden = !on; if (!on) $("sceneNote").hidden = true;
+    splitBtn.textContent = !state.scenes ? "Chia cảnh và xem trước" : on ? "Thu gọn các cảnh ▲" : "Mở lại các cảnh ▼";
+  }
+  splitBtn.onclick = () => {
+    try {
+      $("status").classList.remove("err");
+      if (state.scenes && splitText === ta.value) {
+        const on = $("scenes").hidden; splitShow(on);
+        (on ? $("scenes") : $("editor")).scrollIntoView({ behavior: "smooth", block: "start" }); return;
+      }
+      if (state.scenes) clearScenes(); state.scenes = newScenes(); splitText = ta.value; renderEditor(); splitShow(true);
+      $("scenes").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (e) { fail(e.message); }
   };
   $("btnScript").onclick = () => { ta.value = document.querySelector("#scriptHelp pre").textContent; ta.dispatchEvent(new Event("input")); ta.scrollIntoView({ behavior: "smooth", block: "center" }); };
 
@@ -2974,7 +2991,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
     quotesOn();
     try {
       if (trial() && LOCK.trialLeft() <= 0) throw new Error("Bản dùng thử đã làm đủ " + LOCK.TRIAL_MAX + " video. Mua gói để làm tiếp không giới hạn, video không có chữ dùng thử.");
-      if (!reuseScenes || !state.scenes) { state.scenes = newScenes(); renderEditor(); }
+      if (!reuseScenes || !state.scenes) { state.scenes = newScenes(); splitText = ta.value; renderEditor(); splitShow(true); }
       const keep = state.scenes.filter(sc => (sc.say || "").trim());
       if (!keep.length) throw new Error("Các cảnh đều trống lời đọc. Điền lời đọc ở bước 3 rồi bấm lại.");
       if (keep.length !== state.scenes.length) { const sv = state.scenes; state.scenes = Object.assign(keep, { script: sv.script }); renderEditor(); }
@@ -3006,7 +3023,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   // xem nhanh khung hình (không giọng) để chỉnh chữ trước khi xuất
   $("btnPreview").onclick = async () => {
     try {
-      if (!state.scenes) { state.scenes = newScenes(); renderEditor(); }
+      if (!state.scenes) { state.scenes = newScenes(); splitText = ta.value; renderEditor(); splitShow(true); }
       const sc = state.scenes; let t0 = 0;
       for (const s of sc) { let t = .45; s.words = s.say.split(" ").map(w => { const d = .16 + w.length * .05; const r = { start: t, end: t + d }; t += d; return r; }); s.t0 = t0; s.dur = Math.max(2.2, t + .5); t0 += s.dur; }
       await Core.loadFonts(); const { cv, R } = Core.makeCanvas($("stage"), opts()); $("stageWrap").hidden = false;
