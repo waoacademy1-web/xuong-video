@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Xưởng video animation</title>
+<meta name="description" content="Dán bài viết, ra video animation có giọng đọc AI tiếng Việt. Chạy trên điện thoại và máy tính, không cần cài, không cần mạng.">
+<meta property="og:title" content="Xưởng video animation: dán bài viết, ra video có giọng đọc">
+<meta property="og:description" content="Video animation giọng AI tiếng Việt, làm ngay trên điện thoại. Dùng thử miễn phí 24 giờ.">
+<meta property="og:image" content="video/gioi_thieu_doc.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fffaf4; --bg2:#fff1e4; --card:#ffffff; --ink:#1f1d3a; --muted:#5d5a72;
+  --brand:#ee6a2b; --brand-ink:#ffffff; --brand-soft:#ffe3d1; --navy:#24215e;
+  --line:#f0dcca; --ok:#2f8f5b; --err:#c0392b; --shadow:0 10px 30px rgba(120,60,20,.10);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#16151f; --bg2:#1f1d2b; --card:#24222f; --ink:#f4f1ec; --muted:#b9b5c6;
+    --brand:#ff7a3d; --brand-ink:#1a0e05; --brand-soft:#3a2418; --navy:#c9c6ff;
+    --line:#35323f; --ok:#5fc48c; --err:#ff7a6b; --shadow:0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16151f; --bg2:#1f1d2b; --card:#24222f; --ink:#f4f1ec; --muted:#b9b5c6;
+  --brand:#ff7a3d; --brand-ink:#1a0e05; --brand-soft:#3a2418; --navy:#c9c6ff;
+  --line:#35323f; --ok:#5fc48c; --err:#ff7a6b; --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Be Vietnam Pro",system-ui,sans-serif;font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img,video{max-width:100%;display:block}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em;color:var(--ink);text-wrap:balance}
+h1{font-size:clamp(30px,6vw,52px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(25px,4.2vw,36px);font-weight:800;letter-spacing:-.01em}
+h3{font-size:19px;font-weight:700}
+p{margin:0 0 1em}
+.hl{color:var(--brand)}
+.muted{color:var(--muted)}
+section{padding:64px 0}
+.eyebrow{display:inline-block;font-size:14px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:6px 12px;border-radius:999px;margin-bottom:14px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.logo{font-weight:800;font-size:18px;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo i{width:30px;height:30px;border-radius:9px;background:var(--brand);display:grid;place-items:center;color:#fff;font-style:normal;font-size:15px}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:15px 24px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:active{transform:scale(.98)}
+.btn-main{background:var(--brand);color:var(--brand-ink);box-shadow:0 8px 20px color-mix(in srgb,var(--brand) 35%,transparent)}
+.btn-main:hover{box-shadow:0 10px 26px color-mix(in srgb,var(--brand) 50%,transparent)}
+.btn-ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn-sm{padding:9px 16px;font-size:15px;border-radius:11px}
+
+/* hero */
+.hero{padding:44px 0 56px;background:radial-gradient(900px 420px at 85% 10%,var(--brand-soft),transparent 70%)}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero p.lead{font-size:clamp(17px,2.2vw,20px);color:var(--muted);max-width:34em}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin:22px 0 18px}
+.ticks{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:15px;font-weight:600}
+.ticks li::before{content:"✓ ";color:var(--ok);font-weight:800}
+.phone{justify-self:center;width:min(300px,78vw);aspect-ratio:9/16;border-radius:34px;background:#111;padding:10px;box-shadow:0 30px 60px rgba(60,30,10,.25)}
+.phone video{width:100%;height:100%;object-fit:cover;border-radius:26px;background:#000}
+.phone-note{text-align:center;font-size:14px;margin-top:12px}
+
+/* cards */
+.grid{display:grid;gap:18px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.card .ic{width:46px;height:46px;border-radius:13px;background:var(--brand-soft);display:grid;place-items:center;font-size:24px;margin-bottom:14px}
+.card p{color:var(--muted);margin:0;font-size:16px}
+.alt{background:var(--bg2)}
+.center{text-align:center}
+.sub{max-width:40em;margin:0 auto 34px;color:var(--muted)}
+
+/* steps */
+.step{position:relative;padding-top:56px}
+.step b.n{position:absolute;top:20px;left:24px;font-size:15px;font-weight:800;color:var(--brand-ink);background:var(--brand);width:30px;height:30px;border-radius:50%;display:grid;place-items:center}
+
+/* samples */
+.samples{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.sample{width:min(260px,100%)}
+.sample video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:20px;background:#000;box-shadow:var(--shadow)}
+.sample p{text-align:center;font-size:15px;margin-top:10px;color:var(--muted)}
+
+.sample h3{font-size:17px;margin:12px 0 0}
+.sample p{margin-top:2px}
+.samples.ngang .sample{width:min(420px,100%)}
+.sample .pal{font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px}
+.sw{display:inline-flex;flex:none}.sw b{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--card);margin-left:-4px;box-shadow:0 0 0 1px var(--line)}.sw b:first-child{margin-left:0}
+.pals{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}.pals span{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:600;font-size:15px}.pals .sw b{width:18px;height:18px}
+.samples.ngang .sample video{aspect-ratio:16/9}
+.seg{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;margin:0 0 28px;gap:4px;max-width:100%}
+.seg button{font:inherit;font-size:15px;font-weight:700;border:0;background:transparent;color:var(--muted);padding:10px 16px;border-radius:10px;cursor:pointer}
+.seg button.on{background:var(--brand);color:var(--brand-ink)}
+.phone{position:relative}
+.unmute{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);font:inherit;font-size:14px;font-weight:700;border:0;border-radius:999px;padding:8px 16px;background:rgba(0,0,0,.65);color:#fff;cursor:pointer}
+/* who */
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.chips span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 16px;font-weight:600;font-size:15px}
+
+/* pricing */
+.price{display:flex;flex-direction:column;position:relative}
+.price.best{border:2px solid var(--brand)}
+.price .tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--brand);color:var(--brand-ink);font-size:13px;font-weight:800;padding:4px 12px;border-radius:999px;white-space:nowrap}
+.price .amt{font-size:36px;font-weight:800;color:var(--navy);line-height:1.1;margin:6px 0 2px}
+.price .amt small{font-size:16px;font-weight:600;color:var(--muted)}
+.price .old{text-decoration:line-through;color:var(--muted);font-size:15px;min-height:1.5em}
+.price ul{list-style:none;padding:0;margin:16px 0 22px;font-size:15px;flex:1}
+.price li{padding:5px 0 5px 24px;position:relative}
+.price li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:800}
+.trial-bar{margin-top:22px;text-align:center;font-weight:600}
+
+/* faq */
+.faq{max-width:760px;margin:0 auto}
+details{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 20px;margin-bottom:12px}
+summary{font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--brand);font-weight:800;font-size:22px;line-height:1}
+details[open] summary::after{content:"–"}
+details p{margin:12px 0 0;color:var(--muted);font-size:16px}
+
+/* form */
+.form-wrap{display:grid;grid-template-columns:.9fr 1.1fr;gap:36px;align-items:start}
+form.card{padding:28px}
+label{display:block;font-weight:600;font-size:15px;margin:0 0 6px}
+label .req{color:var(--brand)}
+input,select,textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:16px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.err{color:var(--err);font-size:14px;margin:-10px 0 14px;display:none}
+.consent{font-size:13px;color:var(--muted);margin:12px 0 0}
+.done{display:none;text-align:center;padding:12px 0}
+.done .big{font-size:46px}
+.contact-list{list-style:none;padding:0;margin:20px 0 0}
+.contact-list li{margin-bottom:10px}
+
+footer{padding:34px 0 90px;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+
+/* sticky mobile cta */
+.mcta{display:none}
+
+@media (max-width:860px){
+  .hero .wrap,.form-wrap{grid-template-columns:1fr}
+  .hero{padding-top:28px}
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr}
+  .price.best{order:-1}
+  section{padding:48px 0}
+  .mcta{display:block;position:fixed;left:12px;right:12px;bottom:12px;z-index:30}
+  .mcta .btn{width:100%}
+}
+@media (max-width:520px){
+  .g4{grid-template-columns:1fr}
+  .row2{grid-template-columns:1fr;gap:0}
+  .top .btn-sm{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#"><i>▶</i>Xưởng video</a>
+    <a class="btn btn-main btn-sm" href="#dang-ky">Dùng thử miễn phí</a>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Giọng đọc AI tiếng Việt · Chạy ngay trên điện thoại</span>
+      <h1>Dán bài viết vào, <span class="hl">ra video animation</span> có giọng đọc trong vài phút</h1>
+      <p class="lead">Không cần biết dựng video, không cần cài phần mềm, không cần thuê người đọc. Xưởng video biến bài viết bán hàng, mẹo hay, câu chuyện của bạn thành video dọc chữ bay, số liệu động, ảnh sản phẩm và nhạc nền, sẵn sàng đăng TikTok, Reels, Facebook.</p>
+      <div class="cta">
+        <a class="btn btn-main" href="#dang-ky">Nhận link dùng thử 24 giờ</a>
+        <a class="btn btn-ghost" href="#video-mau">Xem video mẫu</a>
+      </div>
+      <ul class="ticks">
+        <li>7 giọng đọc tiếng Việt</li>
+        <li>11 bảng màu theo từng nghề</li>
+        <li>Không cần mạng sau lần mở đầu</li>
+        <li>Điện thoại và máy tính</li>
+      </ul>
+    </div>
+    <div>
+      <div class="phone"><video id="heroV" src="video/gioi_thieu_doc.mp4" poster="video/gioi_thieu_doc.jpg" autoplay muted loop playsinline preload="metadata"></video><button class="unmute" id="unmute" type="button">🔊 Bật tiếng</button></div>
+      <p class="phone-note muted">Video giới thiệu · <a href="video/gioi_thieu_ngang.mp4" target="_blank" rel="noopener">xem bản ngang</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section>
+  <div class="wrap center">
+    <h2>Bạn có nội dung hay, nhưng <span class="hl">làm video thì mất cả buổi?</span></h2>
+    <p class="sub">Viết bài thì nhanh. Còn ngồi dựng CapCut, tìm nhạc, thu giọng, căn chữ từng câu thì mệt và tốn thời gian. Xưởng video làm phần đó thay bạn.</p>
+    <div class="grid g4" style="text-align:left">
+      <div class="card"><div class="ic">✍️</div><h3>Chỉ cần chữ</h3><p>Dán bài viết, hoặc chụp ảnh văn bản, app tự lấy chữ ra.</p></div>
+      <div class="card"><div class="ic">🎙️</div><h3>Giọng đọc AI</h3><p>7 giọng nam, nữ tiếng Việt, đọc đúng số, đơn vị, nhấn nhá từ khóa.</p></div>
+      <div class="card"><div class="ic">🎬</div><h3>Tự dựng cảnh</h3><p>Chữ bay, con số động, biểu tượng hợp nghề, ảnh sản phẩm, nhạc nền, tất cả tự động.</p></div>
+      <div class="card"><div class="ic">📶</div><h3>Không cần mạng</h3><p>Mở một lần là dùng được cả khi mất mạng. Không cần tài khoản AI nào.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section class="alt">
+  <div class="wrap center">
+    <h2>3 bước là có video</h2>
+    <p class="sub">Làm ngay trên điện thoại, trong lúc chờ cà phê.</p>
+    <div class="grid g3" style="text-align:left">
+      <div class="card step"><b class="n">1</b><h3>Dán bài viết</h3><p>Dán nội dung, hoặc bấm "Chụp văn bản thành chữ" để lấy chữ từ ảnh.</p></div>
+      <div class="card step"><b class="n">2</b><h3>Chọn giọng và màu</h3><p>Chọn giọng đọc, tốc độ, bảng màu, thêm tối đa 12 ảnh sản phẩm và nhạc nền.</p></div>
+      <div class="card step"><b class="n">3</b><h3>Bấm làm video</h3><p>App dựng video dọc 9:16 (TikTok, Reels) hoặc ngang 16:9 (YouTube), bấm tải về máy là đăng được ngay.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLES -->
+<section id="video-mau">
+  <div class="wrap center">
+    <h2>Video mẫu cho từng nghề</h2>
+    <p class="sub">Mỗi video dưới đây làm bằng Xưởng video chỉ từ vài câu chữ, không chỉnh sửa thêm. Bấm vào video để nghe giọng đọc.</p>
+    <div class="seg" role="tablist"><button type="button" class="on" data-f="doc">Dọc 9:16 · TikTok, Reels</button><button type="button" data-f="ngang">Ngang 16:9 · YouTube</button></div>
+    <div class="samples" id="samples">
+      <div class="sample"><video data-n="1_affiliate" src="video/1_affiliate_doc.mp4" poster="video/1_affiliate_doc.jpg" controls playsinline preload="none"></video><h3>📣 Affiliate</h3><p>Review sản phẩm, gắn link</p><p class="pal"><i class="sw"><b style="background:#DE4A2C"></b><b style="background:#FFF2E2"></b><b style="background:#FFE2A0"></b></i>Màu Sale, affiliate</p></div>
+      <div class="sample"><video data-n="2_shop_online" src="video/2_shop_online_doc.mp4" poster="video/2_shop_online_doc.jpg" controls playsinline preload="none"></video><h3>🛍️ Shop online</h3><p>Giới thiệu sản phẩm, giá, ưu đãi</p><p class="pal"><i class="sw"><b style="background:#FAF2E8"></b><b style="background:#4E5B48"></b><b style="background:#D45F78"></b></i>Màu Kem sage</p></div>
+      <div class="sample"><video data-n="3_thuong_hieu_ca_nhan" src="video/3_thuong_hieu_ca_nhan_doc.mp4" poster="video/3_thuong_hieu_ca_nhan_doc.jpg" controls playsinline preload="none"></video><h3>🌟 Thương hiệu cá nhân</h3><p>Chia sẻ hành trình của bạn</p><p class="pal"><i class="sw"><b style="background:#151515"></b><b style="background:#F4F1EA"></b><b style="background:#FF6F59"></b></i>Màu Thương hiệu cá nhân</p></div>
+      <div class="sample"><video data-n="4_xay_kenh_chua_lanh" src="video/4_xay_kenh_chua_lanh_doc.mp4" poster="video/4_xay_kenh_chua_lanh_doc.jpg" controls playsinline preload="none"></video><h3>🧘 Chữa lành, kể chuyện</h3><p>Tâm lý, cảm xúc, xây kênh</p><p class="pal"><i class="sw"><b style="background:#ECE9F2"></b><b style="background:#6E6596"></b><b style="background:#9A6A16"></b></i>Màu Chữa lành</p></div>
+      <div class="sample"><video data-n="5_giao_vien" src="video/5_giao_vien_doc.mp4" poster="video/5_giao_vien_doc.jpg" controls playsinline preload="none"></video><h3>👩‍🏫 Giáo viên</h3><p>Mẹo học, bài giảng ngắn</p><p class="pal"><i class="sw"><b style="background:#F1F5FA"></b><b style="background:#2F5A9E"></b><b style="background:#B86E00"></b></i>Màu Giáo viên, học tập</p></div>
+      <div class="sample"><video data-n="6_tu_van" src="video/6_tu_van_doc.mp4" poster="video/6_tu_van_doc.jpg" controls playsinline preload="none"></video><h3>💼 Tư vấn</h3><p>Bảo hiểm, bất động sản, tài chính</p><p class="pal"><i class="sw"><b style="background:#15293F"></b><b style="background:#F1ECE2"></b><b style="background:#D6B36A"></b></i>Màu Tư vấn, bảo hiểm, BĐS</p></div>
+      <div class="sample"><video data-n="7_doanh_nghiep" src="video/7_doanh_nghiep_doc.mp4" poster="video/7_doanh_nghiep_doc.jpg" controls playsinline preload="none"></video><h3>🧁 Tiệm bánh, quán nhỏ</h3><p>Con số, cảm ơn khách hàng</p><p class="pal"><i class="sw"><b style="background:#F6EEE2"></b><b style="background:#E7CFA9"></b><b style="background:#B8562A"></b></i>Màu Tiệm bánh, cà phê</p></div>
+      <div class="sample"><video data-n="8_lam_dep" src="video/8_lam_dep_doc.mp4" poster="video/8_lam_dep_doc.jpg" controls playsinline preload="none"></video><h3>💆 Làm đẹp, spa</h3><p>Liệu trình, chăm sóc da</p><p class="pal"><i class="sw"><b style="background:#F4ECE8"></b><b style="background:#9A6B5E"></b><b style="background:#9E4F3E"></b></i>Màu Làm đẹp, spa</p></div>
+      <div class="sample"><video data-n="9_suc_khoe" src="video/9_suc_khoe_doc.mp4" poster="video/9_suc_khoe_doc.jpg" controls playsinline preload="none"></video><h3>🥬 Sức khỏe, thực phẩm sạch</h3><p>Dinh dưỡng, sống xanh</p><p class="pal"><i class="sw"><b style="background:#EDF3EA"></b><b style="background:#4E7A5A"></b><b style="background:#B85E1C"></b></i>Màu Sức khỏe, xanh</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PALETTES -->
+<section class="alt">
+  <div class="wrap center">
+    <h2>Màu và biểu tượng <span class="hl">hợp với nghề của bạn</span></h2>
+    <p class="sub">Chọn bảng màu theo nghề, app tự phối nền, chữ, phụ đề và chọn biểu tượng phù hợp: tiệm bánh ra hình chiếc bánh, chữa lành ra hoa sen, giáo viên ra cây bút. Phối theo bánh xe màu, dịu mắt, dễ đọc.</p>
+    <div class="pals">
+      <span><i class="sw"><b style="background:#F6EEE2"></b><b style="background:#E7CFA9"></b><b style="background:#B8562A"></b></i>Tiệm bánh, cà phê</span>
+      <span><i class="sw"><b style="background:#ECE9F2"></b><b style="background:#6E6596"></b><b style="background:#9A6A16"></b></i>Chữa lành</span>
+      <span><i class="sw"><b style="background:#F1F5FA"></b><b style="background:#2F5A9E"></b><b style="background:#B86E00"></b></i>Giáo viên, học tập</span>
+      <span><i class="sw"><b style="background:#15293F"></b><b style="background:#F1ECE2"></b><b style="background:#D6B36A"></b></i>Tư vấn, bảo hiểm, BĐS</span>
+      <span><i class="sw"><b style="background:#DE4A2C"></b><b style="background:#FFF2E2"></b><b style="background:#FFE2A0"></b></i>Sale, affiliate</span>
+      <span><i class="sw"><b style="background:#151515"></b><b style="background:#F4F1EA"></b><b style="background:#FF6F59"></b></i>Thương hiệu cá nhân</span>
+      <span><i class="sw"><b style="background:#F4ECE8"></b><b style="background:#9A6B5E"></b><b style="background:#9E4F3E"></b></i>Làm đẹp, spa</span>
+      <span><i class="sw"><b style="background:#EDF3EA"></b><b style="background:#4E7A5A"></b><b style="background:#B85E1C"></b></i>Sức khỏe, xanh</span>
+      <span><i class="sw"><b style="background:#FFC21A"></b><b style="background:#F26A1D"></b><b style="background:#2B2F8C"></b></i>Vàng cam tím</span>
+      <span><i class="sw"><b style="background:#FAF2E8"></b><b style="background:#4E5B48"></b><b style="background:#D45F78"></b></i>Kem sage</span>
+      <span><i class="sw"><b style="background:#0E1633"></b><b style="background:#5EA2FF"></b><b style="background:#FFC857"></b></i>Xanh đêm</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section>
+  <div class="wrap center">
+    <h2>Dành cho ai?</h2>
+    <p class="sub">Bất kỳ ai cần ra video đều đặn mà không có thời gian hay đội ngũ dựng video.</p>
+    <div class="chips">
+      <span>🛍️ Chủ shop online</span><span>📣 Người làm affiliate</span><span>🌟 Xây thương hiệu cá nhân</span><span>🎬 Xây kênh TikTok, YouTube</span><span>👩‍🏫 Giáo viên, người dạy học</span>
+      <span>💼 Tư vấn viên, bảo hiểm, bất động sản</span><span>🧘 Người chia sẻ kiến thức, chữa lành</span><span>🧁 Tiệm bánh, quán cà phê</span><span>💆 Làm đẹp, spa</span><span>🥬 Sức khỏe, thực phẩm sạch</span><span>🏢 Doanh nghiệp nhỏ</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="bang-gia" class="alt">
+  <div class="wrap center">
+    <h2>Bảng giá</h2>
+    <p class="sub">Trả một lần, dùng trên máy của bạn. Không giới hạn số video.</p>
+    <div class="grid g3" style="text-align:left;margin-top:10px">
+      <div class="card price">
+        <h3>Gói 1 tháng</h3>
+        <div class="old">&nbsp;</div>
+        <div class="amt">99k <small>/ tháng</small></div>
+        <ul><li>Đủ tính năng</li><li>Làm video không giới hạn</li><li>Hỗ trợ qua Zalo</li></ul>
+        <a class="btn btn-ghost" href="#dang-ky" data-goi="1 tháng">Chọn gói này</a>
+      </div>
+      <div class="card price best">
+        <span class="tag">Được chọn nhiều nhất</span>
+        <h3>Gói 1 năm</h3>
+        <div class="old">590k</div>
+        <div class="amt">499k <small>/ năm</small></div>
+        <ul><li>Đủ tính năng</li><li>Rẻ hơn 58% so với trả tháng</li><li>Cập nhật giọng và mẫu mới</li><li>Hỗ trợ qua Zalo</li></ul>
+        <a class="btn btn-main" href="#dang-ky" data-goi="1 năm">Chọn gói này</a>
+      </div>
+      <div class="card price">
+        <h3>Gói vĩnh viễn</h3>
+        <div class="old">1.290k</div>
+        <div class="amt">990k <small>trọn đời</small></div>
+        <ul><li>Trả một lần, dùng mãi</li><li>Cập nhật miễn phí</li><li>Kèm bản chạy trên máy tính</li><li>Hỗ trợ ưu tiên qua Zalo</li></ul>
+        <a class="btn btn-ghost" href="#dang-ky" data-goi="Vĩnh viễn">Chọn gói này</a>
+      </div>
+    </div>
+    <p class="trial-bar">Chưa chắc? <a href="#dang-ky" class="hl">Dùng thử miễn phí 24 giờ</a>, không cần trả trước.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="wrap">
+    <h2 class="center">Câu hỏi thường gặp</h2>
+    <div class="faq" style="margin-top:24px">
+      <details><summary>Tôi không rành công nghệ, có dùng được không?</summary><p>Được. Bạn chỉ cần dán chữ và bấm nút. Nếu vướng, nhắn Zalo là được hướng dẫn từng bước.</p></details>
+      <details><summary>Có cần cài app hay đăng ký tài khoản AI không?</summary><p>Không. Xưởng video mở bằng trình duyệt (Chrome, Safari) trên điện thoại hoặc máy tính. Bạn có thể thêm biểu tượng ra màn hình chính để mở như một app.</p></details>
+      <details><summary>Không có mạng có dùng được không?</summary><p>Lần đầu cần wifi để máy tải giọng đọc (khoảng 110 MB). Sau đó không có mạng vẫn làm video được.</p></details>
+      <details><summary>Dùng thử 24 giờ thế nào?</summary><p>Bạn để lại tên và số Zalo ở form bên dưới, mình gửi link dùng thử qua Zalo. Trong 24 giờ bạn dùng đủ tính năng, thích thì mua.</p></details>
+      <details><summary>Mua xong kích hoạt ra sao?</summary><p>App hiện một "mã máy". Bạn gửi mã đó qua Zalo, mình gửi lại mã kích hoạt, bạn dán vào là dùng được ngay.</p></details>
+      <details><summary>Video có bị đóng dấu (watermark) không?</summary><p>Không. Video tải về sạch, bạn có thể thêm logo của mình ở góc video.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section id="dang-ky" class="alt">
+  <div class="wrap form-wrap">
+    <div>
+      <span class="eyebrow">Miễn phí, không cần trả trước</span>
+      <h2>Nhận link dùng thử 24 giờ</h2>
+      <p class="muted">Để lại thông tin, mình gửi link dùng thử qua Zalo trong ngày. Muốn nhanh hơn, nhắn thẳng Zalo nhé.</p>
+      <ul class="contact-list">
+        <li>💬 Zalo: <a href="https://zalo.me/0938333310" target="_blank" rel="noopener"><b>0938 333 310</b></a></li>
+        <li>📘 Fanpage: <a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">nhắn tin trên Facebook</a></li>
+      </ul>
+    </div>
+
+    <form class="card" id="f" novalidate>
+      <div id="fields">
+        <label for="ten">Họ và tên <span class="req">*</span></label>
+        <input id="ten" name="ten" autocomplete="name" placeholder="Nguyễn Văn A" required>
+        <p class="err" id="e-ten">Bạn nhập tên giúp mình nhé.</p>
+
+        <div class="row2">
+          <div>
+            <label for="sdt">Số điện thoại / Zalo <span class="req">*</span></label>
+            <input id="sdt" name="sdt" type="tel" inputmode="tel" autocomplete="tel" placeholder="09xx xxx xxx" required>
+            <p class="err" id="e-sdt">Số điện thoại chưa đúng.</p>
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" placeholder="(không bắt buộc)">
+            <p class="err" id="e-email">Email chưa đúng.</p>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="nghe">Bạn làm video để</label>
+            <select id="nghe" name="nghe">
+              <option value="">Chọn một</option>
+              <option>Bán hàng online</option>
+              <option>Affiliate</option>
+              <option>Dạy học, chia sẻ kiến thức</option>
+              <option>Tư vấn (bảo hiểm, BĐS, ...)</option>
+              <option>Xây kênh cá nhân</option>
+              <option>Doanh nghiệp</option>
+              <option>Khác</option>
+            </select>
+          </div>
+          <div>
+            <label for="goi">Gói bạn quan tâm</label>
+            <select id="goi" name="goi">
+              <option>Dùng thử trước</option>
+              <option>1 tháng</option>
+              <option>1 năm</option>
+              <option>Vĩnh viễn</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="hp" aria-hidden="true"><label for="web">Website</label><input id="web" name="web" tabindex="-1" autocomplete="off"></div>
+
+        <button class="btn btn-main" style="width:100%" id="gui" type="submit">Gửi đăng ký</button>
+        <p class="err" id="e-gui" style="margin:12px 0 0;text-align:center">Gửi chưa được. Bạn thử lại, hoặc nhắn Zalo 0938 333 310 nhé.</p>
+        <p class="consent">Thông tin chỉ dùng để gửi link dùng thử và tư vấn, không chia sẻ cho ai.</p>
+      </div>
+      <div class="done" id="done">
+        <div class="big">🎉</div>
+        <h3>Đã nhận đăng ký của bạn!</h3>
+        <p class="muted">Mình sẽ gửi link dùng thử qua Zalo trong ngày. Muốn nhận ngay, bấm nút dưới đây.</p>
+        <a class="btn btn-main" href="https://zalo.me/0938333310" target="_blank" rel="noopener">Nhắn Zalo nhận link ngay</a>
+      </div>
+    </form>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Xưởng video animation</span>
+    <span>Zalo <a href="https://zalo.me/0938333310">0938 333 310</a> · <a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></span>
+  </div>
+</footer>
+
+<div class="mcta"><a class="btn btn-main" href="#dang-ky">Dùng thử miễn phí 24 giờ</a></div>
+
+<script>
+// Link nhận đăng ký (Apps Script trong Sheet "Đăng ký Xưởng video" của Diễm). Để trống = xem thử, không lưu gì.
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4SE16h_Zb0sfgKHSmHKJ3BJ6LtlSUDtT9BrNjjcigdMrrE9O/exec';
+
+(function(){
+  const f = document.getElementById('f');
+  const $ = id => document.getElementById(id);
+  const show = (id, on) => { $(id).style.display = on ? 'block' : 'none'; };
+
+  // Đổi video mẫu dọc / ngang
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x === b));
+    const f = b.dataset.f;
+    $('samples').classList.toggle('ngang', f === 'ngang');
+    document.querySelectorAll('#samples video').forEach(v => { v.pause(); v.src = `video/${v.dataset.n}_${f}.mp4`; v.poster = `video/${v.dataset.n}_${f}.jpg`; });
+  }));
+  // Chỉ phát một video mẫu một lúc
+  document.querySelectorAll('#samples video').forEach(v => v.addEventListener('play', () => document.querySelectorAll('#samples video').forEach(o => { if (o !== v) o.pause(); })));
+  // Bật tiếng video giới thiệu
+  $('unmute').addEventListener('click', () => { const v = $('heroV'); v.muted = false; v.currentTime = 0; v.play(); $('unmute').hidden = true; });
+
+  // Bấm "Chọn gói này" thì điền sẵn gói vào form
+  document.querySelectorAll('[data-goi]').forEach(a => a.addEventListener('click', () => { $('goi').value = a.dataset.goi; }));
+
+  // Ẩn nút dính dưới màn hình khi đang ở form
+  const mcta = document.querySelector('.mcta');
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(es => es.forEach(e => { mcta.style.visibility = e.isIntersecting ? 'hidden' : 'visible'; }), {threshold: .15})
+      .observe($('dang-ky'));
+  }
+
+  // Ghi lại nguồn khách (vd ?nguon=tiktok hoặc utm_source=facebook)
+  const q = new URLSearchParams(location.search);
+  const nguon = q.get('nguon') || q.get('utm_source') || (document.referrer ? new URL(document.referrer).hostname : 'truc tiep');
+
+  f.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const ten = $('ten').value.trim();
+    const sdt = $('sdt').value.replace(/[^\d+]/g, '');
+    const email = $('email').value.trim();
+    const okTen = ten.length >= 2;
+    const okSdt = /^(\+?84|0)\d{9,10}$/.test(sdt);
+    const okEmail = !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    show('e-ten', !okTen); show('e-sdt', !okSdt); show('e-email', !okEmail); show('e-gui', false);
+    if (!okTen || !okSdt || !okEmail) return;
+    if ($('web').value) { finish(); return; } // máy spam
+
+    const btn = $('gui');
+    btn.disabled = true; btn.textContent = 'Đang gửi...';
+    const data = new URLSearchParams({ ten, sdt, email, nghe: $('nghe').value, goi: $('goi').value, nguon, trang: location.href.split('?')[0] });
+    try {
+      if (SHEET_URL) await fetch(SHEET_URL, { method: 'POST', mode: 'no-cors', body: data });
+      else await new Promise(r => setTimeout(r, 600));
+      finish();
+    } catch (e) {
+      show('e-gui', true);
+      btn.disabled = false; btn.textContent = 'Gửi đăng ký';
+    }
+  });
+
+  function finish(){ show('fields', false); show('done', true); $('dang-ky').scrollIntoView({behavior:'smooth'}); }
+})();
+</script>
+</body>
+</html>
