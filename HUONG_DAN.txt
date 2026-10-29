@@ -1,0 +1,16 @@
+XUONG VIDEO - BAN CHAY RIENG (KHONG CAN CLAUDE, KHONG CAN MANG)
+
+MAY TINH (Windows)
+1. Giai nen file zip ra mot thu muc (vi du Documents\XuongVideo).
+2. Bam dup file CHAY_XUONG_VIDEO.bat. Trinh duyet tu mo trang Xuong video.
+   (Lan dau Windows co the hoi "Windows protected your PC": bam "More info" > "Run anyway".)
+3. Lan dau bam "Lam video", may doc giong mat 1-2 phut. Tu lan sau chay ca khi tat mang.
+4. Bam "Tai video ve may": video vao thu muc Downloads.
+5. Giu cua so den mo trong luc lam. Lam xong thi dong cua so den va trang web.
+
+Khong mo truc tiep file index.html (trang se bao loi), luon mo bang CHAY_XUONG_VIDEO.bat.
+Nen dung Chrome hoac Edge.
+
+DIEN THOAI
+Can dua thu muc nay len mot trang web mien phi (lam 1 lan), roi mo tren dien thoai va "Them vao Man hinh chinh".
+Sau lan mo dau (tai khoang 110 MB), dien thoai chay duoc khi tat mang.
