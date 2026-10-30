@@ -1,4 +1,4 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1F2275"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><script>window.KK_FILES={"kk_mo_hinh_0.wasm": "phan_1/tts/kk_mo_hinh_0.wasm", "kk_mo_hinh_1.wasm": "phan_1/tts/kk_mo_hinh_1.wasm", "kk_mo_hinh_2.wasm": "phan_2/tts/kk_mo_hinh_2.wasm", "kk_mo_hinh_3.wasm": "phan_2/tts/kk_mo_hinh_3.wasm", "kk_mo_hinh_4.wasm": "phan_3/tts/kk_mo_hinh_4.wasm", "kk_mo_hinh_5.wasm": "phan_3/tts/kk_mo_hinh_5.wasm", "ort-wasm-simd-threaded.wasm": "phan_4/tts/ort-wasm-simd-threaded.wasm", "kk_am.json": "phan_4/tts/kk_am.json", "kk_giong.wasm": "phan_4/tts/kk_giong.wasm"}</script></head><body>
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#1F2275"><link rel="icon" href="icon.png"><link rel="apple-touch-icon" href="icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><script>window.KK_FILES={"kk_mo_hinh_0.wasm": "phan_1/tts/kk_mo_hinh_0.wasm", "kk_mo_hinh_1.wasm": "phan_1/tts/kk_mo_hinh_1.wasm", "kk_mo_hinh_2.wasm": "phan_2/tts/kk_mo_hinh_2.wasm", "kk_mo_hinh_3.wasm": "phan_2/tts/kk_mo_hinh_3.wasm", "kk_mo_hinh_4.wasm": "phan_3/tts/kk_mo_hinh_4.wasm", "kk_mo_hinh_5.wasm": "phan_3/tts/kk_mo_hinh_5.wasm", "ort-wasm-simd-threaded.wasm": "phan_4/tts/ort-wasm-simd-threaded.wasm", "kk_am.json": "phan_4/tts/kk_am.json", "kk_giong.wasm": "phan_4/tts/kk_giong.wasm", "kk_giong_bac.wasm": "phan_4/tts/kk_giong_bac.wasm"}</script></head><body>
 <title>Xưởng video</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="fonts.css">
@@ -98,6 +98,7 @@ video,#stage{max-width:100%;max-height:70vh;border-radius:16px;background:#000;a
 .scene .media{grid-column:1/-1;text-align:left;margin-top:2px;border:1.5px dashed var(--line);background:var(--panel);border-radius:14px;padding:10px}
 .scene .mh{font:800 14px var(--display);margin-bottom:6px}
 .scene .slots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bulk{margin:14px 0 4px;padding:14px;border:1.5px dashed var(--line);border-radius:14px;background:var(--field)}.bulk .bt2{font:800 15px var(--display);margin-bottom:10px}.bulk .brow{display:flex;flex-wrap:wrap;gap:8px}.bulk .bpick{position:relative;overflow:hidden;display:inline-flex;align-items:center;padding:10px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--flame);color:var(--flame);font:800 14px var(--display);cursor:pointer}.bulk .bpick input{position:absolute;inset:0;opacity:0;cursor:pointer}.bulk .bpick.busy{opacity:.6}.bulk .bclear{padding:10px 14px;border-radius:999px;font-size:14px}.bulk .note{margin:10px 0 0}
 .scene .slot .st{font-size:12.5px;font-weight:700;color:var(--muted);margin-bottom:4px}
 .scene .slot .empty,.scene .slot .fill{position:relative;height:88px;border-radius:12px;overflow:hidden}
 .scene .slot .empty{border:1.5px dashed var(--line);background:var(--field);display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 13.5px var(--display);color:var(--flame);cursor:pointer;text-align:center}
@@ -132,7 +133,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 2.0</p></div>
+    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 2.2</p></div>
   </header>
 
   <div class="grid">
@@ -141,7 +142,7 @@ details textarea{margin-top:6px}
       <span id="sampleNote" class="note"><span class="tag">Bài mẫu</span> Đây là bài ví dụ. Xóa đi rồi dán bài của bạn.</span>
       <textarea id="content" spellcheck="false" aria-label="Content"></textarea>
       <div class="row"><button id="btnClear" type="button">Xóa để dán bài mới</button><button id="btnSample" type="button">Dùng bài mẫu</button></div>
-      <div class="row"><button id="btnOcr" type="button">Thêm ảnh có chữ, máy đọc thành content</button><input id="ocrFile" type="file" accept="image/*" multiple hidden aria-label="Ảnh chụp văn bản"></div>
+      <div class="row"><button id="btnOcr" type="button">Đọc chữ từ ảnh thành content</button><input id="ocrFile" type="file" accept="image/*" multiple hidden aria-label="Ảnh chụp văn bản"></div>
       <span id="ocrNote" class="note">Chụp thẳng, đủ sáng, rõ chữ. Nhiều trang thì chọn nhiều ảnh theo thứ tự. Máy đọc xong, chữ hiện ở ô trên, sửa chỗ sai rồi làm video.</span>
       <details id="tips"><summary>Mẹo viết bài và chụp ảnh</summary>
       <span class="note" style="display:block;margin-top:6px">Mẹo: ảnh chụp màn hình bài đăng, chữ trang trí trên nền màu thì máy dễ đọc sai. Trên iPhone, mở ảnh trong app Ảnh, nhấn giữ lên chữ, chọn "Chọn tất cả" rồi "Sao chép", sau đó dán vào ô trên: chữ chuẩn hơn nhiều.</span>
@@ -181,11 +182,12 @@ Chữ:
       <div class="seg">
         <div class="opt"><label for="fmt">Khung</label><select id="fmt"><option value="doc">Dọc 9:16 (TikTok, Reels)</option><option value="ngang">Ngang 16:9 (YouTube)</option></select></div>
         <div class="opt"><label for="theme">Màu</label><select id="theme"><option value="navyhong">Premium</option><option value="rucro">Vibrant</option><option value="toi">Night</option><option value="kem">Minimal</option><option value="sale">Sale &amp; Affiliate</option><option value="canhan">Personal Brand</option><option value="banh">Food &amp; Cafe</option><option value="lamdep">Beauty &amp; Spa</option><option value="xanhla">Health Care</option><option value="lavender">Healing</option><option value="hoctap">Education</option><option value="tuvan">Finance &amp; Consulting</option></select></div>
-        <div class="opt"><label for="voice">Giọng đọc</label><select id="voice"><option value="kk_mai_loan" selected>Nữ, Mai Loan</option><option value="kk_storyvert">Nữ kể chuyện, Storyvert</option><option value="kk_my_yen">Nữ trầm ấm, Mỹ Yến</option><option value="kk_thuc_trinh">Nữ trẻ trung, Thục Trinh</option><option value="kk_duc_an">Nam, Đức An</option><option value="kk_tuan_ngoc">Nam trẻ trung, Tuấn Ngọc</option><option value="kk_thanh_dat">Nam trầm, Thành Đạt</option><option value="off">Không giọng</option></select></div>
+        <div class="opt"><label for="voice">Giọng đọc</label><select id="voice"><option value="kk_mai_loan" selected>Nữ, Mai Loan</option><option value="kk_storyvert">Nữ kể chuyện, Storyvert</option><option value="kk_my_yen">Nữ trầm ấm, Mỹ Yến</option><option value="kk_tram_bac">Nữ Bắc trầm ấm, Ngọc Huyền (chữa lành)</option><option value="kk_thuc_trinh">Nữ trẻ trung, Thục Trinh</option><option value="kk_duc_an">Nam, Đức An</option><option value="kk_tuan_ngoc">Nam trẻ trung, Tuấn Ngọc</option><option value="kk_thanh_dat">Nam trầm, Thành Đạt</option><option value="off">Không giọng</option></select></div>
         <div class="opt"><label for="style">Kiểu đọc</label><select id="style"><option value="mau" selected>Như mẫu (rõ, vui)</option><option value="nang_luong">Năng lượng</option><option value="chia_se">Chia sẻ</option><option value="tam_su">Tâm sự</option><option value="chua_lanh">Chữa lành</option></select></div>
-        <div class="opt"><label for="speed">Tốc độ đọc</label><select id="speed"><option value="0.85">Rất chậm, bài dài (0.85x)</option><option value="1" selected>Chậm (1x)</option><option value="1.3">Vừa (1.3x)</option><option value="1.7">Nhanh (1.7x)</option></select></div>
+        <div class="opt"><label for="speed">Tốc độ đọc</label><select id="speed"><option value="0.65">Sâu lắng, chữa lành (0.65x)</option><option value="0.85">Rất chậm, bài dài (0.85x)</option><option value="1" selected>Chậm (1x)</option><option value="1.3">Vừa (1.3x)</option><option value="1.7">Nhanh (1.7x)</option></select></div>
         <div class="opt"><label for="music">Nhạc nền</label><select id="music"><option value="auto">Nhạc vui có sẵn</option><option value="file">File nhạc của bạn</option><option value="off">Không nhạc</option></select></div>
-        <div class="opt"><label for="icons">Biểu tượng</label><select id="icons"><option value="auto" selected>Theo nội dung</option><option value="wave">Sóng nhạc theo giọng đọc</option></select></div>
+        <div class="opt"><label for="icons">Biểu tượng</label><select id="icons"><option value="auto" selected>Theo nội dung</option><option value="wave">Sóng nhạc theo giọng đọc</option><option value="que">Người que giấu mặt (chỉ phụ đề + từ khóa)</option></select></div>
+        <div class="opt" id="qtitleRow" hidden><label for="qtitle">Kiểu tiêu đề người que</label><select id="qtitle"><option value="vang" selected>Vàng đỏ viền đen</option><option value="bang">Băng rôn đỏ</option><option value="giay">Tờ giấy dán</option><option value="sang">Chữ phát sáng</option></select></div>
         <div class="opt"><label for="chu">Chữ trên video</label><select id="chu"><option value="short">Rút gọn ý chính</option><option value="full">Nguyên văn</option></select></div>
       </div>
       <div class="file" id="musicFileRow"><input id="musicFile" type="file" accept="audio/*"><span id="musicName" class="note">Chọn file mp3</span></div>
@@ -201,8 +203,17 @@ Chữ:
 
   <section id="editor" class="card" aria-labelledby="s3">
     <div class="step" id="s3"><b>3</b>Chia cảnh, chọn ảnh và chỉnh từng cảnh</div>
-    <p class="note">Bấm để máy chia bài thành cảnh (tối đa 12). Mỗi cảnh xem trước được hình, sửa được lời đọc, chữ hiện, kiểu cảnh, đổi thứ tự hoặc xóa cảnh. Mỗi cảnh có ô thêm ảnh sản phẩm và B-roll riêng. Cảnh nào không thêm thì không có ảnh, cảnh vẫn hiện thẻ và hiệu ứng như thường.</p>
+    <p class="note">Bấm để máy chia bài thành cảnh (tối đa 12). Mỗi cảnh xem trước được hình, sửa được lời đọc, chữ hiện, kiểu cảnh, đổi thứ tự hoặc xóa cảnh. Thêm ảnh cho cả video một lần ở ô bên dưới, hoặc thêm ảnh sản phẩm và B-roll riêng cho từng cảnh. Cảnh nào không có ảnh thì chạy nền mặc định.</p>
     <button id="btnSplit" type="button">Chia cảnh và xem trước</button>
+    <div id="bulk" class="bulk">
+      <div class="bt2">Thêm ảnh cho cả video (tối đa 12 ảnh mỗi loại)</div>
+      <div class="brow">
+        <label class="bpick">＋ Ảnh sản phẩm<input id="bulkP" type="file" accept="image/*" multiple aria-label="Chọn nhiều ảnh sản phẩm cho cả video"></label>
+        <label class="bpick">＋ B-roll (ảnh nền)<input id="bulkB" type="file" accept="image/*" multiple aria-label="Chọn nhiều ảnh B-roll cho cả video"></label>
+        <button id="bulkClear" type="button" class="bclear">Bỏ hết ảnh</button>
+      </div>
+      <p id="bulkNote" class="note">Chọn 1 hay nhiều ảnh cùng lúc: máy rải đều vào các cảnh theo thứ tự. Cảnh không có ảnh chạy nền mặc định. Muốn đổi ảnh từng cảnh thì sửa ở ô "Hình trong cảnh này" bên dưới.</p>
+    </div>
     <p id="sceneNote" class="note" hidden></p>
     <div id="scenes"></div>
   </section>
@@ -1114,7 +1125,11 @@ const TTS = (() => {
 const KK = (() => {
   const ORT_URL = (typeof window !== "undefined" && window.TTS_ORT_URL) || "./lib/ort.bundle.min.mjs";
   const SR = 24000, CACHE = "giong-kk-v1", PARTS = 6, STYLE_ROWS = 510, MAXT = 250;   // câu rất dài tốn nhiều bộ nhớ (điện thoại dễ sập trang): cắt thành đoạn
-  const VOICES = ["mai_loan", "storyvert", "my_yen", "thuc_trinh", "duc_an", "tuan_ngoc", "thanh_dat"];
+  const VOICES = ["mai_loan", "storyvert", "my_yen", "thuc_trinh", "duc_an", "tuan_ngoc", "thanh_dat", "tram_bac"];   // tram_bac: file riêng kk_giong_bac.wasm (Ngọc Huyền 0.65 + Thành Đạt 0.35, giọng 15 Diễm chọn)
+  // giọng trộn: pha sẵn từ các giọng gốc (theo tỉ lệ) rồi hạ tông nhẹ. tram_lang = mẫu số 7 Diễm chọn cho chữa lành, triết lý
+  const MIX = { tram_lang: { mix: [["my_yen", .8], ["thanh_dat", .2]], pitch: .94 } };
+  // chỉnh riêng từng giọng: hạ tông (pitch) và đọc chậm hơn (sp) so với tốc độ chọn trên trang
+  const TUNE = { tram_lang: { pitch: .94 }, tram_bac: { pitch: .88, sp: .86 } };
   const VOCAB = {";":1,":":2,",":3,".":4,"!":5,"?":6,"—":9,"…":10,"\"":11,"(":12,")":13,"“":14,"”":15," ":16,"̃":17,"ʣ":18,"ʥ":19,"ʦ":20,"ʨ":21,"ᵝ":22,"ꭧ":23,"A":24,"I":25,"O":31,"Q":33,"S":35,"T":36,"W":39,"Y":41,"ᵊ":42,"a":43,"b":44,"c":45,"d":46,"e":47,"f":48,"h":50,"i":51,"j":52,"k":53,"l":54,"m":55,"n":56,"o":57,"p":58,"q":59,"r":60,"s":61,"t":62,"u":63,"v":64,"w":65,"x":66,"y":67,"z":68,"ɑ":69,"ɐ":70,"ɒ":71,"æ":72,"β":75,"ɔ":76,"ɕ":77,"ç":78,"ɖ":80,"ð":81,"ʤ":82,"ə":83,"ɚ":85,"ɛ":86,"ɜ":87,"ɟ":90,"ɡ":92,"ɥ":99,"ɨ":101,"ɪ":102,"ʝ":103,"ɯ":110,"ɰ":111,"ŋ":112,"ɳ":113,"ɲ":114,"ɴ":115,"ø":116,"ɸ":118,"θ":119,"œ":120,"ɹ":123,"ɾ":125,"ɻ":126,"ʁ":128,"ɽ":129,"ʂ":130,"ʃ":131,"ʈ":132,"ʧ":133,"ʊ":135,"ʋ":136,"ʌ":138,"ɣ":139,"ɤ":140,"χ":142,"ʎ":143,"ʒ":147,"ʔ":148,"ˈ":156,"ˌ":157,"ː":158,"ʰ":162,"ʲ":164,"↓":169,"→":171,"↗":172,"↘":173,"ᵻ":177};
   // tiếng không có trong bảng âm vị
   const FIX = { skin: "ʂkˈin", phri: "fɹˈi" };
@@ -1143,12 +1158,12 @@ const KK = (() => {
   function load(progress) {
     if (loading) return loading;
     loading = (async () => {
-      const TOTAL = 82635779 + 3655680 + 11246032 + 3025201; let got = 0;
+      const TOTAL = 82635779 + 3655680 + 522240 + 11246032 + 3025201; let got = 0;
       const tick = n => { got += n; progress && progress(Math.min(1, got / TOTAL), "Đang tải giọng đọc mới (" + Math.round(got / 1e6) + "/" + Math.round(TOTAL / 1e6) + " MB, chỉ lần đầu)"); };
       const [ortMod, wasm, st, tab, ...parts] = await Promise.all([
         import(ORT_URL),
         getFile(F("ort-wasm-simd-threaded.wasm"), tick),
-        getFile(F("kk_giong.wasm"), tick),
+        getFile(F("kk_giong.wasm"), tick).then(async a => { const b = await getFile(F("kk_giong_bac.wasm"), tick), c = new Uint8Array(a.byteLength + b.byteLength); c.set(new Uint8Array(a)); c.set(new Uint8Array(b), a.byteLength); return c.buffer; }),
         getFile(F("kk_am.json"), tick),
         ...Array.from({ length: PARTS }, (_, k) => getFile(F("kk_mo_hinh_" + k + ".wasm"), tick)),
       ]);
@@ -1203,11 +1218,18 @@ const KK = (() => {
     return x.subarray(Math.max(0, first - 3) * n, Math.min(x.length, (last + 5) * n));
   }
 
-  async function run(ids, vi, speed) {
-    const row = Math.min(ids.length, STYLE_ROWS) - 1, off = (vi * STYLE_ROWS + row) * 256;
+  function refOf(voice, row) {
+    const one = v => { const off = (Math.max(0, VOICES.indexOf(v)) * STYLE_ROWS + row) * 256; return styles.slice(off, off + 256); };
+    if (!MIX[voice]) return one(voice);
+    const r = new Float32Array(256);
+    for (const [v, w] of MIX[voice].mix) { const x = one(v); for (let i = 0; i < 256; i++) r[i] += w * x[i]; }
+    return r;
+  }
+  async function run(ids, voice, speed) {
+    const row = Math.min(ids.length, STYLE_ROWS) - 1;
     const feeds = {
       input_ids: new ort.Tensor("int64", BigInt64Array.from([0, ...ids, 0].map(BigInt)), [1, ids.length + 2]),
-      ref_s: new ort.Tensor("float32", styles.slice(off, off + 256), [1, 256]),
+      ref_s: new ort.Tensor("float32", refOf(voice, row), [1, 256]),
       speed: new ort.Tensor("float32", Float32Array.from([speed]), []),
     };
     const out = await session.run(feeds);
@@ -1216,7 +1238,6 @@ const KK = (() => {
 
   // 1 câu -> Float32Array 24000 Hz. Câu quá dài thì cắt ở dấu phẩy / khoảng trắng.
   async function speak(text, speed = 1, voice = VOICES[0]) {
-    const vi = Math.max(0, VOICES.indexOf(voice));
     const ph = phonemize(text);
     const pieces = []; let rest = ph;
     while (rest) {
@@ -1227,7 +1248,7 @@ const KK = (() => {
       }
       rest = rest.slice(cut.length).trim();
       const ids = toIds(cut.trim());
-      if (ids.length) { if (pieces.length) pieces.push(new Float32Array(Math.floor(SR * .06))); pieces.push(await run(ids, vi, speed)); }
+      if (ids.length) { if (pieces.length) pieces.push(new Float32Array(Math.floor(SR * .06))); pieces.push(await run(ids, voice, speed)); }
     }
     if (!pieces.length) return new Float32Array(Math.floor(SR * 0.2));
     const len = pieces.reduce((a, b) => a + b.length, 0), y = new Float32Array(len); let o = 0;
@@ -1240,12 +1261,17 @@ const KK = (() => {
   const RATE = 1.67, MAXSP = 1.6;
   function synthFor(voice) {
     return async (text, sp) => {
-      const want = sp * RATE, base = Math.min(want, MAXSP);
-      return { audio: TTS.stretch(await speak(text, base, voice), want / base), sr: SR };
+      const tu = TUNE[voice] || {}, want = sp * RATE * (tu.sp || 1), base = Math.min(want, MAXSP);
+      const p = tu.pitch || 1, a = await speak(text, base, voice);
+      if (p === 1) return { audio: TTS.stretch(a, want / base), sr: SR };
+      // hạ tông: co thời gian trước rồi đọc chậm lại đúng p lần (giọng trầm hơn, độ dài giữ nguyên)
+      const x = TTS.stretch(a, want / base / p), n = Math.floor(x.length / p), y = new Float32Array(n);
+      for (let i = 0; i < n; i++) { const t = i * p, k = Math.floor(t), f = t - k; y[i] = (x[k] || 0) * (1 - f) + (x[k + 1] || 0) * f; }
+      return { audio: y, sr: SR };
     };
   }
 
-  return { load, speak, synthFor, phonemize, VOICES, SR, ready: () => !!session, _tab: t => { TAB = t; } };
+  return { load, speak, synthFor, phonemize, VOICES, MIX, SR, ready: () => !!session, _tab: t => { TAB = t; } };
 })();
 
 </script>
@@ -1885,6 +1911,246 @@ const Render = (() => {
       ctx.restore();
     }
 
+    // ------------------------------------------------------------------ kiểu "Người que giấu mặt": tiêu đề cố định trên, khung cảnh có người que (áo sơ mi, cà vạt, kính),
+    // bong bóng ý nghĩ có biểu tượng / ảnh / từ khóa, nhóm người phụ, dấu cảm xúc theo nội dung; phụ đề trắng dưới khung
+    const QC = { bg: "#323A45", wall: "#4A5361", wall2: "#444D5A", floor: "#39414C", line: "#2A3039", ink: "#14171C", shirt: "#FFFFFF", tie: "#22306B", pants: "#1B1E24", t1: "#FFE14D", t2: "#FF4436", red: "#E8322B", pink: "#F28DB2" };
+    const lerp = (a, b, k) => a + (b - a) * k;
+    function level() {
+      if (!LV) return 0;
+      const i = Math.max(0, Math.min(LV.length / NB - 1, Math.floor(curT * LVR)));
+      let v = 0; for (let j = 0; j < NB; j++) v += LV[i * NB + j]; return v / NB;
+    }
+    const NFCs = x => String(x || "").normalize("NFC").toLowerCase();
+    const RX_NEG = /(đừng|không nên|cẩn thận|sai lầm|mất|tệ|khó|buồn|mệt|áp lực|lo lắng|sợ|giận|đau|thất bại|nợ|cô đơn|tổn thương|phản bội|chậm)/;
+    const RX_POS = /(vui|hạnh phúc|yêu|biết ơn|bình an|nhẹ nhàng|thành công|tốt|tuyệt|đẹp|giàu|tự do|bình yên|mạnh mẽ|kiên nhẫn|bước tiếp|đến)/;
+    const RX_PPL = /(mọi người|bạn bè|họ hàng|gia đình|người thân|đồng nghiệp|người khác|khách hàng|họ hàng|con cái|vợ|chồng|bố mẹ|cha mẹ|ai cũng)/;
+    function moodOf(sc) {
+      const s = NFCs(sc.say);
+      if (sc.kind === "question" || /\?/.test(sc.say || "")) return "ask";
+      if (RX_NEG.test(s) && !/(không phải là thua|vẫn)/.test(s)) return "neg";
+      if (RX_POS.test(s)) return "pos";
+      return "calm";
+    }
+    // tư thế = chỗ đặt 2 bàn tay so với vai (x: ra ngoài người, y: xuống dưới), khuỷu tay tự tính
+    const HANDS = {
+      rest: [[22, 195], [22, 195]], explain: [[22, 190], [150, 30]], open: [[150, 80], [150, 80]], think: [[-25, 95], [-42, -18]],
+      up: [[22, 190], [80, -165]], scratch: [[22, 190], [-8, -150]], cross: [[-50, 70], [-55, 78]], chest: [[22, 190], [-34, 45]],
+    };
+    const POSES = { ask: ["think", "scratch"], neg: ["scratch", "cross", "think"], pos: ["open", "up", "explain"], calm: ["explain", "chest", "open"] };
+    function poseOf(tl, k) { if (k < 0) return "rest"; const m = moodOf(tl[k]); const a = POSES[m]; return a[k % a.length]; }
+    function ik(sx, sy, hx, hy, sd, l1, l2) {
+      let dx = hx - sx, dy = hy - sy, d = Math.hypot(dx, dy); const mx = (l1 + l2) * .995, mn = Math.abs(l1 - l2) + 1;
+      if (d > mx) { dx *= mx / d; dy *= mx / d; d = mx; } if (d < mn) { dx *= mn / d; dy *= mn / d; d = mn; }
+      const a = Math.atan2(dy, dx), b = Math.acos(clamp((l1 * l1 + d * d - l2 * l2) / (2 * l1 * d), -1, 1));
+      const e1 = [sx + Math.cos(a + b) * l1, sy + Math.sin(a + b) * l1], e2 = [sx + Math.cos(a - b) * l1, sy + Math.sin(a - b) * l1];
+      const el = (e1[0] - sx) * sd > (e2[0] - sx) * sd ? e1 : e2;   // khuỷu tay chĩa ra ngoài
+      return [el, [sx + dx, sy + dy]];
+    }
+    function figure(fx, fy, S, hands, mood, lev, t, walk) {
+      const ln = (pts, w, c) => { ctx.strokeStyle = c || QC.ink; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.stroke(); };
+      const breath = Math.sin(curT * 2.2) * 3 * S, hipY = fy - 205 * S, shY = hipY - 215 * S + breath, sway = Math.sin(curT * .9) * 3 * S;
+      ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.globalAlpha = .25; ctx.fillStyle = "#000"; ctx.beginPath(); ctx.ellipse(fx, fy + 8 * S, 95 * S, 14 * S, 0, 0, 7); ctx.fill(); ctx.globalAlpha = 1;
+      // chân + giày
+      const st = walk ? Math.sin(walk * 9) * 32 * S : 0;
+      for (const sd of [-1, 1]) {
+        const footX = fx + sd * 34 * S + sd * st;
+        ln([[fx + sd * 20 * S, hipY], [footX, fy - 10 * S]], 30 * S, QC.pants);
+        ctx.fillStyle = QC.ink; ctx.beginPath(); ctx.ellipse(footX + sd * 10 * S, fy - 6 * S, 26 * S, 12 * S, 0, 0, 7); ctx.fill();
+      }
+      // thân áo sơ mi trắng + cà vạt
+      const cx = fx + sway;
+      ctx.fillStyle = QC.shirt; ctx.strokeStyle = QC.ink; ctx.lineWidth = 6 * S;
+      ctx.beginPath(); ctx.moveTo(cx - 50 * S, shY + 6 * S); ctx.quadraticCurveTo(cx, shY - 8 * S, cx + 50 * S, shY + 6 * S); ctx.lineTo(cx + 44 * S, hipY + 8 * S); ctx.lineTo(cx - 44 * S, hipY + 8 * S); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = QC.tie; ctx.beginPath(); ctx.moveTo(cx - 9 * S, shY + 4 * S); ctx.lineTo(cx + 9 * S, shY + 4 * S); ctx.lineTo(cx + 6 * S, shY + 22 * S); ctx.lineTo(cx + 14 * S, shY + 140 * S); ctx.lineTo(cx, shY + 158 * S); ctx.lineTo(cx - 14 * S, shY + 140 * S); ctx.lineTo(cx - 6 * S, shY + 22 * S); ctx.closePath(); ctx.fill();
+      ctx.lineWidth = 4 * S; ctx.beginPath(); ctx.moveTo(cx - 22 * S, shY + 2 * S); ctx.lineTo(cx - 6 * S, shY + 22 * S); ctx.moveTo(cx + 22 * S, shY + 2 * S); ctx.lineTo(cx + 6 * S, shY + 22 * S); ctx.stroke();
+      // đầu
+      const tilt = mood === "ask" ? .12 : mood === "neg" ? -.06 : Math.sin(curT * .7) * .04, hr = 66 * S, hx = cx + Math.sin(tilt) * 60 * S, hy = shY - 78 * S;
+      // tay (vẽ trước đầu để tay gãi đầu nằm trên tóc thì vẽ lại sau)
+      const arms = [];
+      for (const sd of [-1, 1]) {
+        const h = hands[sd < 0 ? 0 : 1], g = Math.sin(curT * 3.1 + sd * 1.7) * 14 * (.25 + lev * 1.2);
+        const sx = cx + sd * 46 * S, sy = shY + 14 * S;
+        const [el, hd] = ik(sx, sy, sx + sd * (h[0] + g * .6) * S, sy + (h[1] + g) * S, sd, 108 * S, 104 * S);
+        arms.push([[sx, sy], el, hd, h[1] < -60]);
+      }
+      for (const a of arms) if (!a[3]) { ln(a.slice(0, 3), 9 * S); ctx.fillStyle = QC.shirt; ctx.lineWidth = 5 * S; ctx.beginPath(); ctx.arc(a[2][0], a[2][1], 13 * S, 0, 7); ctx.fill(); ctx.stroke(); }
+      ctx.save(); ctx.translate(hx, hy); ctx.rotate(tilt);
+      ctx.fillStyle = QC.shirt; ctx.strokeStyle = QC.ink; ctx.lineWidth = 7 * S; ctx.beginPath(); ctx.arc(0, 0, hr, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.lineWidth = 5 * S; ctx.beginPath(); for (const [a, l] of [[-1.9, 22], [-1.6, 28], [-1.3, 24], [-1.05, 18]]) { ctx.moveTo(Math.cos(a) * hr, Math.sin(a) * hr); ctx.lineTo(Math.cos(a) * (hr + l * S), Math.sin(a) * (hr + l * S)); } ctx.stroke();
+      // kính + mắt
+      ctx.lineWidth = 5 * S; for (const sd of [-1, 1]) { rrect(sd * 27 * S - 19 * S, -14 * S, 38 * S, 28 * S, 9 * S); ctx.stroke(); }
+      ctx.beginPath(); ctx.moveTo(-8 * S, -4 * S); ctx.lineTo(8 * S, -4 * S); ctx.stroke();
+      const blink = (curT % 3.6) < .13 ? .15 : 1, look = mood === "ask" ? -4 * S : 0;
+      ctx.fillStyle = QC.ink; for (const sd of [-1, 1]) { ctx.beginPath(); ctx.ellipse(sd * 27 * S, look, 5.5 * S, 7 * S * blink, 0, 0, 7); ctx.fill(); }
+      if (mood === "neg" || mood === "ask") { ctx.lineWidth = 4 * S; ctx.beginPath(); ctx.moveTo(-42 * S, -26 * S); ctx.lineTo(-16 * S, mood === "neg" ? -22 * S : -30 * S); ctx.moveTo(42 * S, -26 * S); ctx.lineTo(16 * S, mood === "neg" ? -22 * S : -32 * S); ctx.stroke(); }
+      // miệng: nói thì mở theo giọng
+      const mo = lev * 16 * S; ctx.lineWidth = 5 * S;
+      if (mo > 3 * S) { ctx.beginPath(); ctx.ellipse(0, 32 * S, 11 * S, mo, 0, 0, 7); ctx.fill(); }
+      else if (mood === "pos") { ctx.beginPath(); ctx.arc(0, 22 * S, 16 * S, .25 * Math.PI, .75 * Math.PI); ctx.stroke(); }
+      else if (mood === "neg") { ctx.beginPath(); ctx.arc(0, 46 * S, 14 * S, 1.2 * Math.PI, 1.8 * Math.PI); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.moveTo(-10 * S, 34 * S); ctx.lineTo(10 * S, 34 * S); ctx.stroke(); }
+      ctx.restore();
+      for (const a of arms) if (a[3]) { ln(a.slice(0, 3), 9 * S); ctx.fillStyle = QC.shirt; ctx.lineWidth = 5 * S; ctx.beginPath(); ctx.arc(a[2][0], a[2][1], 13 * S, 0, 7); ctx.fill(); ctx.stroke(); }
+      ctx.restore();
+      return { hx, hy, hr, top: hy - hr };
+    }
+    // dấu cảm xúc cạnh đầu
+    function moodMark(mood, f, t, S) {
+      const k = back(clamp((t - .35) / .4)); if (k <= 0) return;
+      ctx.save(); ctx.translate(f.hx + f.hr * 1.15, f.hy - f.hr * .9); ctx.scale(k, k); ctx.lineCap = "round";
+      if (mood === "ask") { ctx.fillStyle = "#FFFFFF"; ctx.font = fontOf(90 * S, 900); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.rotate(Math.sin(curT * 3) * .12); ctx.fillText("?", 0, 0); ctx.font = fontOf(56 * S, 900); ctx.fillText("?", 52 * S, 30 * S); }
+      else if (mood === "neg") {
+        ctx.fillStyle = "#FFC83D"; ctx.beginPath(); ctx.moveTo(0, -44 * S); ctx.lineTo(40 * S, 26 * S); ctx.lineTo(-40 * S, 26 * S); ctx.closePath(); ctx.fill();
+        ctx.fillStyle = QC.ink; ctx.fillRect(-4 * S, -18 * S, 8 * S, 26 * S); ctx.beginPath(); ctx.arc(0, 16 * S, 5 * S, 0, 7); ctx.fill();
+        const d = (curT * 1.4) % 1; ctx.globalAlpha = 1 - d; ctx.fillStyle = "#8FD3FF"; ctx.beginPath(); ctx.ellipse(-f.hr * 2.05, 20 * S + d * 40 * S, 9 * S, 14 * S, 0, 0, 7); ctx.fill();
+      } else if (mood === "pos") { ctx.fillStyle = "#FFE14D"; for (const [x, y, r] of [[0, 0, 30], [46, 34, 18], [-30, 44, 14]]) { star(x * S, y * S, r * S * (1 + .15 * Math.sin(curT * 5 + x)), r * S * .35, 4); ctx.fill(); } }
+      ctx.restore();
+    }
+    // bong bóng ý nghĩ: ảnh sản phẩm hoặc biểu tượng + từ khóa
+    function thought(cx, cy, w, h, f, t, sc, st, kw) {
+      const k = back(clamp((t - .25) / .45)); if (k <= 0) return;
+      const im = productFor(st);
+      ctx.save();
+      ctx.fillStyle = "#FFFFFF"; ctx.strokeStyle = QC.ink; ctx.lineWidth = 6 * U;
+      for (const [q, r] of [[.18, 12], [.32, 20]]) { const x = lerp(f.hx + f.hr, cx - w / 2, q * 2), y = lerp(f.hy - f.hr * .6, cy + h * .3, q * 2); ctx.beginPath(); ctx.arc(x, y, r * U * k, 0, 7); ctx.fill(); ctx.stroke(); }
+      ctx.translate(cx, cy + Math.sin(curT * 1.5) * 6 * U); ctx.scale(k, k);
+      ctx.beginPath(); ctx.ellipse(0, 0, w / 2, h / 2, 0, 0, 7); ctx.fill(); ctx.stroke();
+      const txt = kw ? kw.toUpperCase() : "";
+      const ih = txt ? h * .5 : h * .62, iy = txt ? -h * .12 : 0;
+      if (im) {
+        const ar = clamp(im.width / im.height, .75, 1.4), hh = ih, ww = hh * ar;
+        ctx.save(); rrect(-ww / 2, iy - hh / 2, ww, hh, 18 * U); ctx.clip(); coverImage(im, -ww / 2, iy - hh / 2, ww, hh, 1); ctx.restore();
+      } else icon(sc.icon || "bulb", 0, iy, ih * .9, QC.red, "#FFFFFF");
+      if (txt) {
+        let sz = h * .15; ctx.font = fontOf(sz, 900); const tw = ctx.measureText(txt).width; if (tw > w * .64) sz *= w * .64 / tw;
+        ctx.font = fontOf(sz, 900); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillStyle = QC.ink; ctx.fillText(txt, 0, h * .3);
+      }
+      ctx.restore();
+    }
+    // nhóm người phụ (bạn bè, họ hàng, khách...)
+    function crowd(x0, x1, fy, S, t, kw) {
+      const n = 4, ic = ["heart", "question", "star", "chat"];
+      for (let i = 0; i < n; i++) {
+        const k = back(clamp((t - .2 - i * .12) / .4)); if (k <= 0) continue;
+        const x = lerp(x0, x1, i / (n - 1)), y = fy - (i % 2 ? 0 : 18 * S), b = Math.abs(Math.sin(curT * 2.4 + i * 1.3)) * 10 * S, s = S * (.95 + (i % 2) * .1), girl = i % 2 === 1;
+        ctx.save(); ctx.translate(x, y - b); ctx.scale(k, k); ctx.lineCap = "round"; ctx.strokeStyle = QC.ink; ctx.lineWidth = 6 * s;
+        ctx.beginPath(); ctx.moveTo(-16 * s, 0); ctx.lineTo(-10 * s, -90 * s); ctx.moveTo(16 * s, 0); ctx.lineTo(10 * s, -90 * s); ctx.stroke();
+        ctx.fillStyle = girl ? QC.pink : "#FFFFFF"; ctx.beginPath(); ctx.moveTo(-26 * s, -200 * s); ctx.lineTo(26 * s, -200 * s); ctx.lineTo(girl ? 42 * s : 30 * s, -90 * s); ctx.lineTo(girl ? -42 * s : -30 * s, -90 * s); ctx.closePath(); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-26 * s, -190 * s); ctx.lineTo(-44 * s, -120 * s + Math.sin(curT * 3 + i) * 8 * s); ctx.moveTo(26 * s, -190 * s); ctx.lineTo(44 * s, -120 * s - Math.sin(curT * 3 + i) * 8 * s); ctx.stroke();
+        ctx.fillStyle = "#FFFFFF"; ctx.beginPath(); ctx.arc(0, -246 * s, 44 * s, 0, 7); ctx.fill(); ctx.stroke();
+        if (girl) { ctx.fillStyle = QC.ink; ctx.beginPath(); ctx.arc(0, -252 * s, 46 * s, Math.PI * 1.05, Math.PI * 1.95); ctx.fill(); }
+        ctx.fillStyle = QC.ink; for (const sd of [-1, 1]) { ctx.beginPath(); ctx.arc(sd * 15 * s, -244 * s, 5 * s, 0, 7); ctx.fill(); }
+        ctx.beginPath(); ctx.arc(0, -232 * s, 10 * s, .2 * Math.PI, .8 * Math.PI); ctx.stroke();
+        const k2 = back(clamp((t - .6 - i * .15) / .4)); if (k2 > 0) { ctx.save(); ctx.translate(0, -330 * s); ctx.scale(k2, k2); ctx.fillStyle = "#FFFFFF"; ctx.beginPath(); ctx.arc(0, 0, 32 * s, 0, 7); ctx.fill(); icon(ic[i], 0, 0, 40 * s, QC.red, "#FFFFFF"); ctx.restore(); }
+        ctx.restore();
+      }
+      if (kw) { const k = easeOut((t - .5) / .4); if (k > 0) { ctx.save(); ctx.globalAlpha = k; const sz = 64 * S; ctx.font = fontOf(sz, 900); const tx = kw.toUpperCase(), w = ctx.measureText(tx).width + sz; ctx.fillStyle = QC.t1; rrect((x0 + x1) / 2 - w / 2, fy - 560 * S, w, sz * 1.5, sz * .75); ctx.fill(); ctx.fillStyle = QC.ink; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(tx, (x0 + x1) / 2, fy - 560 * S + sz * .78); ctx.restore(); } }
+    }
+    // phòng: tường, sàn, đồ trang trí đổi theo cảnh
+    function room(x, y, w, h, k, S) {
+      ctx.fillStyle = QC.wall; ctx.fillRect(x, y, w, h);
+      ctx.fillStyle = QC.wall2; for (let i = 0; i < 6; i++) ctx.fillRect(x + i * w / 6, y, 3 * U, h * .78);
+      const fl = y + h * .78; ctx.fillStyle = QC.floor; ctx.fillRect(x, fl, w, h - h * .78); ctx.fillStyle = QC.line; ctx.fillRect(x, fl, w, 8 * U);
+      ctx.save(); ctx.strokeStyle = QC.line; ctx.lineWidth = 7 * U; ctx.fillStyle = QC.wall2;
+      const d = k % 3, rx = x + w * .78;
+      if (d === 0) { rrect(rx - 90 * S, y + h * .12, 180 * S, 210 * S, 8 * U); ctx.fill(); ctx.stroke(); ctx.beginPath(); ctx.moveTo(rx, y + h * .12); ctx.lineTo(rx, y + h * .12 + 210 * S); ctx.moveTo(rx - 90 * S, y + h * .12 + 105 * S); ctx.lineTo(rx + 90 * S, y + h * .12 + 105 * S); ctx.stroke(); }
+      else if (d === 1) { ctx.fillStyle = QC.line; ctx.fillRect(rx - 140 * S, y + h * .3, 280 * S, 14 * S); ctx.fillStyle = "#6E8B62"; ctx.beginPath(); ctx.arc(rx - 80 * S, y + h * .3 - 40 * S, 34 * S, 0, 7); ctx.fill(); ctx.fillStyle = QC.line; ctx.fillRect(rx - 100 * S, y + h * .3 - 30 * S, 40 * S, 30 * S); rrect(rx + 20 * S, y + h * .3 - 90 * S, 90 * S, 90 * S, 6 * U); ctx.fillStyle = QC.wall2; ctx.fill(); ctx.stroke(); }
+      else { rrect(x + w * .06, y + h * .14, 150 * S, h * .64, 6 * U); ctx.fill(); ctx.stroke(); ctx.fillStyle = QC.line; ctx.beginPath(); ctx.arc(x + w * .06 + 124 * S, y + h * .5, 9 * S, 0, 7); ctx.fill(); }
+      ctx.restore();
+    }
+    // từ khóa (chữ **tô màu**) của cảnh
+    function kwOf(sc) {
+      const toks = sc.show || [], out = []; let cur = null;
+      toks.forEach(x => { if (x.hl) { if (!cur) out.push(cur = []); cur.push(String(x.w).replace(/[,.;:!?…]+$/, "")); } else cur = null; });
+      return out.length ? out[0].join(" ") : "";
+    }
+    // tiêu đề cố định (chữ của cảnh đầu): dòng 1 vàng, dòng 2 đỏ, viền đen
+    // kiểu tiêu đề: vang (vàng đỏ viền đen), bang (băng rôn đỏ), giay (tờ giấy dán băng keo), sang (dòng nhỏ + dòng lớn phát sáng)
+    function queTitle(tl, T) {
+      const toks = (tl[0].show || []).map(x => ({ w: String(x.w).toUpperCase(), hl: !!x.hl })).filter(x => x.w);
+      if (!toks.length) return;
+      const ws = toks.map(x => x.w);
+      let best = 1, bd = 1e9; for (let i = 1; i < ws.length; i++) { const d = Math.abs(ws.slice(0, i).join(" ").length - ws.slice(i).join(" ").length); if (d < bd) { bd = d; best = i; } }
+      const lines = ws.length > 2 ? [toks.slice(0, best), toks.slice(best)] : [toks];
+      const sty = opt.qtitle || "vang", y0 = P ? 300 * U : 95 * U, mw = P ? W - 2 * M - 40 * U : W * .7;
+      const lw = (l, f) => { ctx.font = f; const sp = ctx.measureText(" ").width; return l.reduce((a, x) => a + ctx.measureText(x.w).width, 0) + sp * (l.length - 1); };
+      const k = back(clamp(T / .6));
+      ctx.save(); ctx.translate(W / 2, y0); ctx.scale(k, k); ctx.textBaseline = "middle"; ctx.textAlign = "left"; ctx.lineJoin = "round";
+      const words = (l, y, f, col, hlCol, stroke, sw) => {
+        ctx.font = f; const sp = ctx.measureText(" ").width; let x = -lw(l, f) / 2;
+        for (const t of l) { if (stroke) { ctx.lineWidth = sw; ctx.strokeStyle = stroke; ctx.strokeText(t.w, x, y); } ctx.fillStyle = t.hl && hlCol ? hlCol : col; ctx.fillText(t.w, x, y); x += ctx.measureText(t.w).width + sp; }
+      };
+      if (sty === "bang") {
+        let sz = (P ? 92 : 74) * U; const wm = Math.max(...lines.map(l => lw(l, fontOf(sz, 900)))); if (wm > mw - 60 * U) sz *= (mw - 60 * U) / wm;
+        const f = fontOf(sz, 900), bw = Math.max(...lines.map(l => lw(l, f))) + sz * 1.3, bh = lines.length * sz * 1.25 + sz * .6;
+        ctx.rotate(-.025); ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fillRect(-bw / 2 + 10 * U, -bh / 2 + 12 * U, bw, bh);
+        ctx.fillStyle = "#D7262E"; ctx.beginPath(); ctx.moveTo(-bw / 2 - 30 * U, -bh / 2); ctx.lineTo(bw / 2 + 30 * U, -bh / 2); ctx.lineTo(bw / 2 + 4 * U, 0); ctx.lineTo(bw / 2 + 30 * U, bh / 2); ctx.lineTo(-bw / 2 - 30 * U, bh / 2); ctx.lineTo(-bw / 2 - 4 * U, 0); ctx.closePath(); ctx.fill();
+        lines.forEach((l, i) => words(l, (i - (lines.length - 1) / 2) * sz * 1.25 + 3 * U, f, "#FFFFFF", "#FFE14D"));
+      } else if (sty === "giay") {
+        let sz = (P ? 88 : 70) * U; const wm = Math.max(...lines.map(l => lw(l, fontOf(sz, 900)))); if (wm > mw - 80 * U) sz *= (mw - 80 * U) / wm;
+        const f = fontOf(sz, 900), bw = Math.max(...lines.map(l => lw(l, f))) + sz * 1.4, bh = lines.length * sz * 1.3 + sz * .9;
+        ctx.rotate(-.018); ctx.shadowColor = "rgba(0,0,0,0.35)"; ctx.shadowBlur = 24 * U; ctx.shadowOffsetY = 10 * U; ctx.fillStyle = "#FFF4D6"; rrect(-bw / 2, -bh / 2, bw, bh, 10 * U); ctx.fill(); ctx.shadowColor = "transparent";
+        ctx.fillStyle = "rgba(255,255,255,0.55)"; for (const sd of [-1, 1]) { ctx.save(); ctx.translate(sd * (bw / 2 - 50 * U), -bh / 2); ctx.rotate(sd * .5); ctx.fillRect(-60 * U, -18 * U, 120 * U, 36 * U); ctx.restore(); }
+        lines.forEach((l, i) => { const y = (i - (lines.length - 1) / 2) * sz * 1.3; ctx.font = f; const sp = ctx.measureText(" ").width; let x = -lw(l, f) / 2;
+          for (const t of l) { const w = ctx.measureText(t.w).width; if (t.hl) { ctx.fillStyle = "rgba(255,214,0,0.75)"; ctx.fillRect(x - 6 * U, y + sz * .02, w + 12 * U, sz * .42); } x += w + sp; }
+          words(l, y, f, "#1E232B", "#C8202A"); });
+      } else if (sty === "sang") {
+        const l1 = lines.length > 1 ? lines[0] : [], l2 = lines.length > 1 ? lines[1] : lines[0];
+        let s1 = (P ? 56 : 46) * U, s2 = (P ? 118 : 92) * U;
+        if (lw(l1, fontOf(s1, 700)) > mw) s1 *= mw / lw(l1, fontOf(s1, 700)); if (lw(l2, fontOf(s2, 900)) > mw) s2 *= mw / lw(l2, fontOf(s2, 900));
+        const y1 = l1.length ? -s2 * .62 : 0, y2 = l1.length ? s1 * .55 : 0;
+        if (l1.length) { ctx.save(); ctx.letterSpacing = "4px"; words(l1, y1, fontOf(s1, 700), "#E9EEF5", "#FFE14D"); ctx.restore(); }
+        ctx.save(); ctx.shadowColor = "rgba(255,200,40,0.65)"; ctx.shadowBlur = 30 * U; words(l2, y2, fontOf(s2, 900), "#FFD83A", "#FF8A3D"); ctx.restore();
+        const bw = Math.min(mw, lw(l2, fontOf(s2, 900))) * .5 * clamp((T - .3) / .5); ctx.fillStyle = "#FF8A3D"; rrect(-bw / 2, y2 + s2 * .62, bw, 10 * U, 5 * U); ctx.fill();
+      } else {
+        let sz = (P ? 104 : 84) * U; const wm = Math.max(...lines.map(l => lw(l, fontOf(sz, 900)))); if (wm > mw) sz *= mw / wm;
+        lines.forEach((l, i) => words(l, i * sz * 1.15 - (lines.length - 1) * sz * .55, fontOf(sz, 900), i || lines.length === 1 ? QC.t2 : QC.t1, null, "#0E1014", sz * .16));
+      }
+      ctx.restore();
+    }
+    // phụ đề trắng dưới khung, chữ chưa đọc mờ hơn
+    function queSub(sc, st, y) {
+      const ws = (sc.say || "").split(/\s+/).filter(Boolean); if (!ws.length || !sc.words) return;
+      let cur = 0; for (let i = 0; i < ws.length; i++) if (sc.words[i] && st.t >= sc.words[i].start - .05) cur = i;
+      if (st.t < (sc.words[0] ? sc.words[0].start - .1 : 0)) return;
+      const groups = []; let g = [];
+      ws.forEach((w, i) => { g.push(i); if (/[.,!?;:…]$/.test(w) && g.length >= 4 || g.length >= 12) { groups.push(g); g = []; } }); if (g.length) groups.push(g);
+      const grp = groups.find(x => x.includes(cur)) || groups[0];
+      const sz = (P ? 50 : 42) * U, mw = P ? W - 2 * M : W * .8; ctx.save(); ctx.font = "italic " + fontOf(sz, 700); const sp = ctx.measureText(" ").width;
+      const lines = []; let line = [], lw = 0;
+      for (const i of grp) { const w = ctx.measureText(ws[i]).width; if (line.length && lw + sp + w > mw) { lines.push(line); line = []; lw = 0; } line.push(i); lw += (line.length > 1 ? sp : 0) + w; } if (line.length) lines.push(line);
+      ctx.textBaseline = "middle"; ctx.shadowColor = "rgba(0,0,0,0.55)"; ctx.shadowBlur = 8 * U; ctx.shadowOffsetY = 2 * U;
+      lines.forEach((ln, j) => { const tw = ln.reduce((a, i) => a + ctx.measureText(ws[i]).width, 0) + sp * (ln.length - 1); let x = W / 2 - tw / 2; const yy = y + (j - (lines.length - 1) / 2) * sz * 1.35;
+        for (const i of ln) { ctx.fillStyle = i <= cur ? "#FFFFFF" : "rgba(255,255,255,0.6)"; ctx.fillText(ws[i], x, yy); x += ctx.measureText(ws[i]).width + sp; } });
+      ctx.restore();
+    }
+    function drawQue(tl, T, k, sc, p, st) {
+      const t = st.t, lev = level();
+      ctx.fillStyle = QC.bg; ctx.fillRect(0, 0, W, H);
+      queTitle(tl, T);
+      const px = 0, py = P ? 500 * U : 190 * U, pw = W, ph = P ? 940 * U : H - 190 * U - 210 * U, S = (P ? 1.02 : .78) * U;
+      ctx.save(); ctx.beginPath(); ctx.rect(px, py, pw, ph); ctx.clip();
+      const z = 1 + .03 * clamp(t / Math.max(1, sc.dur)); ctx.translate(W / 2, py + ph / 2); ctx.scale(z, z); ctx.translate(-W / 2, -(py + ph / 2));
+      const br = brollFor(k);
+      if (br) { coverImage(br, px, py, pw, ph, 1.02); ctx.fillStyle = "rgba(20,24,30,0.38)"; ctx.fillRect(px, py, pw, ph); }
+      else room(px, py, pw, ph, k, S);
+      const isPpl = j => j >= 0 && RX_PPL.test(NFCs(tl[j].say)) && !(j > 0 && isPpl(j - 1)), mood = moodOf(sc), ppl = isPpl(k), kw = kwOf(sc);   // nhóm người không hiện 2 cảnh liền nhau
+      const pa = HANDS[poseOf(tl, k - 1)], pb = HANDS[poseOf(tl, k)], m = k > 0 ? easeInOut(clamp(t / .5)) : 1;
+      const hands = [0, 1].map(s => [lerp(pa[s][0], pb[s][0], m), lerp(pa[s][1], pb[s][1], m)]);
+      const fy = py + ph * .93, walkIn = k === 0 ? clamp(1 - t / .9) : 0;
+      const fx = (P ? W * .27 : W * .3) - walkIn * W * .35;
+      const fig = figure(fx, fy, S, hands, mood, lev, t, walkIn > 0 ? T : 0);
+      moodMark(mood, fig, t, S);
+      if (ppl) crowd(P ? W * .55 : W * .55, P ? W * .9 : W * .88, fy, S * .9, t, kw);
+      else thought(P ? W * .7 : W * .68, py + ph * (P ? .3 : .32), P ? 520 * U : 600 * U, P ? 400 * U : 380 * U, fig, t, sc, st, kw);
+      ctx.restore();
+      // chuyển cảnh: chớp sáng nhẹ
+      if (k > 0 && t < .18) { ctx.fillStyle = "rgba(255,255,255," + (.16 * (1 - t / .18)).toFixed(3) + ")"; ctx.fillRect(px, py, pw, ph); }
+      queSub(sc, st, P ? py + ph + 120 * U : py + ph + 100 * U);
+      cornerLogo(); trialMark();
+    }
+
     // ------------------------------------------------------------------ 1 khung hình tại thời điểm T (giây)
     function draw(tl, T) {
       curT = T;
@@ -1897,6 +2163,7 @@ const Render = (() => {
       const st = { t, p, wordT, k };
       if (curTl !== tl && typeof Engine !== "undefined" && Engine.pickIcon) for (const x of tl) if (x.iconSrc != null) x.icon = Engine.pickIcon(x.iconSrc, opt.theme, x.kind);
       curTl = tl;
+      if (opt.que) { drawQue(tl, T, k, sc, p, st); return; }
       background(p, T, k);
       // chuyển cảnh: vòng tròn màu mới loang ra trên nền cảnh trước
       const TR = .45;
@@ -1947,6 +2214,7 @@ const Core = (() => {
     ai_trong:    { pitch: 1.15, speed: 1,    noise: .7,   low: -3, high: 4,  gain: 1 },
     ai_nangdong: { pitch: 1.1,  speed: 1.18, noise: 1,    low: -4, high: 6,  gain: 1.15, gapMul: .55, emph: 1.6 },
     ai_nhenhang: { pitch: .93,  speed: .93,  noise: .42,  low: 1,  high: -3, gain: .9, gapMul: 1.25 },
+    kk_tram_bac: { pitch: 1,    speed: 1,    noise: null, low: 4,  high: -3, gain: 1.05, gapMul: 1.2 },   // giọng 15: ấm hơn, bớt chói, nghỉ lâu hơn
   };
   const toneOf = opts => TONES[opts.voice] || TONES.ai;
 
@@ -2097,7 +2365,7 @@ const Core = (() => {
     for (const s of sc) if (s.voice) {
       const b = ac.createBuffer(1, s.voice.length, s.voiceSR || TTS.SR); b.copyToChannel ? b.copyToChannel(s.voice, 0) : b.getChannelData(0).set(s.voice);
       const src = ac.createBufferSource(); src.buffer = b; const g = ac.createGain();
-      const T = opts.synth ? TONES.ai : toneOf(opts); g.gain.value = T.gain;
+      const T = opts.synth ? (TONES[opts.voiceName] || TONES.ai) : toneOf(opts); g.gain.value = T.gain;
       const lo = ac.createBiquadFilter(); lo.type = "lowshelf"; lo.frequency.value = 220; lo.gain.value = T.low;
       const hi = ac.createBiquadFilter(); hi.type = "highshelf"; hi.frequency.value = 4500; hi.gain.value = T.high;
       // rõ chữ: bớt ù dưới 90 Hz, nâng vùng 3 kHz (phụ âm) cho giọng đỡ nghẹt
@@ -2186,7 +2454,7 @@ const Core = (() => {
   function makeCanvas(cv, opts) {
     const ngang = opts.fmt === "ngang";
     cv.width = ngang ? 1920 : 1080; cv.height = ngang ? 1080 : 1920;
-    return { cv, R: Render.create(cv, { theme: opts.theme || "rucro", trial: !!opts.trial, logo: opts.logo || null, subtitle: opts.subs !== false, wave: opts.icons === "wave", products: opts.products || [], broll: opts.broll || [] }) };
+    return { cv, R: Render.create(cv, { theme: opts.theme || "rucro", trial: !!opts.trial, logo: opts.logo || null, subtitle: opts.subs !== false, wave: opts.icons === "wave", que: opts.icons === "que", qtitle: opts.qtitle || "vang", products: opts.products || [], broll: opts.broll || [] }) };
   }
 
   // ---------------------------------------------------------------- xuất mp4 bằng WebCodecs (nhanh hơn thời gian thật), không có thì quay lại màn hình
@@ -2291,7 +2559,7 @@ const Core = (() => {
     const job = await buildTimeline(scenes, opts, status);
     await loadFonts();
     const { R } = makeCanvas(cv, opts);
-    if (opts.icons === "wave") R.setAudio(job.mix);
+    if (opts.icons === "wave" || opts.icons === "que") R.setAudio(job.mix);
     const codecs = await pickCodecs(cv.width, cv.height);
     const out = (codecs && await encodeWebCodecs(R, cv, codecs, job, status)) || await encodeRecorder(R, cv, job, status);
     const d = job.diag;
@@ -2791,7 +3059,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   ta.addEventListener("input", () => { store.set("anim_content", ta.value); $("sampleNote").hidden = ta.value !== SAMPLE; clearScenes(); });
   $("btnSample").onclick = () => { ta.value = SAMPLE; ta.dispatchEvent(new Event("input")); };
   $("btnClear").onclick = () => { ta.value = ""; ta.dispatchEvent(new Event("input")); ta.focus(); };
-  for (const id of ["fmt", "theme", "voice", "style", "speed", "music", "subs", "chu"]) {
+  for (const id of ["fmt", "theme", "voice", "style", "speed", "music", "subs", "chu", "qtitle"]) {
     const key = id === "speed" ? "anim_speed_v2" : id === "voice" ? "anim_voice_v2" : "anim_" + id;   // giọng mới làm mặc định   // mặc định tốc độ đổi sang 1x: bỏ lựa chọn cũ đã lưu
     const el = $(id), v = store.get(key);
     if (v !== null) { if (el.type === "checkbox") el.checked = v === "1"; else { const d = el.value; el.value = v; if (el.selectedIndex < 0) el.value = d; } }
@@ -2822,6 +3090,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   $("lex").addEventListener("input", () => { store.set("anim_lex", $("lex").value); TTS.setLexicon($("lex").value); });
   $("music").addEventListener("change", () => { $("musicFileRow").hidden = $("music").value !== "file"; });
   $("musicFileRow").hidden = $("music").value !== "file";
+  const qRow = () => { $("qtitleRow").hidden = $("icons").value !== "que"; }; $("icons").addEventListener("change", qRow); qRow();
 
   $("logoFile").addEventListener("change", async e => {
     const f = e.target.files[0]; if (!f) return;
@@ -3010,8 +3279,38 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   };
   $("btnScript").onclick = () => { ta.value = document.querySelector("#scriptHelp pre").textContent; ta.dispatchEvent(new Event("input")); ta.scrollIntoView({ behavior: "smooth", block: "center" }); };
 
+  // thêm ảnh cho cả video: chọn 1 hay nhiều ảnh, rải đều vào các cảnh theo thứ tự (ảnh sản phẩm ưu tiên cảnh có chỗ hiện ảnh)
+  async function bulkAdd(prop, input) {
+    const files = [...input.files].slice(0, 12); input.value = ""; if (!files.length) return;
+    const lb = input.parentElement; lb.classList.add("busy");
+    try {
+      $("status").classList.remove("err");
+      if (!state.scenes) { state.scenes = newScenes(); splitText = ta.value; }
+      const pics = []; for (const f of files) { const c = await loadPhoto(f); if (c) pics.push(c); await tick(); }
+      if (!pics.length) { $("bulkNote").textContent = "Không đọc được ảnh nào (thử chụp màn hình ảnh đó rồi chọn lại)."; return; }
+      const sc = state.scenes, all = sc.map((x, k) => k);
+      let cand = prop === "pImg" ? all.filter(k => PHOTO_KINDS[sc[k].kind]) : all.filter(k => sc[k].kind !== "stat");
+      if (cand.length < pics.length) cand = all;
+      const m = Math.min(pics.length, cand.length);
+      for (const k of cand) sc[k][prop] = null;
+      for (let j = 0; j < m; j++) {
+        const x = sc[cand[Math.floor(j * cand.length / m)]]; x[prop] = pics[j];
+        if (prop === "pImg" && !PHOTO_KINDS[x.kind]) { x._was = x.kind; Engine.setKind(x, "statement"); x._switched = true; }
+      }
+      state.tl = null; renderEditor(); splitShow(true);
+      $("bulkNote").textContent = "Đã thêm " + m + " " + (prop === "pImg" ? "ảnh sản phẩm" : "B-roll") + " vào " + m + "/" + sc.length + " cảnh." + (pics.length > m ? " Bài chỉ có " + sc.length + " cảnh nên bỏ bớt " + (pics.length - m) + " ảnh." : "") + " Cảnh không có ảnh chạy nền mặc định. Sửa từng cảnh ở bên dưới.";
+    } catch (e) { fail(e.message); } finally { lb.classList.remove("busy"); }
+  }
+  $("bulkP").addEventListener("change", e => bulkAdd("pImg", e.target));
+  $("bulkB").addEventListener("change", e => bulkAdd("bImg", e.target));
+  $("bulkClear").onclick = () => {
+    state.media = null; if (!state.scenes) return;
+    for (const x of state.scenes) { if (x.pImg && x._switched && x._was) Engine.setKind(x, x._was); x.pImg = x.bImg = null; x._switched = false; x._was = null; }
+    state.tl = null; renderEditor(); $("bulkNote").textContent = "Đã bỏ hết ảnh. Các cảnh chạy nền mặc định.";
+  };
+
   const trial = () => typeof LOCK !== "undefined" && LOCK.isTrial && LOCK.isTrial();
-  const opts = () => (syncMedia(), { trial: trial(), fmt: $("fmt").value, theme: $("theme").value, voice: $("voice").value, style: $("style").value, speed: +$("speed").value, music: $("music").value, subs: $("subs").checked, icons: $("icons").value, nhan: false, chu: $("chu").value, logo: state.logo, products: state.products, broll: state.broll, musicBuf: state.musicBuf });
+  const opts = () => (syncMedia(), { trial: trial(), fmt: $("fmt").value, theme: $("theme").value, voice: $("voice").value, style: $("style").value, speed: +$("speed").value, music: $("music").value, subs: $("subs").checked, icons: $("icons").value, qtitle: $("qtitle") ? $("qtitle").value : "vang", nhan: false, chu: $("chu").value, logo: state.logo, products: state.products, broll: state.broll, musicBuf: state.musicBuf });
 
   // ---------------------------------------------------------------- câu đọc trong lúc chờ làm video
   const QUOTES = [
@@ -3111,17 +3410,43 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   // ---------------------------------------------------------------- tải về
   let dl = null;
   const standalone = !window.claude;   // bản chạy riêng (máy tính / cài như app), không có Claude
+  const UA = navigator.userAgent;
+  const IOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const ANDROID = /Android/i.test(UA);
+  // trình duyệt bên trong Zalo, Facebook, Messenger, Instagram, TikTok...: thường không cho tải file
+  const IAB = /Zalo|FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram|Line\/|TikTok|musical_ly|Bytedance|; wv\)/i.test(UA);
+  const IAB_MSG = "Bạn đang mở Xưởng video trong Zalo hoặc Facebook, ở đây không tải được video. Bấm dấu ba chấm ở góc trên bên phải, chọn “Mở bằng trình duyệt” (iPhone: Safari, Android: Chrome) rồi làm video ở đó.";
+  if (standalone && IAB) {
+    const w = document.createElement("div"); w.className = "card"; w.setAttribute("role", "alert");
+    w.style.cssText = "border:2px solid #A50064;background:#FFF6FA;font-weight:600;line-height:1.5";
+    w.textContent = IAB_MSG;
+    const s1 = document.querySelector('section[aria-labelledby="s1"]'); if (s1) s1.before(w);
+  }
   (async () => { try { dl = window.claude && await window.claude.use("downloads"); } catch (e) { dl = null; } if (!dl && !standalone) $("dlNote").hidden = false; })();
   $("btnDownload").onclick = async () => {
     if (!state.videoBlob) return;
     const name = (ta.value.trim().split("\n")[0] || "video").replace(/[\\/:*?"<>|#]/g, "").slice(0, 60).trim() || "video";
     if (!dl && standalone) {
-      const file = new File([state.videoBlob], `${name}.${state.ext}`, { type: state.videoBlob.type || "video/mp4" });
-      if (navigator.canShare && /iPhone|iPad|Android/i.test(navigator.userAgent) && navigator.canShare({ files: [file] })) {
-        try { await navigator.share({ files: [file] }); $("dlMsg").textContent = "Chọn “Lưu video” để vào Ảnh."; return; } catch (e) { if (e && e.name === "AbortError") return; }
+      // tên file không dấu: có dấu thì trình duyệt có thể lưu thành "download" không đuôi, máy không mở được
+      const ascii = name.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").replace(/[^A-Za-z0-9 _-]/g, "").trim().replace(/\s+/g, "_").slice(0, 50) || "video";
+      const msg = $("dlMsg"), file = new File([state.videoBlob], `Xuong_video_${ascii}.${state.ext}`, { type: state.videoBlob.type || "video/mp4" });
+      const canShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+      // iPhone: bảng chia sẻ có "Lưu video" (vào Ảnh). Android: bảng chia sẻ không có nút lưu, nên tải thẳng về máy.
+      if (canShare && (IOS || (ANDROID && IAB))) {
+        try { await navigator.share({ files: [file] }); msg.textContent = IOS ? "Chọn “Lưu video” để lưu vào Ảnh." : "Đã gửi video."; return; }
+        catch (e) { if (e && e.name === "AbortError") { msg.textContent = "Bạn đã đóng bảng chia sẻ. Bấm lại “Tải video về máy”, rồi chọn “Lưu video”."; return; } }
       }
+      if (IAB) { msg.textContent = IAB_MSG; return; }
       const u = URL.createObjectURL(file), a = document.createElement("a"); a.href = u; a.download = file.name; document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(u), 60000); $("dlMsg").textContent = "Đã lưu vào thư mục Tải về (Downloads)."; return;
+      setTimeout(() => URL.revokeObjectURL(u), 120000);
+      msg.textContent = ANDROID ? "Đang tải về máy. Video nằm trong mục Tải xuống (Download), mở app Thư viện hoặc Files để xem."
+        : IOS ? "Bấm “Tải về” nếu máy hỏi. Video nằm trong app Tệp (Files), mục Tải về." : "Đã lưu vào thư mục Tải về (Downloads).";
+      if (ANDROID && canShare) {
+        const b = document.createElement("button"); b.type = "button"; b.textContent = "Không thấy video? Gửi sang app khác";
+        b.onclick = async () => { try { await navigator.share({ files: [file] }); } catch (e) { } };
+        msg.append(document.createElement("br"), b);
+      }
+      return;
     }
     if (!dl) { $("dlNote").hidden = false; return; }
     try { await dl.save({ filename: `${name}.${state.ext}`, data: state.videoBlob }); $("dlMsg").textContent = "Đã gửi video sang máy. Trên iPhone chọn “Lưu video” để vào Ảnh."; }
