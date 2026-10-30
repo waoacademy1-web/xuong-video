@@ -1688,6 +1688,7 @@ const Render = (() => {
     const M = 90 * U, CW = W - 2 * M;
     function sceneTitle(sc, p, st) {
       const t = st.t;
+      if (sc.show && sc.show.some(x => String(x.w).includes("|"))) sc = { ...sc, show: sc.show.map(x => ({ ...x, w: String(x.w).replace(/\|/g, "") })).filter(x => x.w) };   // dấu | chỉ dùng để chia tầng tiêu đề người que
       const hb = hero(sc.icon, P ? W / 2 : W * .27, P ? H * .27 : H * .5, productFor(st) ? (P ? 400 : 440) * U : 210 * U, p, t, st);
       const cx = P ? W / 2 : W * .64, mw = P ? CW : W * .56, to = { upper: true, stroke: 0, marker: false };
       let cy = P ? H * .55 : H * .47, r;
@@ -2247,11 +2248,17 @@ const Render = (() => {
       hong: { a: "#FFD3E4", b: "#FF4F9A", band: "#E23C86", hl: "#FFF07A" }, la: { a: "#DDF7A8", b: "#2FB062", band: "#1F8A4C", hl: "#FFE14D" }, den: { a: "#FFFFFF", b: "#FFFFFF", band: "#14171C", hl: "#FFE14D" } };
     // kiểu tiêu đề: vang (vàng đỏ viền đen), bang (băng rôn đỏ), giay (tờ giấy dán băng keo), sang (dòng nhỏ + dòng lớn phát sáng)
     function queTitle(tl, T) {
-      const toks = (tl[0].show || []).map(x => ({ w: String(x.w).toUpperCase(), hl: !!x.hl })).filter(x => x.w);
+      // dấu | trong chữ tiêu đề = chỗ xuống tầng do người dùng tự chia (vd. "CON TRAI À | HÃY NHỚ 5 ĐIỀU NÀY")
+      const raw = [], cuts = [];
+      for (const x of (tl[0].show || [])) {
+        const parts = String(x.w).toUpperCase().split("|");
+        parts.forEach((w, j) => { if (j > 0) cuts.push(raw.length); if (w.trim()) raw.push({ w: w.trim(), hl: !!x.hl }); });
+      }
+      const toks = raw;
       if (!toks.length) return;
-      const ws = toks.map(x => x.w);
+      const ws = toks.map(x => x.w), cut = cuts.find(c => c > 0 && c < toks.length);
       let best = 1, bd = 1e9; for (let i = 1; i < ws.length; i++) { const d = Math.abs(ws.slice(0, i).join(" ").length - ws.slice(i).join(" ").length); if (d < bd) { bd = d; best = i; } }
-      const lines = ws.length > 2 ? [toks.slice(0, best), toks.slice(best)] : [toks];
+      const lines = cut ? [toks.slice(0, cut), toks.slice(cut)] : ws.length > 2 ? [toks.slice(0, best), toks.slice(best)] : [toks];
       const C = TCOL[opt.qcol] || TCOL.do, sty = opt.qtitle || "vang", y0 = P ? 300 * U : 95 * U, mw = P ? W - 2 * M - 40 * U : W * .7;
       const lw = (l, f) => { ctx.font = f; const sp = ctx.measureText(" ").width; return l.reduce((a, x) => a + ctx.measureText(x.w).width, 0) + sp * (l.length - 1); };
       const k = back(clamp(T / .6));
