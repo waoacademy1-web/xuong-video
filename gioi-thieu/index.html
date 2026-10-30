@@ -827,7 +827,10 @@ const LOCK = (() => {
       const r = await checkFull(dev, code);
       if (!r) continue;
       const h = r.hour;
-      if (h === FOREVER || (now < hourEnd(h) && !back)) { st.set("xv_ma", norm(code)); return (cur = { ok: true, until: h, left: hourEnd(h) - now, trial: r.trial && h !== FOREVER }); }
+      if (h === FOREVER || (now < hourEnd(h) && !back)) {
+        // khách mở link dùng thử lần đầu trên máy này: báo 1 lượt lên Google Sheet (chỉ "đã mở link dùng thử", không gửi tên, số, nội dung)
+        if (code === fromLink && r.trial && h !== FOREVER && !st.get("xv_bao_" + norm(code))) { st.set("xv_bao_" + norm(code), "1"); try { new Image().src = "https" + "://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4SE16h_Zb0sfgKHSmHKJ3BJ6LtlSUDtT9BrNjjcigdMrrE9O/exec?kh=1"; } catch (e) { } }
+        st.set("xv_ma", norm(code)); return (cur = { ok: true, until: h, left: hourEnd(h) - now, trial: r.trial && h !== FOREVER }); }
     }
     return (cur = { ok: false, expired: !!(fromLink || st.get("xv_ma")) });
   }
@@ -1097,7 +1100,7 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
 
   // Ô thông báo góc màn hình: khách thật (file hoat-dong.json Diễm cập nhật) + thông tin thật về gói
   { const t = $('toast'), tx = $('toastTxt'), ic = $('toastIc'); let q = [], i = 0, off = false, hideT;
-    const TEN = { THU: 'đăng ký dùng thử', '1T': 'chọn gói 1 tháng', '1N': 'chọn gói 1 năm', VV: 'chọn gói vĩnh viễn' };
+    const TEN = { KH: 'mở link dùng thử', THU: 'đăng ký dùng thử', '1T': 'chọn gói 1 tháng', '1N': 'chọn gói 1 năm', VV: 'chọn gói vĩnh viễn' };
     const tips = () => (launch() ? [['clock', 'Giá ra mắt còn ' + left()[0] + ' ngày ' + left()[1] + ' giờ, sau đó về giá gốc']] : []).concat([
       ['cal', 'Gói 1 năm chưa bằng nửa giá trả từng tháng'], ['check', 'Dùng thử miễn phí 24 giờ, không cần trả trước'],
       ['shield', 'Vĩnh viễn ' + (launch() ? '990k' : '1.490k') + ': trả một lần, dùng mãi'], ['msg', 'Cần hỏi? Nhắn Zalo 0938 333 310, trả lời trong ngày']]);
@@ -1107,12 +1110,20 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4S
     const start = khach => { const tp = tips(); q = []; khach.forEach((k, j) => { q.push(k); if (tp.length) q.push(tp[j % tp.length]); }); tp.slice(khach.length).forEach(x => q.push(x)); setTimeout(() => { show(); setInterval(show, 30000); }, 8000); };
     // 2 nguồn khách thật: hoat-dong.json (khách mua Diễm ghi ở trang tạo mã) + lượt đăng ký form trong Google Sheet
     const lay = u => fetch(u, { cache: 'no-store' }).then(r => r.ok ? r.json() : null).catch(() => null);
-    const DK = { THU: 'đăng ký dùng thử', '1T': 'đăng ký gói 1 tháng', '1N': 'đăng ký gói 1 năm', VV: 'đăng ký gói vĩnh viễn' };
+    const DK = { KH: 'mở link dùng thử', THU: 'đăng ký dùng thử', '1T': 'đăng ký gói 1 tháng', '1N': 'đăng ký gói 1 năm', VV: 'đăng ký gói vĩnh viễn' };
     Promise.all([lay('hoat-dong.json'), typeof SHEET_URL === 'string' && SHEET_URL ? lay(SHEET_URL + '?hd=1') : null]).then(([d, s]) => {
       const tu = new Date(Date.now() + 7 * 3600e3 - 30 * 864e5).toISOString().slice(0, 10);
       const ok = x => x && TEN[x.goi] && String(x.ngay) >= tu;
-      const a = (d && Array.isArray(d.luot) ? d.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: 'Một khách đã ' + TEN[x.goi] }));
-      const b = (s && Array.isArray(s.luot) ? s.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: 'Một khách đã ' + DK[x.goi] }));
+      // dùng thử (đăng ký form hoặc mở link): chỉ báo có lượt đăng ký mới; đã trả tiền: tên che X*** + gói
+      const MOI = ['Vừa có thêm 1 lượt đăng ký mới', 'Có 1 lượt đăng ký mới', 'Đã có thêm lượt đăng ký mới'], GOI = { '1T': 'gói 1 tháng', '1N': 'gói 1 năm', VV: 'gói vĩnh viễn' };
+      let nm = 0, nb = 0;
+      const cau = (x, mua) => {
+        if (!mua || !GOI[x.goi]) return MOI[nm++ % MOI.length];
+        const ten = /^[A-ZÀ-Ỹ][*]{3}$/.test(String(x.ten || '')) ? x.ten : 'Một khách';
+        return ten + (nb++ % 2 ? ' đã mua ' : ' vừa mua ') + GOI[x.goi];
+      };
+      const a = (d && Array.isArray(d.luot) ? d.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: cau(x, x.goi !== 'THU') }));
+      const b = (s && Array.isArray(s.luot) ? s.luot : []).filter(ok).map(x => ({ ngay: String(x.ngay), t: cau(x, !!x.mua) }));
       const k = a.concat(b).sort((x, y) => y.ngay.localeCompare(x.ngay)).slice(0, 30).map(x => ['users', x.t]);
       // CTV đã nhận hoa hồng thật (trang "Đã trả CTV"), tên chỉ còn chữ cái đầu
       const h = (s && Array.isArray(s.hh) ? s.hh : []).filter(x => x && String(x.ngay) >= tu && Number(x.tien) > 0 && /^[A-ZÀ-Ỹ][*]{3}$/.test(String(x.ten)))

@@ -132,7 +132,7 @@ details textarea{margin-top:6px}
 <div class="wrap">
   <header>
     <div class="logo-mark" aria-hidden="true">▶</div>
-    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 1.9</p></div>
+    <div><h1>Xưởng video</h1><p>Dán content hoặc chụp văn bản, máy tự rút ý chính, giọng AI đọc, xuất video mp4. Chạy ngay trên điện thoại, không cần cài.</p><p style="font-size:12px;opacity:.7;margin-top:4px">Phiên bản 2.0</p></div>
   </header>
 
   <div class="grid">
@@ -185,6 +185,7 @@ Chữ:
         <div class="opt"><label for="style">Kiểu đọc</label><select id="style"><option value="mau" selected>Như mẫu (rõ, vui)</option><option value="nang_luong">Năng lượng</option><option value="chia_se">Chia sẻ</option><option value="tam_su">Tâm sự</option><option value="chua_lanh">Chữa lành</option></select></div>
         <div class="opt"><label for="speed">Tốc độ đọc</label><select id="speed"><option value="0.85">Rất chậm, bài dài (0.85x)</option><option value="1" selected>Chậm (1x)</option><option value="1.3">Vừa (1.3x)</option><option value="1.7">Nhanh (1.7x)</option></select></div>
         <div class="opt"><label for="music">Nhạc nền</label><select id="music"><option value="auto">Nhạc vui có sẵn</option><option value="file">File nhạc của bạn</option><option value="off">Không nhạc</option></select></div>
+        <div class="opt"><label for="icons">Biểu tượng</label><select id="icons"><option value="auto" selected>Theo nội dung</option><option value="wave">Sóng nhạc theo giọng đọc</option></select></div>
         <div class="opt"><label for="chu">Chữ trên video</label><select id="chu"><option value="short">Rút gọn ý chính</option><option value="full">Nguyên văn</option></select></div>
       </div>
       <div class="file" id="musicFileRow"><input id="musicFile" type="file" accept="audio/*"><span id="musicName" class="note">Chọn file mp3</span></div>
@@ -1003,7 +1004,7 @@ const TTS = (() => {
     facebook: "phây búc", tiktok: "tích tốc", zalo: "da lô", youtube: "diu túp", google: "gu gồ", email: "i meo",
     website: "oép sai", wifi: "oai phai", team: "tim", ceo: "xi i ô", kpi: "ca pê i", marketing: "ma két tinh",
     order: "o đơ", size: "sai", top: "tóp", hot: "hót", trend: "tren", healthy: "heo thi", omega: "ô mê ga",
-    vietwise: "việt quai", wise: "quai", boxing: "bóc xing", cardio: "ca đi ô", fitness: "phít nét", file: "phai", drive: "đờ rai", content: "con ten", link: "linh", group: "gờ rúp", like: "lai", share: "se", post: "pốt", page: "pết", follow: "phô lô", inbox: "in bóc", fanpage: "phen pết", online: "on lai", hotline: "hót lai", heartline: "hát lai", keto: "kê tô", gym: "gim", yoga: "dô ga", menu: "mê nu", cafe: "ca phê", coffee: "cà phê", massage: "mát xa",
+    wao: "quao", academy: "a ka đê mi", vietwise: "việt quai", wise: "quai", boxing: "bóc xing", cardio: "ca đi ô", fitness: "phít nét", file: "phai", drive: "đờ rai", content: "con ten", link: "linh", group: "gờ rúp", like: "lai", share: "se", post: "pốt", page: "pết", follow: "phô lô", inbox: "in bóc", fanpage: "phen pết", online: "on lai", hotline: "hót lai", heartline: "hát lai", keto: "kê tô", gym: "gim", yoga: "dô ga", menu: "mê nu", cafe: "ca phê", coffee: "cà phê", massage: "mát xa",
   };
   let LEX = { ...LEX_BASE }, lexVer = 0;
   // "ion = i on" mỗi dòng một từ
@@ -1485,8 +1486,40 @@ const Render = (() => {
       ctx.restore();
     }
     function star(x, y, R, r0, n) { ctx.beginPath(); for (let i = 0; i < n * 2; i++) { const a = -Math.PI / 2 + i * Math.PI / n, rr = i % 2 ? r0 : R; ctx.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } ctx.closePath(); }
+    // sóng nhạc theo giọng đọc: mức âm lượng 60 lần/giây, 7 thanh (setAudio gọi sau khi trộn tiếng)
+    const LVR = 60, NB = 7; let LV = null, curT = 0;
+    function setAudio(mix) {
+      const d = mix.getChannelData(0), sr = mix.sampleRate, n = Math.ceil(d.length / sr * LVR), hop = sr / LVR, sub = Math.floor(hop * 2 / NB);
+      LV = new Float32Array(n * NB); let mx = 1e-4;
+      for (let i = 0; i < n; i++) for (let j = 0; j < NB; j++) {
+        const a = Math.floor(i * hop - hop + j * sub); let e = 0, c = 0;
+        for (let q = Math.max(0, a); q < Math.min(d.length, a + sub); q++) { e += d[q] * d[q]; c++; }
+        const v = c ? Math.sqrt(e / c) : 0; LV[i * NB + j] = v; if (v > mx) mx = v;
+      }
+      const srt = Array.from(LV).filter(v => v > 1e-3).sort((a, b) => a - b), ref = srt.length ? srt[Math.floor(srt.length * .9)] : mx;   // mức chuẩn = 90% (không theo đỉnh lẻ)
+      for (let i = 0; i < LV.length; i++) LV[i] = Math.min(1, Math.pow(LV[i] / ref, 1.4));
+    }
+    function waveBars(x, y, s, col, t) {
+      const i = Math.floor(curT * LVR), bw = s * .1, gap = s * .045, tw = NB * bw + (NB - 1) * gap, hmax = s * .78, ORD = [3, 1, 5, 0, 6, 2, 4];
+      ctx.save(); ctx.translate(x, y); ctx.fillStyle = col;
+      for (let j = 0; j < NB; j++) {
+        let v;
+        if (LV) { const a = LV[Math.min(LV.length / NB - 1, Math.max(0, i)) * NB + ORD[j]] || 0, b = LV[Math.min(LV.length / NB - 1, Math.max(0, i - 2)) * NB + ORD[j]] || 0; v = a * .65 + b * .35; }
+        else v = .35 + .3 * Math.sin(t * 6 + j * 1.3);
+        const env = 1 - Math.abs(j - (NB - 1) / 2) / NB * .9, h = Math.max(bw, hmax * (.08 + .92 * v) * env);
+        rrect(-tw / 2 + j * (bw + gap), -h / 2, bw, h, bw / 2); ctx.fill();
+      }
+      ctx.restore();
+    }
     function badge(name, x, y, s, p, t) {
       const k = back(t / .5); if (k <= 0) return;
+      if (opt.wave) {
+        ctx.save(); ctx.translate(x, y); ctx.scale(k, k);
+        ctx.fillStyle = p.card; ctx.shadowColor = "rgba(20,20,60,0.25)"; ctx.shadowBlur = 24 * U; ctx.shadowOffsetY = 8 * U;
+        ctx.beginPath(); ctx.arc(0, 0, s * .62, 0, 7); ctx.fill(); ctx.restore();
+        ctx.save(); ctx.translate(x, y); ctx.scale(k, k); waveBars(0, 0, s * .62, p.hlOnCard || p.hl, t); ctx.restore();
+        return;
+      }
       ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.rotate(Math.sin(t * 2) * .05);
       ctx.fillStyle = p.card; ctx.shadowColor = "rgba(20,20,60,0.25)"; ctx.shadowBlur = 24 * U; ctx.shadowOffsetY = 8 * U;
       ctx.beginPath(); ctx.arc(0, 0, s * .62, 0, 7); ctx.fill(); ctx.restore();
@@ -1647,7 +1680,8 @@ const Render = (() => {
       const t = st.t, ix = P ? W / 2 : W * .22, iy = P ? H * .26 : H * .5;
       const k = elastic(t / .9); ctx.save(); ctx.translate(ix, iy); ctx.scale(k, k); ctx.rotate(Math.sin(t * 3) * .08);
       ctx.fillStyle = p.card; ctx.beginPath(); ctx.arc(0, 0, 170 * U, 0, 7); ctx.fill();
-      ctx.fillStyle = p.hlOnCard || p.hl; ctx.font = fontOf(250 * U); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("?", 0, 14 * U); ctx.restore();
+      if (opt.wave) { ctx.rotate(-Math.sin(t * 3) * .08); waveBars(0, 0, 170 * U, p.hlOnCard || p.hl, t); ctx.restore(); }
+      else { ctx.fillStyle = p.hlOnCard || p.hl; ctx.font = fontOf(250 * U); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("?", 0, 14 * U); ctx.restore(); }
       const cx = P ? W / 2 : W * .62, cy = P ? H * .56 : H * .5;
       if (P) textBelow(sc.show, cx, iy + 170 * U + 70 * U, H * .8, CW, 118 * U, 6, p, st, {});
       else textBlock(sc.show, cx, cy, W * .6, 100 * U, 5, p, st, { maxH: H * .7 });
@@ -1853,6 +1887,7 @@ const Render = (() => {
 
     // ------------------------------------------------------------------ 1 khung hình tại thời điểm T (giây)
     function draw(tl, T) {
+      curT = T;
       let k = 0; while (k < tl.length - 1 && T >= tl[k + 1].t0) k++;
       const sc = tl[k], p = pal[k % pal.length], t = T - sc.t0;
       const wordT = (i, frac) => {
@@ -1883,7 +1918,7 @@ const Render = (() => {
       if (opt.subtitle) subtitle(sc, st);
       cornerLogo(); trialMark();
     }
-    return { draw, W, H };
+    return { draw, setAudio, W, H };
   }
   return { create };
 })();
@@ -2151,7 +2186,7 @@ const Core = (() => {
   function makeCanvas(cv, opts) {
     const ngang = opts.fmt === "ngang";
     cv.width = ngang ? 1920 : 1080; cv.height = ngang ? 1080 : 1920;
-    return { cv, R: Render.create(cv, { theme: opts.theme || "rucro", trial: !!opts.trial, logo: opts.logo || null, subtitle: opts.subs !== false, products: opts.products || [], broll: opts.broll || [] }) };
+    return { cv, R: Render.create(cv, { theme: opts.theme || "rucro", trial: !!opts.trial, logo: opts.logo || null, subtitle: opts.subs !== false, wave: opts.icons === "wave", products: opts.products || [], broll: opts.broll || [] }) };
   }
 
   // ---------------------------------------------------------------- xuất mp4 bằng WebCodecs (nhanh hơn thời gian thật), không có thì quay lại màn hình
@@ -2256,6 +2291,7 @@ const Core = (() => {
     const job = await buildTimeline(scenes, opts, status);
     await loadFonts();
     const { R } = makeCanvas(cv, opts);
+    if (opts.icons === "wave") R.setAudio(job.mix);
     const codecs = await pickCodecs(cv.width, cv.height);
     const out = (codecs && await encodeWebCodecs(R, cv, codecs, job, status)) || await encodeRecorder(R, cv, job, status);
     const d = job.diag;
@@ -2518,7 +2554,10 @@ const LOCK = (() => {
       const r = await checkFull(dev, code);
       if (!r) continue;
       const h = r.hour;
-      if (h === FOREVER || (now < hourEnd(h) && !back)) { st.set("xv_ma", norm(code)); return (cur = { ok: true, until: h, left: hourEnd(h) - now, trial: r.trial && h !== FOREVER }); }
+      if (h === FOREVER || (now < hourEnd(h) && !back)) {
+        // khách mở link dùng thử lần đầu trên máy này: báo 1 lượt lên Google Sheet (chỉ "đã mở link dùng thử", không gửi tên, số, nội dung)
+        if (code === fromLink && r.trial && h !== FOREVER && !st.get("xv_bao_" + norm(code))) { st.set("xv_bao_" + norm(code), "1"); try { new Image().src = "https" + "://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4SE16h_Zb0sfgKHSmHKJ3BJ6LtlSUDtT9BrNjjcigdMrrE9O/exec?kh=1"; } catch (e) { } }
+        st.set("xv_ma", norm(code)); return (cur = { ok: true, until: h, left: hourEnd(h) - now, trial: r.trial && h !== FOREVER }); }
     }
     return (cur = { ok: false, expired: !!(fromLink || st.get("xv_ma")) });
   }
@@ -2972,7 +3011,7 @@ Hãy theo dõi Siêu thị VietWise. Heartline 0934 862 080.`;
   $("btnScript").onclick = () => { ta.value = document.querySelector("#scriptHelp pre").textContent; ta.dispatchEvent(new Event("input")); ta.scrollIntoView({ behavior: "smooth", block: "center" }); };
 
   const trial = () => typeof LOCK !== "undefined" && LOCK.isTrial && LOCK.isTrial();
-  const opts = () => (syncMedia(), { trial: trial(), fmt: $("fmt").value, theme: $("theme").value, voice: $("voice").value, style: $("style").value, speed: +$("speed").value, music: $("music").value, subs: $("subs").checked, nhan: false, chu: $("chu").value, logo: state.logo, products: state.products, broll: state.broll, musicBuf: state.musicBuf });
+  const opts = () => (syncMedia(), { trial: trial(), fmt: $("fmt").value, theme: $("theme").value, voice: $("voice").value, style: $("style").value, speed: +$("speed").value, music: $("music").value, subs: $("subs").checked, icons: $("icons").value, nhan: false, chu: $("chu").value, logo: state.logo, products: state.products, broll: state.broll, musicBuf: state.musicBuf });
 
   // ---------------------------------------------------------------- câu đọc trong lúc chờ làm video
   const QUOTES = [
