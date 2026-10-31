@@ -77,7 +77,7 @@ const LOCK = (() => {
   const CONTACT = "Diễm Nguyễn (Zalo 0938 333 310)";   // ghi trên màn hình khóa: liên hệ ai để nhận mã
   const KEY = "95e3845e10c23e066e35309c7d91b45350666606fc5b8f03";
   const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   // không có I L O U cho khỏi nhầm
-  const st = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+  const mem = {}, st = { get(k) { try { const v = localStorage.getItem(k); if (v != null) return v; } catch (e) { } return k in mem ? mem[k] : null; }, set(k, v) { mem[k] = String(v); try { localStorage.setItem(k, v); } catch (e) { } } };
 
   const enc = bytes => { let bits = 0, v = 0, s = ""; for (const b of bytes) { v = (v << 8) | b; bits += 8; while (bits >= 5) { s += B32[(v >>> (bits - 5)) & 31]; bits -= 5; } } if (bits) s += B32[(v << (5 - bits)) & 31]; return s; };
   const dec = s => { const out = []; let bits = 0, v = 0; for (const c of s) { const i = B32.indexOf(c); if (i < 0) return null; v = (v << 5) | i; bits += 5; if (bits >= 8) { out.push((v >>> (bits - 8)) & 255); bits -= 8; } } return out; };
@@ -136,6 +136,19 @@ const LOCK = (() => {
     return (cur = { ok: false, expired: !!(fromLink || st.get("xv_ma")) });
   }
 
+  // mã không đúng: đoán lý do thường gặp để báo khách dễ hiểu
+  async function sigOther(msg) { const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]); return new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(msg))).slice(0, 6); }
+  async function whyWrong(dev, v) {
+    const c = norm(v);
+    if (c === norm(dev)) return "Đây là mã máy của bạn. Gửi mã máy này cho Diễm để nhận mã kích hoạt, rồi nhập mã kích hoạt vào ô này.";
+    if (c.length < 15) return "Mã còn thiếu chữ. Mã kích hoạt có 15 ký tự (dạng XXXX-XXXX-XXXX-XXX). Chép nguyên mã Diễm gửi rồi dán vào.";
+    const b = dec(c);
+    if (b && b.length >= 9) {
+      const hour = (b[0] << 16) | (b[1] << 8) | b[2];
+      for (const d of [dev, "", TRIAL_DEV]) { const t = await sigOther("XE:" + norm(d) + ":h" + hour); if (t.every((x, i) => x === b[3 + i])) return "Mã này là của Xưởng Edit, không dùng cho app này. Mở Xưởng Edit rồi nhập mã vào đó."; }
+    }
+    return "Mã không đúng với máy này (mã máy " + dev + "). Kiểm tra lại từng chữ. Nếu bạn lấy mã máy ở trình duyệt khác, hoặc trước khi thêm vào màn hình chính, thì mã máy đã khác: gửi lại mã máy đang hiện ở trên để nhận mã mới.";
+  }
   // khoa = true: không đóng được (chưa có mã / hết hạn); false: tự mở ra để nhập mã khác
   function overlay(dev, khoa, expired) {
     const el = document.createElement("div");
@@ -146,19 +159,34 @@ const LOCK = (() => {
       <p>${khoa ? (expired ? "Mã hoặc link dùng thử của bạn đã hết hạn. " : "") + "Để dùng, gửi" : "Gửi"} <b>mã máy</b> dưới đây cho ${CONTACT} để nhận mã kích hoạt.</p>
       <p class="khoa-may">Mã máy: <b id="khoaMay">${dev}</b> <button type="button" id="khoaCopy">Sao chép</button></p>
       <p class="khoa-lh"><button type="button" id="khoaMua">Mua gói (MoMo)</button><a href="https://zalo.me/0938333310" target="_blank" rel="noopener">Nhắn Zalo</a><a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></p>
-      <input id="khoaMa" placeholder="Nhập mã kích hoạt" autocomplete="off" autocapitalize="characters" spellcheck="false">
-      <button type="button" id="khoaMo">Kích hoạt</button>
-      <p id="khoaLoi" class="khoa-loi"></p></div>`;
+      <form id="khoaForm" novalidate><input id="khoaMa" placeholder="Nhập mã kích hoạt" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+      <button type="submit" id="khoaMo">Kích hoạt</button></form>
+      <p id="khoaLoi" class="khoa-loi" role="alert" aria-live="polite"></p></div>`;
     document.body.appendChild(el);
     if (!khoa) el.querySelector("#khoaDong").onclick = () => el.remove();
     el.querySelector("#khoaMua").onclick = buy;
     el.querySelector("#khoaCopy").onclick = () => { try { navigator.clipboard.writeText(dev); el.querySelector("#khoaCopy").textContent = "Đã chép"; } catch (e) { } };
-    el.querySelector("#khoaMo").onclick = async () => {
-      const v = el.querySelector("#khoaMa").value, h = await check(dev, v), err = el.querySelector("#khoaLoi");
-      if (h == null) { err.textContent = "Mã kích hoạt không đúng. Kiểm tra lại từng chữ."; return; }
-      if (h !== FOREVER && Date.now() >= hourEnd(h)) { err.textContent = "Mã này đã hết hạn (" + untilText(h) + ")."; return; }
-      st.set("xv_ma", norm(v)); el.remove(); guard();
-    };
+    const inp = el.querySelector("#khoaMa"), btn = el.querySelector("#khoaMo"), err = el.querySelector("#khoaLoi");
+    const say = (t, ok) => { err.textContent = t; err.style.color = ok ? "#2F8F5B" : ""; try { err.scrollIntoView({ block: "nearest" }); } catch (x) { } };
+    // điện thoại: bàn phím hiện lên thì kéo nút Kích hoạt lên cho thấy
+    inp.addEventListener("focus", () => setTimeout(() => { try { btn.scrollIntoView({ block: "nearest" }); } catch (x) { } }, 350));
+    el.querySelector("#khoaForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      if (btn.disabled) return;
+      const v = inp.value;
+      if (!norm(v)) { say("Bạn chưa nhập mã kích hoạt."); return; }
+      inp.blur(); btn.disabled = true; btn.textContent = "Đang kiểm tra...";
+      try {
+        const h = await check(dev, v);
+        if (h == null) { say(await whyWrong(dev, v)); return; }
+        if (h !== FOREVER && Date.now() >= hourEnd(h)) { say("Mã này đã hết hạn (" + untilText(h) + "). Nhắn Diễm để nhận mã mới."); return; }
+        st.set("xv_ma", norm(v));
+        say("Kích hoạt xong. Dùng được " + untilText(h) + ".", true); btn.textContent = "Đã kích hoạt";
+        setTimeout(() => { el.remove(); if (window.__khoaReload) location.reload(); else guard(); }, 900);
+        return;
+      } catch (x) { say("Trình duyệt này chưa kiểm tra được mã. Mở link bằng Chrome hoặc Safari (không mở trong Zalo, Facebook), rồi nhập lại."); }
+      finally { if (btn.textContent !== "Đã kích hoạt") { btn.disabled = false; btn.textContent = "Kích hoạt"; } }
+    });
   }
   // ---------------------------------------------------------------- mua gói: MoMo, lời nhắn tự điền mã máy + gói
   const PAY = { momo: "0938 333 310", name: "NGUYỄN NGỌC DIỄM", plans: [["1THANG", "1 tháng", 99000, "1T", 129000], ["1NAM", "1 năm", 499000, "1N", 690000], ["VINHVIEN", "Vĩnh viễn", 990000, "VV", 1490000]] };
@@ -277,12 +305,12 @@ const LOCK = (() => {
   }
 
   const css = document.createElement("style");
-  css.textContent = `#khoa{position:fixed;inset:0;z-index:9999;background:rgba(18,20,46,.92);display:flex;align-items:center;justify-content:center;padding:16px}
-  .khoa-hop{background:var(--panel,#fff);color:var(--ink,#1F2275);border-radius:20px;padding:22px;max-width:420px;width:100%;font-family:var(--body,sans-serif)}
+  css.textContent = `#khoa{position:fixed;inset:0;z-index:9999;background:rgba(18,20,46,.92);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .khoa-hop{margin:auto;background:var(--panel,#fff);color:var(--ink,#1F2275);border-radius:20px;padding:22px;max-width:420px;width:100%;font-family:var(--body,sans-serif)}
   .khoa-hop h2{margin:0 0 8px}.khoa-hop p{line-height:1.5}.khoa-may b{font-size:20px;letter-spacing:1px}
   .khoa-hop input{width:100%;box-sizing:border-box;font-size:18px;padding:12px;border-radius:12px;border:2px solid var(--line,#ddd);background:var(--field,#fff);color:inherit;text-transform:uppercase;margin:8px 0}
   .khoa-hop button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 14px;background:var(--flame,#E8471B);color:#fff;cursor:pointer}
-  #khoaCopy{padding:6px 10px;font-size:14px;margin-left:6px}#khoaMo{width:100%;padding:14px}
+  #khoaCopy{padding:6px 10px;font-size:14px;margin-left:6px}#khoaMo{width:100%;padding:14px}#khoaMo:disabled{opacity:.7}#khoaForm{margin:0}
   .khoa-lh{display:flex;gap:8px;flex-wrap:wrap}.khoa-lh a{flex:1;text-align:center;font-weight:800;text-decoration:none;padding:10px;border-radius:12px;border:2px solid var(--flame,#E8471B);color:var(--flame,#E8471B)}
   .khoa-loi{color:var(--flame,#E8471B);font-weight:700;min-height:1.2em}
   .khoa-ban{margin:8px 0 0;font-size:13px;color:var(--muted,#6A6B8F);text-align:center}
