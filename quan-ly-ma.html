@@ -17,12 +17,12 @@ button{font:inherit;font-weight:800;font-size:17px;border:0;border-radius:12px;p
 .ra{margin-top:16px;font-size:15px}.ra b{display:block;font-size:22px;letter-spacing:1px;color:var(--ink);margin:6px 0;word-break:break-all}
 .ra .lk{font-size:15px;letter-spacing:0}
 .chep{background:none;color:var(--flame);border:2px solid var(--flame);padding:8px;margin-top:6px}
-.spc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.spc label{margin:0;position:relative}.spc input{position:absolute;opacity:0;width:auto}.spc span{display:block;text-align:center;padding:14px 6px;border-radius:12px;border:2px solid var(--line);font-weight:800;cursor:pointer}.spc input:checked+span{border-color:var(--flame);background:var(--field);color:var(--flame)}
-body.xe{--flame:#2F8F5B}
+.spc{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.spc label{margin:0;position:relative}.spc input{position:absolute;opacity:0;width:auto}.spc span{display:block;text-align:center;padding:14px 6px;border-radius:12px;border:2px solid var(--line);font-weight:800;cursor:pointer}.spc input:checked+span{border-color:var(--flame);background:var(--field);color:var(--flame)}
+body.xe{--flame:#2F8F5B}body.xc{--flame:#B98900;--bg:#FFF6D1;--field:#FFFCEB;--line:#F2DE97}
 </style></head><body>
 <main>
 <h1>Tạo mã kích hoạt</h1>
-<p>Dành riêng cho Diễm. Dùng chung cho Xưởng video và Xưởng Edit.</p>
+<p>Dành riêng cho Diễm. Dùng chung cho Xưởng video, Xưởng Edit và Xưởng content.</p>
 </main>
 <main id="cong">
 <h2>Mật khẩu</h2>
@@ -38,8 +38,9 @@ body.xe{--flame:#2F8F5B}
 <div class="spc" role="radiogroup" aria-label="Chọn app">
 <label><input type="radio" name="sp" value="xv" checked><span>Xưởng video</span></label>
 <label><input type="radio" name="sp" value="xe"><span>Xưởng Edit</span></label>
+<label><input type="radio" name="sp" value="xc"><span>Xưởng content</span></label>
 </div>
-<p>Mã của app nào chỉ mở được app đó. Dán lời nhắn chuyển khoản thì trang tự chọn đúng app (XV là Xưởng video, XE là Xưởng Edit).</p>
+<p>Mã của app nào chỉ mở được app đó. Dán lời nhắn chuyển khoản thì trang tự chọn đúng app (XV là Xưởng video, XE là Xưởng Edit, XC là Xưởng content).</p>
 </main>
 <main>
 <h2>1. Link dùng thử</h2>
@@ -643,15 +644,279 @@ const LOCK_XE = (() => {
 
   return { buy, isLaunch, LAUNCH_END, planPrice, TRIAL_DEV, makeCode, check, checkFull, status, deviceId, untilText, hourNow, FOREVER, norm, isTrial, trialLeft, trialCount, TRIAL_MAX };
 })();
+const LOCK_XC = (() => {
+  const H0 = Date.UTC(2026, 0, 1), FOREVER = 0xFFFFFF;   // hạn = số giờ kể từ 1/1/2026
+  const CONTACT = "Diễm Nguyễn (Zalo 0938 333 310)";   // ghi trên màn hình khóa: liên hệ ai để nhận mã
+  const KEY = "95e3845e10c23e066e35309c7d91b45350666606fc5b8f03";
+  const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   // không có I L O U cho khỏi nhầm
+  const st = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) { } } };
+
+  const enc = bytes => { let bits = 0, v = 0, s = ""; for (const b of bytes) { v = (v << 8) | b; bits += 8; while (bits >= 5) { s += B32[(v >>> (bits - 5)) & 31]; bits -= 5; } } if (bits) s += B32[(v << (5 - bits)) & 31]; return s; };
+  const dec = s => { const out = []; let bits = 0, v = 0; for (const c of s) { const i = B32.indexOf(c); if (i < 0) return null; v = (v << 5) | i; bits += 5; if (bits >= 8) { out.push((v >>> (bits - 8)) & 255); bits -= 8; } } return out; };
+  const norm = s => (s || "").toUpperCase().replace(/[^0-9A-Z]/g, "").replace(/O/g, "0").replace(/[IL]/g, "1");
+  const group = s => s.match(/.{1,4}/g).join("-");
+
+  async function tag(device, hour) {
+    const k = await crypto.subtle.importKey("raw", new TextEncoder().encode(KEY), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+    return new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode("XC:" + norm(device) + ":h" + hour))).slice(0, 6);
+  }
+  // mã cho 1 máy (device rỗng = mã chung, máy nào nhập cũng được), dùng được tới giờ `hour` (FOREVER = vĩnh viễn)
+  async function makeCode(device, hour) { return group(enc([hour >> 16, (hour >> 8) & 255, hour & 255, ...(await tag(device, hour))])); }
+  // mã đúng -> giờ hết hạn (số), sai -> null
+  async function check(device, code) { const r = await checkFull(device, code); return r ? r.hour : null; }
+  // như check, kèm trial = true nếu là link dùng thử (mã tạo cho "máy" THU: chữ U không có trong mã máy thật)
+  const TRIAL_DEV = "THU";
+  async function checkFull(device, code) {
+    const b = dec(norm(code)); if (!b || b.length < 9) return null;
+    const hour = (b[0] << 16) | (b[1] << 8) | b[2];
+    for (const d of [device, "", TRIAL_DEV]) { const t = await tag(d, hour); if (t.every((x, i) => x === b[3 + i])) return { hour, trial: d === TRIAL_DEV }; }
+    return null;
+  }
+  // bản dùng thử (mã chung có hạn): mở hết tính năng, video có chữ ở góc, tối đa TRIAL_MAX video
+  const TRIAL_MAX = 10;
+  let cur = { ok: false };
+  const trialKey = () => "xc_thu_" + (st.get("xc_ma") || "");
+  const isTrial = () => !!cur.trial;
+  const trialUsed = () => +st.get(trialKey()) || 0;
+  const trialLeft = () => Math.max(0, TRIAL_MAX - trialUsed());
+  function trialCount() { st.set(trialKey(), String(trialUsed() + 1)); if (cur.ok) banner(cur); }
+  const hourEnd = h => H0 + h * 3600e3;
+  const hourNow = () => Math.floor((Date.now() - H0) / 3600e3);
+  const untilText = h => h === FOREVER ? "vĩnh viễn" : new Date(hourEnd(h)).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "numeric", month: "numeric", year: "numeric" });
+
+  function deviceId() {
+    let id = st.get("xv_may");
+    if (!id) { id = group(enc(crypto.getRandomValues(new Uint8Array(5)))); st.set("xv_may", id); }
+    return id;
+  }
+
+  // trạng thái: { ok, until (giờ hết hạn), left (ms) }
+  async function status() {
+    const now = Date.now(), dev = deviceId();
+    const seen = +st.get("xc_lan_cuoi") || 0;
+    const back = seen && now < seen - 3600e3;            // chỉnh lùi đồng hồ máy
+    if (!back) st.set("xc_lan_cuoi", String(Math.max(now, seen)));
+    // mã đi kèm link (?ma=...) hoặc mã đã nhập trước đó
+    const fromLink = new URLSearchParams(location.search).get("ma");
+    for (const code of [fromLink, st.get("xc_ma")]) {
+      if (!code) continue;
+      const r = await checkFull(dev, code);
+      if (!r) continue;
+      const h = r.hour;
+      if (h === FOREVER || (now < hourEnd(h) && !back)) {
+        // khách mở link dùng thử lần đầu trên máy này: báo 1 lượt lên Google Sheet (chỉ "đã mở link dùng thử", không gửi tên, số, nội dung)
+        if (code === fromLink && r.trial && h !== FOREVER && !st.get("xc_bao_" + norm(code))) { st.set("xc_bao_" + norm(code), "1"); try { new Image().src = "https" + "://script.google.com/macros/s/AKfycbyhE2sdFp8QTc8IzH6T4SE16h_Zb0sfgKHSmHKJ3BJ6LtlSUDtT9BrNjjcigdMrrE9O/exec?kh=1&sp=xc"; } catch (e) { } }
+        st.set("xc_ma", norm(code)); return (cur = { ok: true, until: h, left: hourEnd(h) - now, trial: r.trial && h !== FOREVER }); }
+    }
+    return (cur = { ok: false, expired: !!(fromLink || st.get("xc_ma")) });
+  }
+
+  // khoa = true: không đóng được (chưa có mã / hết hạn); false: tự mở ra để nhập mã khác
+  function overlay(dev, khoa, expired) {
+    const el = document.createElement("div");
+    el.id = "khoa";
+    el.innerHTML = `<div class="khoa-hop">
+      ${khoa ? "" : '<button type="button" id="khoaDong" aria-label="Đóng">✕</button>'}
+      <h2>${!khoa ? "Nhập mã kích hoạt" : expired ? "Hết thời gian dùng" : "Cần mã để dùng"}</h2>
+      <p>${khoa ? (expired ? "Mã hoặc link dùng thử của bạn đã hết hạn. " : "") + "Để dùng, gửi" : "Gửi"} <b>mã máy</b> dưới đây cho ${CONTACT} để nhận mã kích hoạt.</p>
+      <p class="khoa-may">Mã máy: <b id="khoaMay">${dev}</b> <button type="button" id="khoaCopy">Sao chép</button></p>
+      <p class="khoa-lh"><button type="button" id="khoaMua">Mua gói (MoMo)</button><a href="https://zalo.me/0938333310" target="_blank" rel="noopener">Nhắn Zalo</a><a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></p>
+      <input id="khoaMa" placeholder="Nhập mã kích hoạt" autocomplete="off" autocapitalize="characters" spellcheck="false">
+      <button type="button" id="khoaMo">Kích hoạt</button>
+      <p id="khoaLoi" class="khoa-loi"></p></div>`;
+    document.body.appendChild(el);
+    if (!khoa) el.querySelector("#khoaDong").onclick = () => el.remove();
+    el.querySelector("#khoaMua").onclick = buy;
+    el.querySelector("#khoaCopy").onclick = () => { try { navigator.clipboard.writeText(dev); el.querySelector("#khoaCopy").textContent = "Đã chép"; } catch (e) { } };
+    el.querySelector("#khoaMo").onclick = async () => {
+      const v = el.querySelector("#khoaMa").value, h = await check(dev, v), err = el.querySelector("#khoaLoi");
+      if (h == null) { err.textContent = "Mã kích hoạt không đúng. Kiểm tra lại từng chữ."; return; }
+      if (h !== FOREVER && Date.now() >= hourEnd(h)) { err.textContent = "Mã này đã hết hạn (" + untilText(h) + ")."; return; }
+      st.set("xc_ma", norm(v)); el.remove(); guard();
+    };
+  }
+  // ---------------------------------------------------------------- mua gói: MoMo, lời nhắn tự điền mã máy + gói
+  const PAY = { momo: "0938 333 310", name: "NGUYỄN NGỌC DIỄM", plans: [["1THANG", "1 tháng", 149000, "1T", 199000], ["1NAM", "1 năm", 690000, "1N", 990000], ["VINHVIEN", "Vĩnh viễn", 1290000, "VV", 1890000]] };
+  // giá ra mắt đến 23:59 ngày 30/11/2026 (giờ VN), sau đó tự lên giá sau ra mắt
+  const LAUNCH_END = Date.UTC(2026, 10, 30, 16, 59, 59), isLaunch = () => Date.now() <= LAUNCH_END;
+  const price = p => isLaunch() ? p[2] : p[4];
+  const planPrice = code => { const p = PAY.plans.find(x => x[0] === code || x[3] === code); return p ? price(p) : 0; };
+  const vnd = n => n.toLocaleString("vi-VN") + "đ";
+  // VietQR của ví MoMo (Diễm gửi): thêm số tiền (54) và lời nhắn (62/08) rồi tính lại mã kiểm CRC
+  const QR_ACC = "0010A000000727013300069710250119PSP26302142000001010208QRIBFTTA", QR_REF = "0515MOMOW2W123605830622hmzpXQJ_XugcfvJpcmNlsg";
+  const tlv = (id, v) => id + String(v.length).padStart(2, "0") + v;
+  function crc16(t) { let c = 0xFFFF; for (let i = 0; i < t.length; i++) { c ^= t.charCodeAt(i) << 8; for (let j = 0; j < 8; j++) c = c & 0x8000 ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF; } return c.toString(16).toUpperCase().padStart(4, "0"); }
+  function vietqr(amount, note) {
+    const body = "000201" + "010212" + tlv("38", QR_ACC) + "5303704" + tlv("54", String(amount)) + "5802VN" + tlv("62", QR_REF + tlv("08", note)) + "6304";
+    return body + crc16(body);
+  }
+  function qrCanvas(text, px) {
+    const q = qrcode(0, "M"); q.addData(text); q.make();
+    const n = q.getModuleCount(), m = 3, cell = Math.floor(px / (n + 2 * m)), size = cell * (n + 2 * m), c = document.createElement("canvas");
+    c.width = c.height = size; const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, size, size); g.fillStyle = "#111";
+    for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect((k + m) * cell, (r + m) * cell, cell, cell);
+    return c;
+  }
+  const IC = {
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    dl: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+    msg: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
+    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    key: '<path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/>'
+  };
+  const ic = n => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+  function buy(sel) {
+    const pick = Number.isInteger(sel) ? sel : 1;   // gói chọn sẵn (landing truyền vào), mặc định 1 năm
+    if (document.getElementById("mua")) return;
+    const dev = deviceId(), el = document.createElement("div"); el.id = "mua";
+    const tag = ["", "Tiết kiệm nhất", "Dùng mãi"];
+    el.innerHTML = `<div class="mua-hop" role="dialog" aria-modal="true" aria-labelledby="muaTd">
+      <button type="button" id="muaDong" aria-label="Đóng">${ic("x")}</button>
+      <h2 id="muaTd">Mua Xưởng Edit</h2>
+      <p class="mua-sub">Thanh toán qua MoMo, nhận mã kích hoạt trong ngày.${isLaunch() ? " <b class=\"mua-ram\">Giá ra mắt đến hết 30/11</b>" : ""}</p>
+      <div class="mua-goi" role="radiogroup" aria-label="Chọn gói">${PAY.plans.map((p, i) => `<label${i === 1 ? ' class="hot"' : ""}><input type="radio" name="muaGoi" value="${i}"${i === pick ? " checked" : ""}>${tag[i] ? `<em>${tag[i]}</em>` : ""}<b>${p[1]}</b><span>${vnd(price(p))}</span>${isLaunch() ? `<s>${vnd(p[4])}</s>` : ""}</label>`).join("")}</div>
+      <label class="mua-zl" for="muaZalo"><span>Số Zalo của bạn <i>(để nhận mã, nên ghi)</i></span>
+        <input id="muaZalo" type="tel" inputmode="numeric" autocomplete="tel" placeholder="09xx xxx xxx" maxlength="14"></label>
+      <div class="mua-qr">
+        <div class="mua-qrimg" id="muaQr"></div>
+        <div class="mua-qrtxt"><b>Quét mã để chuyển</b><span>Dùng app MoMo hoặc app ngân hàng quét mã. Số tiền và lời nhắn đã điền sẵn. Đang mua trên điện thoại thì lưu ảnh mã, rồi mở app chọn quét ảnh có sẵn.</span>
+          <button type="button" class="mua-nut2" id="muaLuu">${ic("dl")}Lưu ảnh mã QR</button></div>
+      </div>
+      <p class="mua-hoac">Hoặc chuyển tay vào MoMo</p>
+      <div class="mua-tt">
+        <div><span>Người nhận</span><b>${PAY.name}</b></div>
+        <div><span>Số MoMo</span><b>${PAY.momo}</b><button type="button" class="mua-chep" data-chep="${PAY.momo.replace(/\s/g, "")}" aria-label="Chép số MoMo">${ic("copy")}</button></div>
+        <div><span>Số tiền</span><b id="muaTien"></b><button type="button" class="mua-chep" id="chepTien" aria-label="Chép số tiền">${ic("copy")}</button></div>
+        <div><span>Lời nhắn</span><b id="muaNhan"></b><button type="button" class="mua-chep" id="chepNhan" aria-label="Chép lời nhắn">${ic("copy")}</button></div>
+      </div>
+      <div class="mua-an">${ic("shield")}<p>Chỉ chuyển vào MoMo tên <b>${PAY.name}</b>, số <b>${PAY.momo}</b>. Xưởng Edit không nhờ ai thu hộ. Còn phân vân thì nhắn Zalo hoặc Fanpage hỏi trước khi chuyển.</p></div>
+      <p class="mua-nho">Chuyển xong là xong: mình đối soát giao dịch theo lời nhắn và gửi mã kích hoạt qua Zalo số bạn ghi, trong ngày. Nhắn Zalo kèm ảnh giao dịch thì nhận mã nhanh hơn.</p>
+      <div class="mua-xong">
+        <a class="mua-nut" href="https://zalo.me/0938333310" target="_blank" rel="noopener">${ic("msg")}Đã chuyển, nhắn Zalo nhận mã</a>
+        <button type="button" class="mua-nut2" id="muaNhap">${ic("key")}Nhập mã kích hoạt</button>
+      </div>
+      <div class="mua-cskh"><div><span>Heartline chăm sóc khách hàng</span><a href="tel:0938333310">${ic("phone")}0938 333 310</a></div>
+        <p><a href="https://zalo.me/0938333310" target="_blank" rel="noopener">Zalo</a><a href="https://www.facebook.com/profile.php?id=61585588883230" target="_blank" rel="noopener">Fanpage</a></p></div>
+    </div>`;
+    document.body.appendChild(el);
+    let qr = null;
+    const upd = () => {
+      const p = PAY.plans[+el.querySelector("input[name=muaGoi]:checked").value], zl = zalo();
+      const nhan = "XE " + dev.replace("-", "") + " " + p[3] + (zl ? " " + zl : "");
+      el.querySelector("#muaTien").textContent = vnd(price(p)); el.querySelector("#chepTien").dataset.chep = String(price(p));
+      el.querySelector("#muaNhan").textContent = nhan; el.querySelector("#chepNhan").dataset.chep = nhan;
+      const box = el.querySelector("#muaQr"); box.textContent = "";
+      try { qr = qrCanvas(vietqr(price(p), nhan), 480); qr.setAttribute("role", "img"); qr.setAttribute("aria-label", "Mã QR chuyển " + vnd(price(p)) + " vào MoMo " + PAY.name); box.append(qr); el.dataset.goi = p[0]; } catch (e) { qr = null; box.textContent = "Không tạo được mã QR, chuyển tay theo thông tin bên dưới."; }
+    };
+    // số Zalo hợp lệ (10 số, bắt đầu bằng 0) mới ghi vào lời nhắn; nhớ trên máy cho lần sau
+    const zIn = el.querySelector("#muaZalo"); zIn.value = st.get("xc_zalo") || "";
+    function zalo() { let d = zIn.value.replace(/\D/g, ""); if (d.startsWith("84")) d = "0" + d.slice(2); return /^0\d{9}$/.test(d) ? d : ""; }
+    zIn.addEventListener("input", () => { st.set("xc_zalo", zIn.value); upd(); });
+    el.querySelectorAll("input[name=muaGoi]").forEach(r => r.addEventListener("change", upd)); upd();
+    el.addEventListener("click", e => {
+      const b = e.target.closest("button[data-chep]"); if (!b) return;
+      try { navigator.clipboard.writeText(b.dataset.chep); b.classList.add("ok"); setTimeout(() => b.classList.remove("ok"), 1500); } catch (err) { }
+    });
+    el.querySelector("#muaLuu").onclick = () => {
+      if (!qr) return;
+      qr.toBlob(async bl => {
+        const name = "QR_MoMo_XuongEdit_" + el.dataset.goi + ".png", f = new File([bl], name, { type: "image/png" });
+        if (navigator.canShare && /iPhone|iPad|Android/i.test(navigator.userAgent) && navigator.canShare({ files: [f] })) { try { await navigator.share({ files: [f] }); return; } catch (err) { if (err && err.name === "AbortError") return; } }
+        const u = URL.createObjectURL(f), a = document.createElement("a"); a.href = u; a.download = name; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 30000);
+      }, "image/png");
+    };
+    el.querySelector("#muaNhap").onclick = () => { el.remove(); if (window.LOCK_APP_URL) { location.href = window.LOCK_APP_URL; return; } document.getElementById("khoa") || overlay(deviceId(), false); };
+    el.querySelector("#muaDong").onclick = () => el.remove();
+    el.addEventListener("click", e => { if (e.target === el) el.remove(); });
+  }
+
+  function banner(s) {
+    const b = document.getElementById("khoaBan") || document.createElement("p");
+    b.id = "khoaBan"; b.className = "khoa-ban";
+    if (s.until === FOREVER) { b.remove(); return; }
+    const hl = Math.max(1, Math.ceil(s.left / 3600e3));
+    b.innerHTML = (s.trial ? "<b>Bản dùng thử</b>: còn " + hl + " giờ, còn " + trialLeft() + "/" + TRIAL_MAX + " video. Video dùng thử có chữ nhỏ ở góc, mua gói thì video sạch." :
+      "Dùng được đến " + untilText(s.until) + (hl <= 72 ? " (còn " + hl + " giờ)." : ".")) +
+      ' <button type="button" class="khoa-link">Nhập mã kích hoạt</button> <button type="button" class="khoa-link mua-link">Mua gói</button>';
+    b.querySelector("button").onclick = () => document.getElementById("khoa") || overlay(deviceId(), false);
+    b.querySelector(".mua-link").onclick = buy;
+    const h = document.querySelector("header"); (h || document.body).insertAdjacentElement(h ? "afterend" : "afterbegin", b);
+  }
+  async function guard() {
+    const s = await status();
+    if (s.ok) { banner(s); if (s.until !== FOREVER) setTimeout(guard, Math.min(s.left + 1000, 3600e3)); return; }
+    const b = document.getElementById("khoaBan"); if (b) b.remove();
+    document.getElementById("khoa") || overlay(deviceId(), true, s.expired);
+  }
+
+  const css = document.createElement("style");
+  css.textContent = `#khoa{position:fixed;inset:0;z-index:9999;background:rgba(14,30,24,.92);display:flex;align-items:center;justify-content:center;padding:16px}
+  .khoa-hop{background:var(--panel,#fff);color:var(--ink,#16324F);border-radius:20px;padding:22px;max-width:420px;width:100%;font-family:var(--body,sans-serif)}
+  .khoa-hop h2{margin:0 0 8px}.khoa-hop p{line-height:1.5}.khoa-may b{font-size:20px;letter-spacing:1px}
+  .khoa-hop input{width:100%;box-sizing:border-box;font-size:18px;padding:12px;border-radius:12px;border:2px solid var(--line,#ddd);background:var(--field,#fff);color:inherit;text-transform:uppercase;margin:8px 0}
+  .khoa-hop button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 14px;background:var(--flame,#E8471B);color:#fff;cursor:pointer}
+  #khoaCopy{padding:6px 10px;font-size:14px;margin-left:6px}#khoaMo{width:100%;padding:14px}
+  .khoa-lh{display:flex;gap:8px;flex-wrap:wrap}.khoa-lh a{flex:1;text-align:center;font-weight:800;text-decoration:none;padding:10px;border-radius:12px;border:2px solid var(--flame,#E8471B);color:var(--flame,#E8471B)}
+  .khoa-loi{color:var(--flame,#E8471B);font-weight:700;min-height:1.2em}
+  .khoa-ban{margin:8px 0 0;font-size:13px;color:var(--muted,#6A6B8F);text-align:center}
+  .khoa-link{font:inherit;font-weight:700;background:none;border:0;color:var(--flame,#E8471B);text-decoration:underline;cursor:pointer;padding:4px}
+  .khoa-hop{position:relative}#khoaDong,#muaDong{position:absolute;top:10px;right:10px;background:none;color:inherit;font-size:20px;padding:6px 10px}
+  #khoaMua{flex:1 1 100%}
+  #mua{position:fixed;inset:0;z-index:10000;background:rgba(14,30,24,.82);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto;font-family:var(--body,sans-serif)}
+  .mua-hop{position:relative;margin:auto;background:#fff;color:#16324F;border-radius:22px;padding:22px 18px 18px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .mua-hop h2{margin:0;font:800 22px var(--display,sans-serif);padding-right:36px}.mua-sub{margin:4px 0 14px;color:#6A6B8F;font-size:14.5px}
+  .mua-hop button,.mua-hop a{font:inherit}
+  #muaDong{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;background:#F4F1FA;color:#16324F;display:grid;place-items:center;cursor:pointer;padding:0}
+  .mua-goi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .mua-goi label{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;border:1.5px solid #E6E1EF;border-radius:14px;padding:16px 4px 10px;cursor:pointer;text-align:center;background:#fff;transition:border-color .15s,box-shadow .15s}
+  .mua-goi input{position:absolute;opacity:0;pointer-events:none}
+  .mua-goi b{font-size:14px;font-weight:700;color:#6A6B8F}.mua-goi s{font-size:12px;color:#8A8CB0}.mua-ram{display:inline-block;margin-top:4px;font-weight:700;color:#A50064}.mua-goi span{font:800 17px var(--display,sans-serif);color:#16324F}
+  .mua-goi em{position:absolute;top:-9px;left:50%;transform:translateX(-50%);white-space:nowrap;font:700 10.5px var(--body,sans-serif);font-style:normal;background:#16324F;color:#fff;border-radius:99px;padding:2px 8px}
+  .mua-goi label:has(input:checked){border-color:#A50064;box-shadow:0 0 0 3px rgba(165,0,100,.12);background:#FFF7FB}
+  .mua-goi label:has(input:checked) b{color:#A50064}
+  .mua-goi label:has(input:focus-visible){outline:3px solid #FFC21A;outline-offset:2px}
+  .mua-qr{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;margin-top:16px;padding:16px 14px;border-radius:18px;background:linear-gradient(160deg,#FCEAF4,#F8E1EE)}
+  .mua-qrimg{flex:none;width:200px;height:200px;background:#fff;border-radius:14px;padding:6px;box-sizing:border-box;display:grid;place-items:center;font-size:12px;text-align:center;border:2px solid #F3B5D6}
+  .mua-qrimg canvas{width:100%;height:100%;image-rendering:pixelated;display:block}
+  .mua-qrtxt{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;max-width:300px}.mua-qrtxt b{font-size:16px;color:#A50064}.mua-qrtxt span{font-size:13.5px;line-height:1.45;color:#4A3550}
+  .mua-hoac{margin:16px 0 6px;font-size:13px;font-weight:700;color:#6A6B8F;text-transform:uppercase;letter-spacing:.6px}
+  .mua-tt{border:1.5px solid #ECE8F2;border-radius:14px;overflow:hidden}
+  .mua-tt>div{display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:26px}.mua-tt>div+div{border-top:1px solid #F0EDF5}
+  .mua-tt span{flex:none;width:84px;font-size:13.5px;color:#6A6B8F}.mua-tt b{flex:1;min-width:0;font-size:15.5px;overflow-wrap:anywhere}
+  .mua-chep{flex:none;width:34px;height:34px;border-radius:10px;border:0;background:#F4F1FA;color:#16324F;display:grid;place-items:center;cursor:pointer;padding:0}
+  .mua-chep.ok{background:#E3F5EA;color:#2F8F5B}
+  .mua-an{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:12px;border-radius:14px;background:#F1F7F3;color:#24533A}
+  .mua-an svg{flex:none;margin-top:2px;color:#2F8F5B}.mua-an p{margin:0;font-size:13.5px;line-height:1.5}
+  .mua-xong{display:grid;gap:8px;margin-top:14px}
+  .mua-nut,.mua-nut2{display:flex;align-items:center;justify-content:center;gap:8px;border-radius:14px;padding:12px 14px;font-weight:800;text-decoration:none;cursor:pointer}
+  .mua-nut{background:#A50064;color:#fff;border:0}.mua-nut2{background:#fff;color:#16324F;border:1.5px solid #E1DCEB}
+  .mua-qrtxt .mua-nut2{padding:8px 10px;font-size:13.5px;border-radius:10px;background:#fff;border-color:#F3B5D6;color:#A50064}
+  .mua-nho{margin:14px 2px 0;font-size:13.5px;line-height:1.55;color:#4A4C7A}
+  .mua-zl{display:block;margin-top:14px}.mua-zl span{display:block;font-size:13.5px;font-weight:700;margin-bottom:6px}.mua-zl i{font-style:normal;font-weight:400;color:#6A6B8F}
+  .mua-zl input{width:100%;box-sizing:border-box;font:inherit;font-size:17px;padding:11px 14px;border-radius:12px;border:1.5px solid #E1DCEB;background:#fff;color:#16324F;margin:0}
+  .mua-zl input:focus{outline:none;border-color:#A50064;box-shadow:0 0 0 3px rgba(165,0,100,.12)}
+  .mua-cskh{margin-top:14px;padding:14px;border-radius:14px;background:linear-gradient(160deg,#2F8F5B,#1F6B42);color:#F8F5FF;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+  .mua-cskh span{display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#F4AFD3;font-weight:700}
+  .mua-cskh a{color:#fff;text-decoration:none;font-weight:800}
+  .mua-cskh>div>a{display:flex;align-items:center;gap:8px;font-size:20px;margin-top:2px}
+  .mua-cskh p{margin:0;display:flex;gap:8px}.mua-cskh p a{font-size:13.5px;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:7px 14px}
+  @media (max-width:370px){.mua-hop{padding:20px 14px 16px}.mua-goi{gap:6px}.mua-goi span{font-size:15px}.mua-goi b{font-size:13px}.mua-tt span{width:72px}}`;
+  document.head.appendChild(css);
+  if (typeof window !== "undefined" && !window.LOCK_NO_AUTO) (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", guard) : guard());
+
+  return { buy, isLaunch, LAUNCH_END, planPrice, TRIAL_DEV, makeCode, check, checkFull, status, deviceId, untilText, hourNow, FOREVER, norm, isTrial, trialLeft, trialCount, TRIAL_MAX };
+})();
 
 </script>
 <script>
-const LINKS = { xv: "https://waoacademy1-web.github.io/xuong-video/", xe: "https://waoacademy1-web.github.io/auto-edit/" };
+const LINKS = { xv: "https://waoacademy1-web.github.io/xuong-video/", xe: "https://waoacademy1-web.github.io/auto-edit/", xc: "https://waoacademy1-web.github.io/xuong-content/" };
 const spNow = () => (document.querySelector('input[name="sp"]:checked') || {}).value || "xv";
 const spSet = v => { const r = document.querySelector('input[name="sp"][value="' + v + '"]'); if (r && !r.checked) { r.checked = true; spDoi(); } };
-const L = () => spNow() === "xe" ? LOCK_XE : LOCK;   // khóa của app đang chọn
-const spTen = () => spNow() === "xe" ? "Xưởng Edit" : "Xưởng video";
-function spDoi() { document.body.classList.toggle("xe", spNow() === "xe"); document.getElementById("raThu").innerHTML = ""; document.getElementById("ra").innerHTML = ""; }
+const L = () => spNow() === "xe" ? LOCK_XE : spNow() === "xc" ? LOCK_XC : LOCK;   // khóa của app đang chọn
+const spTen = () => spNow() === "xe" ? "Xưởng Edit" : spNow() === "xc" ? "Xưởng content" : "Xưởng video";
+function spDoi() { document.body.classList.toggle("xe", spNow() === "xe"); document.body.classList.toggle("xc", spNow() === "xc"); document.getElementById("raThu").innerHTML = ""; document.getElementById("ra").innerHTML = ""; }
 document.querySelectorAll('input[name="sp"]').forEach(r => r.addEventListener("change", spDoi));
 // mật khẩu: so mã băm PBKDF2 (không ghi mật khẩu trong trang)
 const SALT = "e5feaf90e0e89ddb", HASH = "5b07cc28bfbab0e383b9d50bb43953ca1ddcfc7bc67705884133b26a39d54c57";
@@ -675,14 +940,14 @@ document.getElementById("taoThu").onclick = async () => {
   const url = LINKS[spNow()] + "?ma=" + L().norm(await L().makeCode(L().TRIAL_DEV, h));   // mã dùng thử: có chữ ở góc video, tối đa 10 video
   document.getElementById("raThu").innerHTML = `Link dùng thử ${spTen()}, mở được đến ${L().untilText(h)}:<b class="lk" id="link">${url}</b><button type="button" class="chep" id="chepThu">Sao chép link</button>`;
   copyBtn("chepThu", url);
-  hdNut(document.getElementById("raThu"), "THU");
+  if (spNow() !== "xc") hdNut(document.getElementById("raThu"), "THU");
 };
 // lời nhắn MoMo "XV <mã máy> <gói>" -> tự điền mã máy và thời hạn
 document.getElementById("loiNhan").addEventListener("input", e => {
-  const m = /X([VE])\W*([0-9A-Z]{4})\W?([0-9A-Z]{4})\W+(1\s*THANG|1\s*NAM|VINH\s*VIEN|1T|1N|VV)\b(?:\D+((?:\+?84|0)\d{9}))?/i.exec(e.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d"));
+  const m = /X([VEC])\W*([0-9A-Z]{4})\W?([0-9A-Z]{4})\W+(1\s*THANG|1\s*NAM|VINH\s*VIEN|1T|1N|VV)\b(?:\D+((?:\+?84|0)\d{9}))?/i.exec(e.target.value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/gi, "d"));
   const kq = document.getElementById("loiNhanKq");
-  if (m) spSet(m[1].toUpperCase() === "E" ? "xe" : "xv");
-  if (!m) { kq.textContent = e.target.value.trim() ? "Chưa đọc được. Lời nhắn đúng có dạng: XV 7K3M9QXA 1N 0912345678 hoặc XE 7K3M9QXA 1N 0912345678 (số Zalo có thể không có)" : ""; return; }
+  if (m) spSet({ E: "xe", C: "xc" }[m[1].toUpperCase()] || "xv");
+  if (!m) { kq.textContent = e.target.value.trim() ? "Chưa đọc được. Lời nhắn đúng có dạng: XV 7K3M9QXA 1N 0912345678 (XE cho Xưởng Edit, XC cho Xưởng content) (số Zalo có thể không có)" : ""; return; }
   const goi = ({ "1T": "1THANG", "1N": "1NAM", "VV": "VINHVIEN" })[m[4].toUpperCase()] || m[4].toUpperCase().replace(/\s/g, ""), han = { "1THANG": "720", "1NAM": "8760", "VINHVIEN": "forever" }[goi];
   document.getElementById("may").value = m[2].toUpperCase() + "-" + m[3].toUpperCase();
   document.getElementById("han").value = han;
@@ -697,7 +962,7 @@ document.getElementById("tao").onclick = async () => {
   const code = await L().makeCode(may, h);
   ra.innerHTML = `${spTen()}: ${may ? "Mã kích hoạt cho máy " + may.slice(0, 4) + "-" + may.slice(4) : "Mã chung (máy nào nhập cũng được)"}, dùng đến ${L().untilText(h)}:<b id="ma">${code}</b><button type="button" class="chep" id="chep">Sao chép mã</button>`;
   copyBtn("chep", code);
-  const g = { "720": "1T", "8760": "1N", forever: "VV" }[v]; if (g) hdNut(ra, g);
+  const g = { "720": "1T", "8760": "1N", forever: "VV" }[v]; if (g && spNow() !== "xc") hdNut(ra, g);
 };
 
 // ghi lượt khách thật để landing hiện thông báo (chỉ loại gói và ngày, không tên, không số điện thoại)

@@ -53,6 +53,18 @@ input:focus{outline:none;border-color:var(--berry)}
 .empty{padding:18px 16px;color:var(--muted);font-size:14px}
 .note{font-size:13px;color:var(--muted);margin-top:10px}
 .foot{margin-top:34px;font-size:14px;color:var(--muted);text-align:center}
+.hop{margin-top:14px}
+.hop h3{margin:0 0 4px;font-size:17px}
+.hop .dong{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.hop .dong:first-of-type{border-top:0}
+.hop .dong span small{display:block;color:var(--muted);font-size:12.5px}
+.hop .dong b{white-space:nowrap;font-variant-numeric:tabular-nums}
+.hop .dong.sach{border-top:2px solid var(--ink);font-size:17px}.hop .dong.sach b{color:var(--ok)}
+.tim{color:var(--berry)}
+.thue{margin-top:12px;background:#FFF8E6;border:1px solid #F1DDA6;border-radius:14px;padding:14px}
+.thue p{margin:0 0 8px;font-size:14px}
+.thue .row{flex-wrap:wrap}
+.offline{background:#FFF8E6;border:1px solid #F1DDA6;border-radius:12px;padding:10px 14px;font-size:14px;margin:0 0 14px}
 @media (min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
@@ -71,6 +83,7 @@ input:focus{outline:none;border-color:var(--berry)}
     </form>
   </section>
   <section id="ds" hidden>
+    <p class="offline" id="offline" hidden></p>
     <h1 id="chao"></h1>
     <p class="muted" id="nhan"></p>
     <div class="stats">
@@ -79,6 +92,7 @@ input:focus{outline:none;border-color:var(--berry)}
       <div class="stat"><span>Đã kiếm được</span><b id="sHh"></b></div>
       <div class="stat hl"><span>Còn chờ nhận</span><b id="sCon"></b></div>
     </div>
+    <div class="card hop" id="hop" aria-live="polite"></div>
     <div class="card rut" id="rut"></div>
     <h2>Link giới thiệu của bạn</h2>
     <div class="link"><code id="link"></code><button class="btn line" id="chep" type="button" style="padding:8px 14px">Sao chép</button></div>
@@ -109,7 +123,7 @@ function ve(r, sdt) {
   $('login').hidden = true; $('ds').hidden = false; $('out').hidden = false;
   $('chao').textContent = 'Chào ' + (String(r.ten || '').trim().split(/\s+/).pop() || 'bạn');
   $('nhan').textContent = 'Mã CTV: ' + r.ma + (r.nhan ? ' · Nhận tiền qua ' + r.nhan : '');
-  $('sDk').textContent = r.dk; $('sTra').textContent = r.tra; $('sHh').textContent = vnd(r.hoahong); $('sCon').textContent = vnd(r.conlai);
+  veHop(r); $('sDk').textContent = r.dk; $('sTra').textContent = r.tra; $('sHh').textContent = vnd(r.hoahong); $('sCon').textContent = vnd(r.conlai);
   const link = new URL('./?ref=' + r.ma, location.href).href; $('link').textContent = link;
   $('chep').onclick = async () => { try { await navigator.clipboard.writeText(link); $('chep').textContent = 'Đã chép'; } catch (e) { } };
   const txt = 'Mình đang dùng Xưởng video: dán bài viết là ra video có giọng đọc AI tiếng Việt. Dùng thử miễn phí 24 giờ tại đây:';
@@ -118,7 +132,7 @@ function ve(r, sdt) {
   const rut = $('rut'), min = r.toithieu || 100000;
   if (r.yc) rut.innerHTML = '<p><b>Đã gửi yêu cầu nhận hoa hồng ngày ' + esc(r.yc) + '.</b></p><p class="muted" style="margin:0">Xưởng video chuyển trong 3 ngày làm việc và báo qua ' + (r.email ? 'email' : 'Zalo') + '.</p>';
   else if (r.conlai >= min) {
-    rut.innerHTML = '<p>Bạn có thể nhận <b>' + vnd(r.conlai) + '</b>.' + (r.conlai >= 2000000 ? ' Số từ 2.000.000đ được khấu trừ 10% thuế thu nhập cá nhân theo quy định.' : '') + '</p><button class="btn" id="rutBtn" type="button">Yêu cầu nhận hoa hồng</button><p class="err" id="rutLoi"></p>';
+    rut.innerHTML = '<p>Bạn có thể nhận <b>' + vnd(r.conlai) + '</b>.' + ' Xưởng trích 1% quỹ biết ơn, 1% quỹ tri ân, và trừ 10% thuế nếu tháng đó từ 2 triệu. Xem Hộp của bạn ở trên.' + '</p><button class="btn" id="rutBtn" type="button">Yêu cầu nhận hoa hồng</button><p class="err" id="rutLoi"></p>';
     $('rutBtn').onclick = async () => {
       $('rutBtn').disabled = true; $('rutBtn').textContent = 'Đang gửi...';
       try { const x = await fetch(SHEET_URL + '?rut=' + encodeURIComponent(r.ma) + '&sdt=' + sdt, { cache: 'no-store' }).then(y => y.json());
@@ -135,17 +149,50 @@ function ve(r, sdt) {
     (l.xn ? '<span class="tag ok">Đã xác nhận</span>' : l.tk ? '<a class="btn" style="padding:8px 14px;font-size:13px" href="' + SHEET_URL + '?xn=' + encodeURIComponent(l.tk) + '" target="_blank" rel="noopener">Xác nhận đã nhận</a>' : '<span class="tag cho">Chờ xác nhận</span>') + '</div></div>').join('')
     : '<div class="empty">Chưa có lần nhận tiền nào.</div>';
 }
+
+// Hộp của bạn: hoa hồng 40%, quỹ biết ơn 1% và quỹ tri ân 1% (xưởng giữ cho gặp mặt, hoạt động xã hội),
+// thuế: tháng nào hoa hồng từ 2 triệu thì xưởng trừ 10% và nộp thay, dưới 2 triệu không trừ
+const ETAX = 'https://canhan.gdt.gov.vn/';
+const QUY = 0.01, THUE = 0.10, NGUONG = 2000000;
+const ngayDon = s => { const m = /(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(String(s || '')); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; };
+function veHop(r) {
+  const nay = new Date(), don = (r.don || []).filter(d => Number(d.hoahong) > 0);
+  const cungThang = d => { const t = ngayDon(d.ngay); return t && t.getFullYear() === nay.getFullYear() && t.getMonth() === nay.getMonth(); };
+  const cungQuy = d => { const t = ngayDon(d.ngay); return t && t.getFullYear() === nay.getFullYear() && Math.floor(t.getMonth() / 3) === Math.floor(nay.getMonth() / 3); };
+  const docNgay = don.some(d => ngayDon(d.ngay));
+  const hh = docNgay ? don.filter(cungThang).reduce((s, d) => s + Number(d.hoahong), 0) : Number(r.hoahong) || 0;
+  const hhQuy = docNgay ? don.filter(cungQuy).reduce((s, d) => s + Number(d.hoahong), 0) : hh;
+  const bo = Math.round(hh * QUY), ta = Math.round(hh * QUY), giu = hh >= NGUONG, thue = giu ? Math.round(hh * THUE) : 0, sach = hh - bo - ta - thue;
+  const huy = Math.round(hhQuy * QUY / 1000), q = Math.floor(nay.getMonth() / 3) + 1;
+  $('hop').innerHTML = '<h3>Hộp của bạn ' + (docNgay ? 'tháng ' + (nay.getMonth() + 1) + '/' + nay.getFullYear() : '') + '</h3>' +
+    '<div class="dong"><span>Hoa hồng 40%<small>Trên số tiền khách thực trả, đã thanh toán thành công</small></span><b>' + vnd(hh) + '</b></div>' +
+    '<div class="dong"><span><span class="tim">♥</span> Quỹ biết ơn 1%<small>Xưởng giữ để làm hoạt động xã hội chung</small></span><b>−' + vnd(bo) + '</b></div>' +
+    '<div class="dong"><span>🤗 Quỹ tri ân 1%<small>Xưởng giữ cho buổi gặp mặt, kết nối cộng đồng CTV</small></span><b>−' + vnd(ta) + '</b></div>' +
+    '<div class="dong"><span>Thuế thu nhập cá nhân<small>' + (giu ? 'Tháng này từ 2 triệu: xưởng trừ 10% và nộp thay bạn' : 'Dưới 2 triệu: xưởng không trừ') + '</small></span><b>' + (giu ? '−' + vnd(thue) : '0đ') + '</b></div>' +
+    '<div class="dong sach"><span>Tiền sạch xưởng chuyển cho bạn</span><b>' + vnd(sach) + '</b></div>' +
+    '<p style="margin:12px 0 0;font-size:15px">🤗 Huy hiệu ôm nhau quý ' + q + ': <b>' + huy + '</b> <span class="muted" style="font-size:13px">(1 huy hiệu = 1.000đ bạn góp vào quỹ tri ân. Về 0 khi sang quý mới.)</span></p>' +
+    '<div class="thue"><p><b>Nghĩa vụ thuế:</b> người nhận hoa hồng tự chịu trách nhiệm về thuế thu nhập cá nhân của mình. Khoản xưởng đã trừ 10% thì xưởng nộp thay bạn trong tháng. Khoản dưới 2 triệu không bị trừ, bạn tự kê khai khi quyết toán nếu tổng thu nhập cả năm phải nộp thuế.</p>' +
+    '<div class="row"><button class="btn" id="thueNop" type="button" style="padding:9px 16px">Mở eTax để kê khai</button></div>' +
+    '<p id="thueKq" style="margin:8px 0 0;font-size:13.5px" aria-live="polite"></p></div>';
+  $('thueNop').onclick = () => {
+    if (!navigator.onLine) { $('thueKq').textContent = 'Phần eTax cần có mạng internet. Bạn bật Wi-Fi hoặc 4G rồi bấm lại nhé. Các phần khác của trang vẫn xem được khi không có mạng.'; return; }
+    window.open(ETAX, '_blank', 'noopener');
+    $('thueKq').innerHTML = 'Đang mở eTax ở thẻ mới. Nếu chưa thấy, bấm vào đây: <a href="' + ETAX + '" target="_blank" rel="noopener">canhan.gdt.gov.vn</a>. Trên điện thoại có thể dùng app eTax Mobile của Tổng cục Thuế.';
+  };
+}
 async function vao(ma, sdt, im) {
   const b = $('vao'); b.disabled = true; b.textContent = 'Đang mở...'; $('loi').textContent = '';
-  try { const r = await tai(ma, sdt); try { localStorage.setItem(KEY, JSON.stringify({ ma, sdt })); localStorage.setItem('xv_ctv', ma); } catch (e) { } ve(r, sdt); }
-  catch (e) { if (!im) $('loi').textContent = (e && e.message) || 'Chưa mở được. Bạn thử lại sau ít phút nhé.'; else { $('ma').value = ma; } }
+  try { const r = await tai(ma, sdt); try { localStorage.setItem(KEY, JSON.stringify({ ma, sdt })); localStorage.setItem('xv_ctv', ma); localStorage.setItem('xv_ctv_luu', JSON.stringify({ ma, t: Date.now(), r })); } catch (e) { } $('offline').hidden = true; ve(r, sdt); }
+  catch (e) {
+    let c = null; try { c = JSON.parse(localStorage.getItem('xv_ctv_luu') || 'null'); } catch (x) { }
+    if (c && c.ma === ma && !navigator.onLine) { ve(c.r, sdt); $('offline').hidden = false; $('offline').textContent = 'Không có mạng. Bạn đang xem số liệu lưu lúc ' + new Date(c.t).toLocaleString('vi-VN') + '. Có mạng lại thì tải lại trang để cập nhật.'; b.disabled = false; b.textContent = 'Xem trang của tôi'; return; } if (!im) $('loi').textContent = (e && e.message) || 'Chưa mở được. Bạn thử lại sau ít phút nhé.'; else { $('ma').value = ma; } }
   b.disabled = false; b.textContent = 'Xem trang của tôi';
 }
 $('f').addEventListener('submit', e => { e.preventDefault();
   const ma = $('ma').value.toLowerCase().replace(/[^a-z0-9]/g, ''), sdt = sdtSach($('sdt').value);
   if (!ma) { $('loi').textContent = 'Bạn nhập mã CTV nhé.'; return; } if (!/^0\d{9}$/.test(sdt)) { $('loi').textContent = 'Số Zalo chưa đúng.'; return; }
   vao(ma, sdt); });
-$('out').onclick = () => { try { localStorage.removeItem(KEY); } catch (e) { } location.reload(); };
+$('out').onclick = () => { try { localStorage.removeItem(KEY); localStorage.removeItem('xv_ctv_luu'); } catch (e) { } location.reload(); };
 if (dn && dn.ma && dn.sdt) vao(dn.ma, dn.sdt, true);
 </script>
 </body>
